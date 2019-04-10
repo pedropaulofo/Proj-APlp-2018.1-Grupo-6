@@ -6,21 +6,28 @@ using namespace std;
 
 int main()
 {
-	int difficulty;
-	string difficulties[3] = { "Facil", "Media", "Dificil" };
-	string jogador1, jogador2;
+	string difficulty, jogador1, jogador2;;
+	string difficulties[3] = { "Easy", "Medium", "Hard" };
 
-	cout << "Bem-vindo ao jogo Nara Shogi!\n" << endl;
-	cout << "Escolha a dificuldade desejada\n" << endl;
-	cout << "1 - Facil (tabuleiro 4 x 3)\n";
-	cout << "2 - Medio (tabuleiro 9 x 9)\n";
-	cout << "3 - Dificil (tabuleiro 13 x 13)\n" << endl;
-	cin >> difficulty;
+	cout << "---------------------------\n" << endl;
+	cout << "   Welcome to Nara Shogi!  \n" << endl;
+	cout << "---------------------------\n" << endl;
+	cout << "Choose the difficulty below:\n" << endl;
+	cout << "1 - Easy (4 x 3 table)\n";
+	cout << "2 - Medium (9 x 9 table)\n";
+	cout << "3 - Hard (13 x 13 table)\n" << endl;
 
-	cout << "\nDificuldade: " << difficulties[difficulty - 1] << endl;
-	cout << "Nome do jogador 1: ";
+	while (true) {
+		cin >> difficulty;
+		if (difficulty == "1" || difficulty == "2" || difficulty == "3") break;
+		else cout << "\nInvalid entry, try again:\n";
+	}
+
+
+	cout << "\nDifficulty: " << difficulties[stoi(difficulty) - 1] << endl;
+	cout << "\nPlayer 1 name: ";
 	cin >> jogador1;
-	cout << "Nome do jogador 2: ";
+	cout << "Player 2 name: ";
 	cin >> jogador2;
 
 }
