@@ -17,7 +17,8 @@ int main()
 
 	while (true) {
 		cin >> difficulty;
-		if (difficulty == "1" || difficulty == "2" || difficulty == "3") break;
+		if (difficulty == "2") break;
+		else if (difficulty == "1" || difficulty == "3") cout << "\nUnimplemented yet. Try medium.\n";
 		else cout << "\nInvalid entry, try again:\n";
 	}
 

@@ -13,7 +13,7 @@
 
 void start_match(int tablesize, std::string player1, std::string player2);
 void print_header();
-void print_board();
+void print_board(char board[9][9]);
 void update_display_board(char board[9][9]);
 
 #endif //PCH_H

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include <iostream>
 #include <string>
 
@@ -6,8 +6,7 @@
 
 using namespace std;
 
-
-char display_board_medium[42][59] = {
+char display_board_medium[42][59] = { //visual representation of the 9x9 board on screen
 	{' ', ' ', ' ', ' ', ' ', ' ', ' ', '0', ' ', ' ', ' ', ' ', ' ', '1', ' ', ' ', ' ', ' ', ' ', '2', ' ', ' ', ' ', ' ', ' ', '3', ' ', ' ', ' ', ' ', ' ', '4', ' ', ' ', ' ', ' ', ' ', '5', ' ', ' ', ' ', ' ', ' ', '6', ' ', ' ', ' ', ' ', ' ', '7', ' ', ' ', ' ', ' ', ' ', '8', ' ', ' ', ' '},
 	{' ', ' ', ' ', ' ', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
 	{' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#'},
@@ -48,13 +47,12 @@ char display_board_medium[42][59] = {
 	{' ', ' ', ' ', ' ', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
 };
 
-
 typedef struct board_pos {
 	int line_pos;
 	int column_pos;
 } board_pos;
 
-board_pos transf_matrix[BOARDSIZE][BOARDSIZE] = {
+board_pos transf_matrix[BOARDSIZE][BOARDSIZE] = { // correlates each board cell to the corresponding slot on the display board
 	{ board_pos{  3, 7 }, board_pos{  3, 13 }, board_pos{  3, 19 }, board_pos{  3, 25 }, board_pos{  3, 31 }, board_pos{  3, 37 }, board_pos{  3, 43 }, board_pos{  3, 49 }, board_pos{  3, 55}},
 	{ board_pos{  7, 7 }, board_pos{  7, 13 }, board_pos{  7, 19 }, board_pos{  7, 25 }, board_pos{  7, 31 }, board_pos{  7, 37 }, board_pos{  7, 43 }, board_pos{  7, 49 }, board_pos{  7, 55} },
 	{ board_pos{ 11, 7 }, board_pos{ 11, 13 }, board_pos{ 11, 19 }, board_pos{ 11, 25 }, board_pos{ 11, 31 }, board_pos{ 11, 37 }, board_pos{ 11, 43 }, board_pos{ 11, 49 }, board_pos{  11, 55} },
@@ -64,12 +62,12 @@ board_pos transf_matrix[BOARDSIZE][BOARDSIZE] = {
 	{ board_pos{ 27, 7 }, board_pos{ 27, 13 }, board_pos{ 27, 19 }, board_pos{ 27, 25 }, board_pos{ 27, 31 }, board_pos{ 27, 37 }, board_pos{ 27, 43 }, board_pos{ 27, 49 }, board_pos{  27, 55} },
 	{ board_pos{ 31, 7 }, board_pos{ 31, 13 }, board_pos{ 31, 19 }, board_pos{ 31, 25 }, board_pos{ 31, 31 }, board_pos{ 31, 37 }, board_pos{ 31, 43 }, board_pos{ 31, 49 }, board_pos{  31, 55} },
 	{ board_pos{ 35, 7 }, board_pos{ 35, 13 }, board_pos{ 35, 19 }, board_pos{ 35, 25 }, board_pos{ 35, 31 }, board_pos{ 35, 37 }, board_pos{ 35, 43 }, board_pos{ 35, 49 }, board_pos{  35, 55} },
-};
+}; 
 
 void start_match(int dif, string player1, string player2)
 {
-	char medium_board[BOARDSIZE][BOARDSIZE] = {
-	{'l', 'k', 's', 'G', 'K', 'G', 's', 'k', 'l'},
+	char medium_board[BOARDSIZE][BOARDSIZE] = {  // K-King, G- Gold general, s-Silver general, n-Knight, L-Lance, b-Bishop, r-Rook, p-Pawn
+	{'L', 'n', 's', 'G', 'K', 'G', 's', 'n', 'L'},
 	{' ', 'r', ' ', ' ', ' ', ' ', ' ', 'b', ' '},
 	{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
 	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
@@ -77,15 +75,28 @@ void start_match(int dif, string player1, string player2)
 	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 	{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
 	{' ', 'b', ' ', ' ', ' ', ' ', ' ', 'r', ' '},
-	{'l', 'k', 's', 'G', 'K', 'G', 's', 'k', 'l'}
+	{'L', 'n', 's', 'G', 'K', 'G', 's', 'n', 'L'}
+	};
+
+
+	char players_pieces_state[BOARDSIZE][BOARDSIZE] = {
+		{ '2', '2', '2', '2', '2', '2', '2', '2', '2'},
+		{ '0', '2', '0', '0', '0', '0', '0', '2', '0' },
+		{ '2', '2', '2', '2', '2', '2', '2', '2', '2' },
+		{ '0', '0', '0', '0', '0', '0', '0', '0', '0' },
+		{ '0', '0', '0', '0', '0', '0', '0', '0', '0' },
+		{ '0', '0', '0', '0', '0', '0', '0', '0', '0' },
+		{ '1', '1', '1', '1', '1', '1', '1', '1', '1' },
+		{ '0', '1', '0', '0', '0', '0', '0', '1', '0' },
+		{ '1', '1', '1', '1', '1', '1', '1', '1', '1' }
 	};
 	 
 	while (true) { // GAME LOOP
 		system("CLS");
-		update_display_board(medium_board);
-		print_board();
+		update_display_board(medium_board); // updates the current board configuration on the graphic board representation
+		print_board(players_pieces_state); // prints the graphic board on display with colors according to the palyers pieces
 
-		string move_origin, move_target; 
+		string move_origin, move_target;
 		cout << player1 << "'s turn. Choose the piece you want to make a move with by typing its coordinates. (Example: G2)\n" << "Piece of choice: ";
 		cin >> move_origin;
 		cout << player1 << ", choose the where to you want to move with the Pawn(G2)\n" << "Target coordinates: ";
@@ -95,12 +106,37 @@ void start_match(int dif, string player1, string player2)
 
 }
 
-void print_board() {
-
-
+void print_board(char pboard[BOARDSIZE][BOARDSIZE]) {
+	int coluna = 0;
 	for (int i = 0; i < 38; i++) {
+		int linha = 0;
 		for (int j = 0; j < 59; j++) {
-			printf("%c", display_board_medium[i][j]);
+			char out = display_board_medium[i][j];
+			if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos && pboard[linha][coluna] == '2') {
+				printf("\033[1;31m%c\033[0m", out); // if the piece is from player 2, displays in RED
+				coluna += 1;
+				if (linha>BOARDSIZE){
+					coluna = 0;
+					linha += 1;
+				}
+			}
+			else if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos && pboard[linha][coluna] == '1'){
+				printf("\033[1;36m%c\033[0m", out); // if the piece is from player 1, displays in CYAN
+				coluna += 1;
+				if (linha > BOARDSIZE) {
+					coluna = 0;
+					linha += 1;
+				}
+			}
+			else if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos) {
+				printf("%c", out);
+				coluna += 1;
+				if (linha > BOARDSIZE) {
+					coluna = 0;
+					linha += 1;
+				}
+			}
+			else printf("%C", out);
 		}
 		printf("\n");
 	}
