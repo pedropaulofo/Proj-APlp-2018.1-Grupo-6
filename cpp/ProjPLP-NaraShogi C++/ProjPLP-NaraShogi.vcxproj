@@ -160,8 +160,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Shogi launcher.cpp" />
-    <ClCompile Include="Table.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="display board.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProjPLP-NaraShogi.vcxproj.user" />

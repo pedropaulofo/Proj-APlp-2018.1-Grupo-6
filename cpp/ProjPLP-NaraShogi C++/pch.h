@@ -6,9 +6,14 @@
 //   5. Ir Para o Projeto > Adicionar Novo Item para criar novos arquivos de código, ou Projeto > Adicionar Item Existente para adicionar arquivos de código existentes ao projeto
 //   6. No futuro, para abrir este projeto novamente, vá para Arquivo > Abrir > Projeto e selecione o arquivo. sln
 
+#include <string>
+
 #ifndef PCH_H
 #define PCH_H
 
-// TODO: adicione cabeçalhos que você deseja pré-compilar aqui
+void start_match(int tablesize, std::string player1, std::string player2);
+void print_header();
+void print_board();
+void update_display_board(char board[9][9]);
 
 #endif //PCH_H
