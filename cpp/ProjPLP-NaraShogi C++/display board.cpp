@@ -1,8 +1,12 @@
 ﻿#include "pch.h"
 #include <iostream>
 #include <string>
+#include "cores.h"
+
 
 #define BOARDSIZE 9 // USANDO, POR ENQUANTO, SEMPRE A DIFUCULDADE MEDIA (TABULEIRO 9X9)
+#define CLEAR_SCREEN "\033[2J\033[1;1H"
+#define PLAYER2_COLOR "\033[1;31m%c\033[0m"
 
 using namespace std;
 
@@ -67,7 +71,7 @@ board_pos transf_matrix[BOARDSIZE][BOARDSIZE] = { // correlates each board cell 
 void start_match(int dif, string player1, string player2)
 {
 	char medium_board[BOARDSIZE][BOARDSIZE] = {  // K-King, G- Gold general, s-Silver general, n-Knight, L-Lance, b-Bishop, r-Rook, p-Pawn
-	{'L', 'n', 's', 'G', 'K', 'G', 's', 'n', 'L'},
+	{'l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'},
 	{' ', 'r', ' ', ' ', ' ', ' ', ' ', 'b', ' '},
 	{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
 	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
@@ -75,7 +79,7 @@ void start_match(int dif, string player1, string player2)
 	{' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '},
 	{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
 	{' ', 'b', ' ', ' ', ' ', ' ', ' ', 'r', ' '},
-	{'L', 'n', 's', 'G', 'K', 'G', 's', 'n', 'L'}
+	{'l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'}
 	};
 
 
@@ -91,16 +95,49 @@ void start_match(int dif, string player1, string player2)
 		{ '1', '1', '1', '1', '1', '1', '1', '1', '1' }
 	};
 	 
+	bool player2_turn = false; //true -> turn player1
+
 	while (true) { // GAME LOOP
-		system("CLS");
+		printf(CLEAR_SCREEN);
 		update_display_board(medium_board); // updates the current board configuration on the graphic board representation
 		print_board(players_pieces_state); // prints the graphic board on display with colors according to the palyers pieces
 
-		string move_origin, move_target;
-		cout << player1 << "'s turn. Choose the piece you want to make a move with by typing its coordinates. (Example: G2)\n" << "Piece of choice: ";
-		cin >> move_origin;
-		cout << player1 << ", choose the where to you want to move with the Pawn(G2)\n" << "Target coordinates: ";
-		cin >> move_target;
+		string player,move_origin, move_target;
+		if(player2_turn){
+			player = player2;
+		}else{
+			player = player1;
+		}
+		while(true){
+			player2_turn ? foreground(RED) : foreground(CYAN);
+			cout  << player;
+			style(RESETALL);
+			cout << "'s turn. Choose the piece you want to make a move with by typing its coordinates. (Example: G2)\n" << "Piece of choice: ";
+			cin >> move_origin;
+			
+			// TODO
+			// Check if position exists
+			//2 - Checa se peca na posicao eh do jogador atual
+			// se as duuas forem validas dah brake
+			break;
+			//caso seja invalido
+			cout <<  "Jogada invalida";
+		}
+
+		while(true){
+			cout << player << ", choose the where to you want to move with the Pawn(G2)\n" << "Target coordinates: ";
+			cin >> move_target;
+			//if() se
+			medium_board[2][0] = '	';
+			medium_board[3][0] = 'p';
+			players_pieces_state[2][0] = '0';
+			players_pieces_state[3][0] = '2';
+			//passa a vez
+			player2_turn = !player2_turn;
+			break;
+		}
+		
+
 	}
 	
 
@@ -113,7 +150,7 @@ void print_board(char pboard[BOARDSIZE][BOARDSIZE]) {
 		for (int j = 0; j < 59; j++) {
 			char out = display_board_medium[i][j];
 			if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos && pboard[linha][coluna] == '2') {
-				printf("\033[1;31m%c\033[0m", out); // if the piece is from player 2, displays in RED
+				printf(PLAYER2_COLOR, out); // if the piece is from player 2, displays in RED
 				coluna += 1;
 				if (linha>BOARDSIZE){
 					coluna = 0;

@@ -1,8 +1,11 @@
 #include "pch.h"
+#include "display board.cpp"
 #include <iostream>
 #include <string>
 
 using namespace std;
+
+#define CLEAR_SCREEN "\033[2J\033[1;1H"
 
 int main()
 {
@@ -23,7 +26,7 @@ int main()
 	}
 
 	int dif = stoi(difficulty);
-	system("CLS");
+	printf(CLEAR_SCREEN);
 	print_header();
 	cout << "Difficulty: " << difficulties[dif - 1] << endl;
 	cout << "\nPlayer 1 name: ";
