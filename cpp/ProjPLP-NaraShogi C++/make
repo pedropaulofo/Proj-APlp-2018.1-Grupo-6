@@ -1,3 +1,4 @@
+# Script temporario para build e execução do jogo
 rm -rf jogo
 g++ main.cpp -o jogo
 ./jogo
