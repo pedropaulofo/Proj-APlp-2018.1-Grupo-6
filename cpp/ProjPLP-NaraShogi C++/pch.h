@@ -7,9 +7,15 @@
 //   6. No futuro, para abrir este projeto novamente, vá para Arquivo > Abrir > Projeto e selecione o arquivo. sln
 
 #include <string>
-
 #ifndef PCH_H
 #define PCH_H
+#define BOARDSIZE 9 // USANDO, POR ENQUANTO, SEMPRE A DIFUCULDADE MEDIA (TABULEIRO 9X9)
+
+
+typedef struct board_pos {
+	int line_pos;
+	int column_pos;
+} board_pos;
 
 void start_match(int tablesize, std::string player1, std::string player2);
 void print_header();
