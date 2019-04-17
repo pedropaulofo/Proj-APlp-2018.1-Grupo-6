@@ -17,6 +17,7 @@ bld/
 
 # Visual Studio cache/options directory
 .vs/
+.vscode/
 
 # IDE Related Project files
 *.sln
