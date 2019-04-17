@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "display board.cpp"
 #include <iostream>
 #include <string>
 
@@ -26,7 +25,8 @@ int main()
 	}
 
 	int dif = stoi(difficulty);
-	printf(CLEAR_SCREEN);
+	//printf(CLEAR_SCREEN);
+	system("CLS");
 	print_header();
 	cout << "Difficulty: " << difficulties[dif - 1] << endl;
 	cout << "\nPlayer 1 name: ";
