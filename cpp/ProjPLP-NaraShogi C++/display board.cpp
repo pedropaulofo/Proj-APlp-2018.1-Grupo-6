@@ -9,7 +9,7 @@
 #define BASE_ASCII_SUBT_LINE  65
 #define BASE_ASCII_SUBT_COLUMN 48
 #define HIGHLIGHT_CHAR '/'
-#define BLANK_CELL '.'
+#define BLANK_CELL '_'
 
 using namespace std;
 
@@ -92,7 +92,7 @@ char pieces_map[BOARDSIZE][BOARDSIZE] = {  // K-King, G- Gold general, s-Silver 
 	{'l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'}
 };
 
-bool player_turn; //    true -> turn player2     false -> player1
+bool player_turn; //    true -> turn player1     false -> player2
 
 
 /// FUNCOES COMECAM ABAIXO
@@ -151,44 +151,30 @@ void print_board() {
 		int linha = 0;
 		for (int j = 0; j < 59; j++) {
 			char out = display_board[i][j];
-			if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos && players_map[linha][coluna] == '2') {
-				foreground(RED);
-				printf("%c", out); // if the piece is from player 2, displays in RED
+
+			if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos) { // if the char displays one of the cells
+				
+				if (players_map[linha][coluna] == '2') {
+					foreground(RED); // if the piece is from player 2, displays in RED
+				}
+				else if (players_map[linha][coluna] == '1') {
+					foreground(CYAN); // if the piece is from player 1, displays in CYAN
+				}				
 				coluna += 1;
 				if (linha > BOARDSIZE) {
 					coluna = 0;
 					linha += 1;
 				}
+				
 			}
-			else if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos && players_map[linha][coluna] == '1') {
-				foreground(CYAN);
-				printf("%c", out); // if the piece is from player 1, displays in CYAN
-				coluna += 1;
-				if (linha > BOARDSIZE) {
-					coluna = 0;
-					linha += 1;
-				}
-			}
-			else if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos) {
-				foreground(BLACK);
-				FOREBLACK;
-				printf("%c", out);
-				coluna += 1;
-				if (linha > BOARDSIZE) {
-					coluna = 0;
-					linha += 1;
-				}
-			}
-			else if (out == '_'){
-				foreground(BLACK);
-				FOREBLACK;
-				printf("%C", out);
+			if (out == BLANK_CELL){
+				foreground(BLACK); // hides the empty cell by setting it to black
 	   		}
 			else if (out == HIGHLIGHT_CHAR) {
-				foreground(GREEN);
-				printf("%C", out);
+				foreground(GREEN); // higlights the selected cell with green slashes around it
 			}
-			else printf("%C", out);
+
+			printf("%C", out); // PRINTS CHAR
 			style(RESETALL);
 		}
 		printf("\n");
@@ -232,9 +218,9 @@ void move(board_pos origin, board_pos target) {
 	int tar_col = target.column_pos;//target colunn
 
 	pieces_map[tar_line][tar_col] = pieces_map[ori_line][ori_col];	// sets the selected piece to the targeted cell
-	pieces_map[ori_line][ori_col] = '_';							// clears the cell where the pieces was before moving
+	pieces_map[ori_line][ori_col] = BLANK_CELL;							// clears the cell where the pieces was before moving
 	players_map[tar_line][tar_col] = players_map[ori_line][ori_col];// sets the targeted cell as having one of the player's piece
-	players_map[ori_line][ori_col] = '0';							// sets the origin to have no player piece on it
+	players_map[ori_line][ori_col] = EMPTYCELL;							// sets the origin to have no player piece on it
 
 }
 
@@ -243,6 +229,42 @@ void print_warning(string message) {
 	foreground(RED);
 	cout << "\n" << message << "\n";
 	style(RESETALL);
+}
+
+bool is_legal_move(char piece_type, board_pos origin, board_pos target) {
+	switch (piece_type)
+	{
+	case 'p': // PAWN
+		return is_pawn_move(origin, target, player_turn);
+	case 'b': // BISHOP
+		return is_bishop_move(origin, target, players_map);
+	case 'l': // LANCER
+		return false;
+	case 'r': // 
+		return false;
+	case 'n': // KNIGHT
+		return false;
+	case 's': // SILVER GENERAL
+		return false;
+	case 'G': // GOLDEN GENERAL
+		return false;
+	case 'K': // KING
+		return false;
+	case 'P': // PROMOTED PAWN
+		return false;
+	case 'B': // PROMOTED BISHOP
+		return false;
+	case 'R': // PROMOTED 
+		return false;
+	case 'N': // PROMOTED KNIGHT
+		return false;
+	case 'S': // PROMOTED SILVER GENERAL
+		return false;
+	default:
+		return false;
+	}
+	
+	return false;
 }
 
 
@@ -291,14 +313,17 @@ void start_match(int difficulty, string player1_name, string player2_name)
 			print_player_name(current_player_name);
 			cout << ", choose the where to you want to move with your piece (" + move_origin + ")\n" << "Target coordinates: ";
 			cin >> move_target;
-
 			if (coordinate_isvalid(move_target) && !has_player_piece(move_target, player_turn)) { // The targeted position must be valid and not contain the own player's piece
-				highlight_cell(move_origin, true); // Erases the selected highlight, as the move will be made.
 
 				target_cell.line_pos = get_line_pos(move_target);
 				target_cell.column_pos = get_column_pos(move_target);
 
-				if (pieces_map[origin_cell.line_pos][origin_cell.column_pos] == 'p' && is_pawn_move(origin_cell, target_cell, players_map)) {
+				char piece = pieces_map[origin_cell.line_pos][origin_cell.column_pos];
+				bool legal_move = is_legal_move(piece, origin_cell, target_cell);
+				
+				cout << "legal ate aqui\n";
+				if (legal_move) {
+					highlight_cell(move_origin, true);  // Erases the selected highlight, as the move will be made.
 					move(origin_cell, target_cell);
 					switch_turn();
 					break;

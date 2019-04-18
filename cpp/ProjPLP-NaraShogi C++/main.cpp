@@ -25,8 +25,7 @@ int main()
 	}
 
 	int dif = stoi(difficulty);
-	//printf(CLEAR_SCREEN);
-	system("CLS");
+	printf(CLEAR_SCREEN);
 	print_header();
 	cout << "Difficulty: " << difficulties[dif - 1] << endl;
 	cout << "\nPlayer 1 name: ";
