@@ -21,5 +21,6 @@ void start_match(int tablesize, std::string player1, std::string player2);
 void print_header();
 void print_board(char board[9][9]);
 void update_display_board(char board[9][9]);
+bool is_pawn_move(board_pos origin, board_pos target, char playerboard[BOARDSIZE][BOARDSIZE]);
 
 #endif //PCH_H

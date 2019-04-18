@@ -82,13 +82,13 @@ char  players_map[BOARDSIZE][BOARDSIZE] = {
 
 char pieces_map[BOARDSIZE][BOARDSIZE] = {  // K-King, G- Gold general, s-Silver general, n-Knight, L-Lance, b-Bishop, r-Rook, p-Pawn
 	{'l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'},
-	{'.', 'r', '.', '.', '.', '.', '.', 'b', '.'},
+	{'_', 'r', '_', '_', '_', '_', '_', 'b', '_'},
 	{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
-	{'.', '.', '.', '.', '.', '.', '.', '.', '.'},
-	{'.', '.', '.', '.', '.', '.', '.', '.', '.'},
-	{'.', '.', '.', '.', '.', '.', '.', '.', '.'},
+	{'_', '_', '_', '_', '_', '_', '_', '_', '_'},
+	{'_', '_', '_', '_', '_', '_', '_', '_', '_'},
+	{'_', '_', '_', '_', '_', '_', '_', '_', '_'},
 	{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
-	{'.', 'b', '.', '.', '.', '.', '.', 'r', '.'},
+	{'_', 'b', '_', '_', '_', '_', '_', 'r', '_'},
 	{'l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'}
 };
 
@@ -170,6 +170,8 @@ void print_board() {
 				}
 			}
 			else if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos) {
+				foreground(BLACK);
+				FOREBLACK;
 				printf("%c", out);
 				coluna += 1;
 				if (linha > BOARDSIZE) {
@@ -177,7 +179,7 @@ void print_board() {
 					linha += 1;
 				}
 			}
-			else if (out == BLANK_CELL){
+			else if (out == '_'){
 				foreground(BLACK);
 				FOREBLACK;
 				printf("%C", out);
@@ -185,8 +187,6 @@ void print_board() {
 			else if (out == HIGHLIGHT_CHAR) {
 				foreground(GREEN);
 				printf("%C", out);
-				
-
 			}
 			else printf("%C", out);
 			style(RESETALL);
@@ -213,7 +213,7 @@ void highlight_cell(string move_origin, bool undo) { /// if UNDO is TRUE, clears
 	int display_line = transf_matrix[line][column].line_pos; //Corresponding LINE index on DISPLAY board
 	int display_column = transf_matrix[line][column].column_pos; //Corresponding COLUMN index on DISPLAY board
 
-	char overlay = undo ? '.' : HIGHLIGHT_CHAR;
+	char overlay = undo ? '_' : HIGHLIGHT_CHAR;
 
 	display_board[display_line - 1][display_column - 1] = overlay; //diagonal sup esq
 	display_board[display_line - 1][display_column] = overlay; //vertical sup
@@ -232,10 +232,17 @@ void move(board_pos origin, board_pos target) {
 	int tar_col = target.column_pos;//target colunn
 
 	pieces_map[tar_line][tar_col] = pieces_map[ori_line][ori_col];	// sets the selected piece to the targeted cell
-	pieces_map[ori_line][ori_col] = '.';							// clears the cell where the pieces was before moving
+	pieces_map[ori_line][ori_col] = '_';							// clears the cell where the pieces was before moving
 	players_map[tar_line][tar_col] = players_map[ori_line][ori_col];// sets the targeted cell as having one of the player's piece
 	players_map[ori_line][ori_col] = '0';							// sets the origin to have no player piece on it
 
+}
+
+void print_warning(string message) {
+	print_board();
+	foreground(RED);
+	cout << "\n" << message << "\n";
+	style(RESETALL);
 }
 
 
@@ -275,33 +282,34 @@ void start_match(int difficulty, string player1_name, string player2_name)
 				break;
 			}
 			else {
-				print_board();
-				cout << "\n'" << move_origin << "' is an invalid input. Try again:\n";
+				print_warning("'" + move_origin + "' is an invalid input. Try again:");
 			}
 		}
 
 		while (true) { // LOOP AGUARDANDO POR UM DESTINO VALIDO
 
 			print_player_name(current_player_name);
-			cout << current_player_name << ", choose the where to you want to move with the Pawn(G2)\n" << "Target coordinates: ";
+			cout << ", choose the where to you want to move with your piece (" + move_origin + ")\n" << "Target coordinates: ";
 			cin >> move_target;
 
 			if (coordinate_isvalid(move_target) && !has_player_piece(move_target, player_turn)) { // The targeted position must be valid and not contain the own player's piece
-				//highlight_cell(move_origin, true); // Erases the selected highlight, as the move will be made.
+				highlight_cell(move_origin, true); // Erases the selected highlight, as the move will be made.
 
 				target_cell.line_pos = get_line_pos(move_target);
 				target_cell.column_pos = get_column_pos(move_target);
 
-				//if (pieces_map[origin_cell.line_pos][origin_cell.column_pos] == 'c' && is_move_valid(origin_cell, target_cell, players_map, pieces_map)) {
-				move(origin_cell, target_cell);
-				//}
-
-				switch_turn();
-				break;
+				if (pieces_map[origin_cell.line_pos][origin_cell.column_pos] == 'p' && is_pawn_move(origin_cell, target_cell, players_map)) {
+					move(origin_cell, target_cell);
+					switch_turn();
+					break;
+				}
+				else {
+					print_warning("Invalid move for this piece. Try again:");
+					
+				}
 			}
 			else {
-				print_board();
-				printf("\nInvalid input. Try again:\n");
+				print_warning("Invalid input. Try again:");
 			}
 		}
 
