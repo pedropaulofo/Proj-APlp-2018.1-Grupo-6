@@ -1,5 +1,4 @@
 #include "pch.h"
-#include <stdio.h>
 
 //Bispo : Move-se apenas para as diagonais.
 

@@ -1,5 +1,4 @@
 #include "pch.h"
-#include <stdio.h>
 
 //Peão : Move-se apenas uma casa para frente.
 

@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #include "pch.h"
-#include "cores.h"
+#include "colors.h"
 #include <iostream>
 #include <string>
 #include <cstdio>
@@ -10,6 +10,22 @@
 #define BASE_ASCII_SUBT_COLUMN 48
 #define HIGHLIGHT_CHAR '/'
 #define BLANK_CELL '_'
+
+// Pieces identifiers
+#define PAWN 'p'
+#define BISHOP 'b'
+#define ROOK 'r'
+#define LANCER 'l'
+#define KNIGHT 'n'
+#define SILVERGENERAL 's'
+#define GOLDENGENERAL 'G'
+#define KING 'K'
+#define PROMOTEDPAWN 'P'
+#define PROMOTEDBISHOP 'B'
+#define PROMOTEDROOK 'R'
+#define PROMOTEDLANCER 'N'
+#define PROMOTEDKNIGHT 'N'
+#define PROMOTEDSILVERGENERAL 'S'
 
 using namespace std;
 
@@ -102,16 +118,21 @@ void switch_turn() {
 	player_turn = !player_turn;
 }
 
-bool player1_turn() {
+bool is_player1_turn() {
 	return player_turn;
 }
 
-bool player2_turn() {
+bool is_player2_turn() {
 	return !player_turn;
 }
 
+void set_player_textxcolor(bool is_player1) {
+	if (is_player1) foreground(CYAN);
+	else foreground(YELLOW);
+}
+
 void print_player_name(string current_player_name) {
-	player1_turn() ? foreground(CYAN) : foreground(RED);
+	set_player_textxcolor(is_player1_turn());
 	cout << current_player_name;
 	style(RESETALL);
 }
@@ -138,7 +159,7 @@ bool coordinate_isvalid(string input) {
 	return true;
 }
 
-bool has_player_piece(string pos, bool checking_player1) {
+bool is_from_player(string pos, bool checking_player1) {
 	int line = get_line_pos(pos);
 	int column = get_column_pos(pos);
 
@@ -146,19 +167,21 @@ bool has_player_piece(string pos, bool checking_player1) {
 }
 
 void print_board() {
+	background(BLACK);
+
 	int coluna = 0;
 	for (int i = 0; i < 38; i++) {
 		int linha = 0;
 		for (int j = 0; j < 59; j++) {
 			char out = display_board[i][j];
-
+			foreground(WHITE);
 			if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos) { // if the char displays one of the cells
 				
 				if (players_map[linha][coluna] == '2') {
-					foreground(RED); // if the piece is from player 2, displays in RED
+					set_player_textxcolor(false); // if the piece is from player 2, displays in RED
 				}
 				else if (players_map[linha][coluna] == '1') {
-					foreground(CYAN); // if the piece is from player 1, displays in CYAN
+					set_player_textxcolor(true);; // if the piece is from player 1, displays in CYAN
 				}				
 				coluna += 1;
 				if (linha > BOARDSIZE) {
@@ -173,14 +196,14 @@ void print_board() {
 			else if (out == HIGHLIGHT_CHAR) {
 				foreground(GREEN); // higlights the selected cell with green slashes around it
 			}
-
+					
 			printf("%C", out); // PRINTS CHAR
-			style(RESETALL);
+			
 		}
 		printf("\n");
 
 	}
-
+	style(RESETALL);
 }
 
 void update_display_board() {
@@ -234,39 +257,37 @@ void print_warning(string message) {
 bool is_legal_move(char piece_type, board_pos origin, board_pos target) {
 	switch (piece_type)
 	{
-	case 'p': // PAWN
+	case PAWN: 
 		return is_pawn_move(origin, target, player_turn);
-	case 'b': // BISHOP
+	case BISHOP: 
 		return is_bishop_move(origin, target, players_map);
-	case 'l': // LANCER
+	case ROOK:
+		return is_rook_move(origin, target, players_map);
+	case LANCER:
+		return is_lancer_move(origin, target, players_map);
+	case KNIGHT:
+		return is_knight_move(origin, target, player_turn);
+	case SILVERGENERAL:
+		return is_silverg_move(origin, target, player_turn);
+	case GOLDENGENERAL:
+		return is_goldeng_move(origin, target, player_turn);
+	case KING:
+		return is_king_move(origin, target);
+	case PROMOTEDPAWN:
 		return false;
-	case 'r': // 
+	case PROMOTEDBISHOP:
 		return false;
-	case 'n': // KNIGHT
+	case PROMOTEDROOK:
 		return false;
-	case 's': // SILVER GENERAL
+	case PROMOTEDKNIGHT:
 		return false;
-	case 'G': // GOLDEN GENERAL
-		return false;
-	case 'K': // KING
-		return false;
-	case 'P': // PROMOTED PAWN
-		return false;
-	case 'B': // PROMOTED BISHOP
-		return false;
-	case 'R': // PROMOTED 
-		return false;
-	case 'N': // PROMOTED KNIGHT
-		return false;
-	case 'S': // PROMOTED SILVER GENERAL
+	case PROMOTEDSILVERGENERAL:
 		return false;
 	default:
 		return false;
 	}
-	
 	return false;
 }
-
 
 // MATCH STARTS WITH THE FOLLOWING FUNCTION:
 
@@ -283,7 +304,7 @@ void start_match(int difficulty, string player1_name, string player2_name)
 
 		string current_player_name; // Get the current turn Player's Name
 
-		current_player_name = player1_turn() ? player1_name : player2_name;
+		current_player_name = is_player1_turn() ? player1_name : player2_name;
 
 		string move_origin, move_target;
 		board_pos origin_cell, target_cell;
@@ -294,7 +315,7 @@ void start_match(int difficulty, string player1_name, string player2_name)
 			cout << "'s turn. Choose the piece you want to make a move with by typing its coordinates. (Example: G2)\n" << "Piece of choice: ";
 			cin >> move_origin;
 
-			if (coordinate_isvalid(move_origin) && has_player_piece(move_origin, player_turn)) { // The selected position must be valid and contain one of the current player's pieces
+			if (coordinate_isvalid(move_origin) && is_from_player(move_origin, player_turn)) { // The selected position must be valid and contain one of the current player's pieces
 				highlight_cell(move_origin, false); // highlights the selected piece
 
 				origin_cell.line_pos = get_line_pos(move_origin);
@@ -313,7 +334,7 @@ void start_match(int difficulty, string player1_name, string player2_name)
 			print_player_name(current_player_name);
 			cout << ", choose the where to you want to move with your piece (" + move_origin + ")\n" << "Target coordinates: ";
 			cin >> move_target;
-			if (coordinate_isvalid(move_target) && !has_player_piece(move_target, player_turn)) { // The targeted position must be valid and not contain the own player's piece
+			if (coordinate_isvalid(move_target) && !is_from_player(move_target, player_turn)) { // The targeted position must be valid and not contain the own player's piece
 
 				target_cell.line_pos = get_line_pos(move_target);
 				target_cell.column_pos = get_column_pos(move_target);
