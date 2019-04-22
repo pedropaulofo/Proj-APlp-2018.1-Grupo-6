@@ -10,6 +10,8 @@
 #define BASE_ASCII_SUBT_COLUMN 48
 #define HIGHLIGHT_CHAR '/'
 #define BLANK_CELL '_'
+#define P1_IDENTIFER '1'
+#define P2_IDENTIFER '2'
 
 // Pieces identifiers
 #define PAWN 'p'
@@ -109,6 +111,7 @@ char pieces_map[BOARDSIZE][BOARDSIZE] = {  // K-King, G- Gold general, s-Silver 
 };
 
 bool player_turn; //    true -> turn player1     false -> player2
+string current_player_name;
 
 
 /// FUNCOES COMECAM ABAIXO
@@ -137,15 +140,15 @@ void print_player_name(string current_player_name) {
 	style(RESETALL);
 }
 
-int get_line_pos(string pos) {
-	char linha = toupper(pos[0]);
-	int conversao = (int)linha - BASE_ASCII_SUBT_LINE;
-	return conversao;
-}
+board_pos text_to_pos(string input) {
+	board_pos conversao;
 
-int get_column_pos(string pos) {
-	char coluna = pos[1];
-	int conversao = (int)coluna - BASE_ASCII_SUBT_COLUMN;
+	char linha = toupper(input[0]);
+	char coluna = input[1];
+
+	conversao.line_pos = (int)linha - BASE_ASCII_SUBT_LINE;
+	conversao.column_pos = (int)coluna - BASE_ASCII_SUBT_COLUMN;
+
 	return conversao;
 }
 
@@ -159,11 +162,11 @@ bool coordinate_isvalid(string input) {
 	return true;
 }
 
-bool is_from_player(string pos, bool checking_player1) {
-	int line = get_line_pos(pos);
-	int column = get_column_pos(pos);
+bool is_from_player(board_pos pos, bool checking_player1) {
+	int line = pos.line_pos;
+	int column = pos.column_pos;
 
-	return (players_map[line][column] == '1' && checking_player1) || (players_map[line][column] == '2' && !checking_player1);
+	return (players_map[line][column] == P1_IDENTIFER && checking_player1) || (players_map[line][column] == P2_IDENTIFER && !checking_player1);
 }
 
 void print_board() {
@@ -216,13 +219,13 @@ void update_display_board() {
 	}
 }
 
-void highlight_cell(string move_origin, bool undo) { /// if UNDO is TRUE, clears the highlight by switching for blank space. If UNDO is FALSE, inserts the Highligth Character arround the selected cell
-	int line = get_line_pos(move_origin);
-	int column = get_column_pos(move_origin);
+void highlight_cell(board_pos move_origin, bool undo) { /// If UNDO is TRUE, clears the highlight by switching for blank space. If UNDO is FALSE, inserts the Highligth Character arround the selected cell
+	int line = move_origin.line_pos;
+	int column = move_origin.column_pos;
 	int display_line = transf_matrix[line][column].line_pos; //Corresponding LINE index on DISPLAY board
 	int display_column = transf_matrix[line][column].column_pos; //Corresponding COLUMN index on DISPLAY board
 
-	char overlay = undo ? '_' : HIGHLIGHT_CHAR;
+	char overlay = undo ? BLANK_CELL : HIGHLIGHT_CHAR;
 
 	display_board[display_line - 1][display_column - 1] = overlay; //diagonal sup esq
 	display_board[display_line - 1][display_column] = overlay; //vertical sup
@@ -289,6 +292,91 @@ bool is_legal_move(char piece_type, board_pos origin, board_pos target) {
 	return false;
 }
 
+void check_and_promote(board_pos destino){
+	char player = players_map[destino.line_pos][destino.column_pos];
+	
+	if (player == P1_IDENTIFER) {
+		if (destino.line_pos <= PROMOTION_AREA1) {
+			pieces_map[destino.line_pos][destino.column_pos] = toupper(pieces_map[destino.line_pos][destino.column_pos]);
+		}
+	}
+	else if (player == P2_IDENTIFER) {
+		if (destino.line_pos >= PROMOTION_AREA2) {
+			pieces_map[destino.line_pos][destino.column_pos] = toupper(pieces_map[destino.line_pos][destino.column_pos]);
+		}
+	}
+
+}
+
+board_pos get_origin() {
+	string input_text;
+	board_pos  origin_cell;
+
+	while (true) { // LOOP WAITING FOR A VALID ORIGIN POSITION
+
+		print_player_name(current_player_name);
+		cout << "'s turn. Choose the piece you want to make a move with by typing its coordinates. (Example: G2)\n" << "Piece of choice: ";
+		cin >> input_text;
+
+		if (coordinate_isvalid(input_text)) {					// CHECK IF THE INPUT REFER TO VALID COORDINATES ON THE BOARD
+			origin_cell = text_to_pos(input_text);
+
+			if (is_from_player(origin_cell, player_turn)) {		// CHECK IF THE CHOSEN COORDINATES CONTAIN ONE OF THE PLAYER'S PIECES
+
+				highlight_cell(origin_cell, false);			// Highlights the selected piece
+				print_board();
+				break;
+			}
+			else {
+				print_warning("'" + input_text + "' does not contain the current player piece. Try again:");
+			}
+		}
+		else {
+			print_warning("'" + input_text + "' is an invalid input. Try again:");
+		}
+	}
+	return origin_cell;
+}
+
+void move_to_target(board_pos origin_cell) {
+	string target_input;
+	board_pos target_cell;
+
+	while (true) { // LOOP WAITING FOR A VALID TARGET POSITION
+
+		print_player_name(current_player_name);
+		cout << ", choose the where to you want to move with your selected piece.\n" << "Target coordinates: ";
+		cin >> target_input;
+
+		if (coordinate_isvalid(target_input)) {											// CHECK IF THE INPUT IS A VALID POSITION ON THE BOARD
+			target_cell = text_to_pos(target_input);
+
+			if (!is_from_player(target_cell, player_turn)) {								// CHECK IF THE POSITION GIVEN DOES NOT CONTAIN ONE OF THE OWN PLAYER'S PIECES
+				char piece = pieces_map[origin_cell.line_pos][origin_cell.column_pos];
+
+				if (is_legal_move(piece, origin_cell, target_cell)) {					// CHECK IF THE MOVE IS LEGAL FOR THE PIECE CHOSEN
+
+					highlight_cell(origin_cell, true);		// Undoes the selected highlight, as the move will be completed
+					move(origin_cell, target_cell);			// MAKES THE MOVE
+					check_and_promote(target_cell);			// PROMOTES IF THE PIECE REACHES PROMOTION AREA
+					switch_turn();
+					break;
+				}
+				else {
+					print_warning("Invalid move for this piece. Try again:");
+
+				}
+			}
+			else {
+				print_warning("'" + target_input + "' contain one of the current player pieces. Try again:");
+			}
+		}
+		else {
+			print_warning("Invalid input. Try again:");
+		}
+	} // END LOOP FOR TARGET POSITION
+}
+
 // MATCH STARTS WITH THE FOLLOWING FUNCTION:
 
 void start_match(int difficulty, string player1_name, string player2_name)
@@ -302,63 +390,13 @@ void start_match(int difficulty, string player1_name, string player2_name)
 		update_display_board(); // updates the current board configuration on the graphic board representation
 		print_board(); // prints the graphic board on display with colors according to the palyers pieces
 
-		string current_player_name; // Get the current turn Player's Name
+		 // Get the current turn Player's Name
 
 		current_player_name = is_player1_turn() ? player1_name : player2_name;
 
-		string move_origin, move_target;
-		board_pos origin_cell, target_cell;
-		while (true) { // LOOP AGUARDANDO RECEBER UMA POSICAO DE ORIGEM VALIDA
-
-
-			print_player_name(current_player_name);
-			cout << "'s turn. Choose the piece you want to make a move with by typing its coordinates. (Example: G2)\n" << "Piece of choice: ";
-			cin >> move_origin;
-
-			if (coordinate_isvalid(move_origin) && is_from_player(move_origin, player_turn)) { // The selected position must be valid and contain one of the current player's pieces
-				highlight_cell(move_origin, false); // highlights the selected piece
-
-				origin_cell.line_pos = get_line_pos(move_origin);
-				origin_cell.column_pos = get_column_pos(move_origin);
-
-				print_board();
-				break;
-			}
-			else {
-				print_warning("'" + move_origin + "' is an invalid input. Try again:");
-			}
-		}
-
-		while (true) { // LOOP AGUARDANDO POR UM DESTINO VALIDO
-
-			print_player_name(current_player_name);
-			cout << ", choose the where to you want to move with your piece (" + move_origin + ")\n" << "Target coordinates: ";
-			cin >> move_target;
-			if (coordinate_isvalid(move_target) && !is_from_player(move_target, player_turn)) { // The targeted position must be valid and not contain the own player's piece
-
-				target_cell.line_pos = get_line_pos(move_target);
-				target_cell.column_pos = get_column_pos(move_target);
-
-				char piece = pieces_map[origin_cell.line_pos][origin_cell.column_pos];
-				bool legal_move = is_legal_move(piece, origin_cell, target_cell);
-				
-				cout << "legal ate aqui\n";
-				if (legal_move) {
-					highlight_cell(move_origin, true);  // Erases the selected highlight, as the move will be made.
-					move(origin_cell, target_cell);
-					switch_turn();
-					break;
-				}
-				else {
-					print_warning("Invalid move for this piece. Try again:");
-					
-				}
-			}
-			else {
-				print_warning("Invalid input. Try again:");
-			}
-		}
-
+	
+		board_pos origin_cell = get_origin();
+		move_to_target(origin_cell);
 	}
 
 }
