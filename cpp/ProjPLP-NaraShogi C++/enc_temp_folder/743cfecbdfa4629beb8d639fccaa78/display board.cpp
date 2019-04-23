@@ -89,7 +89,7 @@ char pieces_map[BOARDSIZE][BOARDSIZE] = {  // K-King, G- Gold general, s-Silver 
 	{'l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'}
 };
 
-bool player_turn;									 //    true -> turn player1     false -> player2
+bool player_turn; //    true -> turn player1     false -> player2
 
 string current_player_name;
 

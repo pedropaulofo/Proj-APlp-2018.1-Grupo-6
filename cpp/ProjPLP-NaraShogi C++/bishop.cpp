@@ -20,7 +20,7 @@ bool is_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSI
 		if (players_map[j][i] == identifier) {
 			return false; // FOUND OWN PLAYER'S PIECE ON THE WAY
 		}
-		else if (i != k && players_map[j][i] != EMPTYCELL) {
+		else if (i != k && players_map[j][i] != NOPLAYER) {
 			return false; // OPONENT PIECE FOUND HALFWAY, INVALID MOVE,
 		}
 	}

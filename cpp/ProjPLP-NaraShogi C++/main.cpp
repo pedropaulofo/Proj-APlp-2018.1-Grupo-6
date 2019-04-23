@@ -6,7 +6,7 @@ using namespace std;
 
 #define CLEAR_SCREEN "\033[2J\033[1;1H"
 
-void print_header() {
+void print_header() {printf(CLEAR_SCREEN);
 	cout << "---------------------------\n" << endl;
 	cout << "   Welcome to Nara Shogi!  \n" << endl;
 	cout << "---------------------------\n" << endl;
@@ -15,13 +15,14 @@ void print_header() {
 int main()
 {
 	//PARA AGILIZAR TESTES DURANTE O DESENVOLVIMENTO:
-	start_match(2, "Fulano", "Sicrano");
+	//start_match(2, "Fulano", "Sicrano");
 	//___________________________________
 
 
 	string difficulty, player1, player2;
 	string difficulties[3] = { "Easy", "Medium", "Hard" };
 
+	printf(CLEAR_SCREEN);
 	print_header();
 	cout << "Choose the difficulty below:\n" << endl;
 	cout << "1 - Easy (4 x 3 table)\n";
