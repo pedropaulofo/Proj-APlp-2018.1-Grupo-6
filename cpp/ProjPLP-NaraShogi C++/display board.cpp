@@ -231,6 +231,7 @@ void move(board_pos origin, board_pos target) {
 }
 
 void print_warning(string message) {
+	printf(CLEAR_SCREEN);
 	print_board();
 	foreground(RED);
 	cout << "\n" << message << "\n";
