@@ -9,7 +9,9 @@ bool is_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSI
 	int i = origin.column_pos; 
 	int j = origin.line_pos;   
 	int k = target.column_pos; 
-	int l = target.line_pos; 
+	int l = target.line_pos;
+
+	if (i == k || j == l) return false; // Bishop cannot go to positions on the same line or column
 
 	while(i != k){
 		if (i < k) i++;
@@ -25,5 +27,9 @@ bool is_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSI
 		}
 	}
 	return j == target.line_pos; // TRUE if for X moves towards targeted LINE, it has moved X COLUMNS in the same direction 
+}
+
+bool is_prom_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSIZE][BOARDSIZE]) {
+	return is_king_move(origin, target) || is_bishop_move(origin, target, players_map); // Promoted Bishop can do both king moves and bishop moves
 }
 

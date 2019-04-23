@@ -24,6 +24,10 @@
 #define RESET 'R'
 #define HELP 'H'
 
+#define NO_COMMAND 0
+#define RETRY 1
+#define EXIT 2
+
 // Pieces identifiers
 #define PAWN 'p'
 #define BISHOP 'b'
@@ -42,12 +46,14 @@
 
 
 typedef struct board_pos {
-	int line_pos = NULL;
-	int column_pos = NULL;
+	int line_pos = -1;
+	int column_pos = -1;
 } board_pos;
 
 void start_match(int tablesize, std::string player1, std::string player2);
 int main();
+
+// STANDARD PIECES:
 
 bool is_pawn_move(board_pos origin, board_pos target, bool is_player1);
 bool is_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSIZE][BOARDSIZE]);
@@ -57,5 +63,9 @@ bool is_knight_move(board_pos origin, board_pos target, bool is_player1);
 bool is_silverg_move(board_pos origin, board_pos target, bool is_player1);
 bool is_goldeng_move(board_pos origin, board_pos target, bool is_player1);
 bool is_king_move(board_pos origin, board_pos target);
+
+// PROMOTED PIECES:
+
+bool is_prom_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSIZE][BOARDSIZE]);
 
 #endif //PCH_H

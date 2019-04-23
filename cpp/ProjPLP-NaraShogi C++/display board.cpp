@@ -10,7 +10,8 @@ using namespace std;
 
 /// DECLARACOES GLOBAIS COMECAM ABAIXO
 
-void check_command(string input, board_pos current_cell);
+int check_command(string input, board_pos current_cell, bool disable_back);
+board_pos origin_cell, target_cell;
 
 char display_board[42][59] = { //visual representation of the 9x9 board on screen
 	{' ', ' ', ' ', ' ', ' ', ' ', ' ', '0', ' ', ' ', ' ', ' ', ' ', '1', ' ', ' ', ' ', ' ', ' ', '2', ' ', ' ', ' ', ' ', ' ', '3', ' ', ' ', ' ', ' ', ' ', '4', ' ', ' ', ' ', ' ', ' ', '5', ' ', ' ', ' ', ' ', ' ', '6', ' ', ' ', ' ', ' ', ' ', '7', ' ', ' ', ' ', ' ', ' ', '8', ' ', ' ', ' '},
@@ -89,7 +90,7 @@ char pieces_map[BOARDSIZE][BOARDSIZE] = {  // K-King, G- Gold general, s-Silver 
 	{'l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'}
 };
 
-bool player_turn;									 //    true -> turn player1     false -> player2
+bool player_turn = true;				//    true -> turn player1     false -> player2
 
 string current_player_name;
 
@@ -258,7 +259,7 @@ bool is_legal_move(char piece_type, board_pos origin, board_pos target) {
 	case PROMOTEDPAWN:
 		return false;
 	case PROMOTEDBISHOP:
-		return false;
+		return is_prom_bishop_move(origin, target, players_map);
 	case PROMOTEDROOK:
 		return false;
 	case PROMOTEDKNIGHT:
@@ -287,9 +288,9 @@ void check_and_promote(board_pos destino){
 
 }
 
-board_pos get_origin() {
+board_pos input_origin() {
 	string input_text;
-	board_pos  origin_cell;
+	board_pos  cell;
 
 	while (true) { // LOOP WAITING FOR A VALID ORIGIN POSITION
 
@@ -301,14 +302,16 @@ board_pos get_origin() {
 		cout << "'s turn. Choose the piece you want to make a move with by typing its coordinates. (Example: G2)\n" << "Piece of choice: ";
 		cin >> input_text;
 
-		check_command(input_text, origin_cell); // Check if input is a game command
+		int command = check_command(input_text, cell, false); // Check if input is a game command
+		if(command == 2) break;
+		else if (command == 1) continue;
 
 		if (coordinate_isvalid(input_text)) {					// CHECK IF THE INPUT REFER TO VALID COORDINATES ON THE BOARD
-			origin_cell = text_to_pos(input_text);
+			cell = text_to_pos(input_text);
 
-			if (is_from_player(origin_cell, player_turn)) {		// CHECK IF THE CHOSEN COORDINATES CONTAIN ONE OF THE PLAYER'S PIECES
+			if (is_from_player(cell, player_turn)) {		// CHECK IF THE CHOSEN COORDINATES CONTAIN ONE OF THE PLAYER'S PIECES
 
-				highlight_cell(origin_cell, false);			// Highlights the selected piece
+				highlight_cell(cell, false);			// Highlights the selected piece
 				printf(CLEAR_SCREEN);
 				print_board();
 				break;
@@ -321,12 +324,12 @@ board_pos get_origin() {
 			print_warning("'" + input_text + "' is an invalid input. Try again:");
 		}
 	}
-	return origin_cell;
+	return cell;
 }
 
-board_pos get_target(board_pos origin_cell) {
-	string target_input;
-	board_pos target_cell;
+board_pos input_target() {
+	string input_text;
+	board_pos cell;
 
 	while (true) { // LOOP WAITING FOR A VALID TARGET POSITION
 				
@@ -336,17 +339,19 @@ board_pos get_target(board_pos origin_cell) {
 
 		print_player_name(current_player_name);
 		cout << ", choose the where to you want to move with your selected piece.\n" << "Target coordinates: ";
-		cin >> target_input;
+		cin >> input_text;
 
-		check_command(target_input, origin_cell);
+		int command = check_command(input_text, origin_cell, true); // Check if input is a game command
+		if (command == 2) break;
+		else if (command == 1) continue;
 
-		if (coordinate_isvalid(target_input)) {											// CHECK IF THE INPUT IS A VALID POSITION ON THE BOARD
-			target_cell = text_to_pos(target_input);
+		if (coordinate_isvalid(input_text)) {											// CHECK IF THE INPUT IS A VALID POSITION ON THE BOARD
+			cell = text_to_pos(input_text);
 
-			if (!is_from_player(target_cell, player_turn)) {								// CHECK IF THE POSITION GIVEN DOES NOT CONTAIN ONE OF THE OWN PLAYER'S PIECES
+			if (!is_from_player(cell, player_turn)) {								// CHECK IF THE POSITION GIVEN DOES NOT CONTAIN ONE OF THE OWN PLAYER'S PIECES
 				char piece = pieces_map[origin_cell.line_pos][origin_cell.column_pos];
 
-				if (is_legal_move(piece, origin_cell, target_cell)) {					// CHECK IF THE MOVE IS LEGAL FOR THE PIECE CHOSEN
+				if (is_legal_move(piece, origin_cell, cell)) {					// CHECK IF THE MOVE IS LEGAL FOR THE PIECE CHOSEN
 
 					highlight_cell(origin_cell, true);		// Undoes the selected highlight, as the move will be completed
 					break;
@@ -357,7 +362,7 @@ board_pos get_target(board_pos origin_cell) {
 				}
 			}
 			else {
-				print_warning("'" + target_input + "' contain one of the current player pieces. Try again:");
+				print_warning("'" + input_text + "' contain one of the current player pieces. Try again:");
 			}
 		}
 		else {
@@ -365,38 +370,41 @@ board_pos get_target(board_pos origin_cell) {
 		}
 	} // END LOOP FOR TARGET POSITION
 
-	return target_cell;
+	return cell;
 }
 
-void check_command(string input, board_pos current_cell) {
+int check_command(string input, board_pos current_cell, bool enable_back) {
 	if (input.length() == 1) {
 		char command = toupper(input[0]);
 		switch (command) {
 		case BACK:
-			if (current_cell.line_pos != NULL) {
+			if (enable_back) {
+				highlight_cell(current_cell, true);
+				cout << "selecao desfeita.\n";
 				printf(CLEAR_SCREEN);
-				highlight_cell(current_cell, true); // Erase highlight
 				print_board();
-				get_origin();
+				origin_cell = input_origin();
 			}
-			else return;
+			printf(CLEAR_SCREEN);
+			print_board();
+			return RETRY;
 		case HELP:
 			printf("NOT YET IMPLEMENTED\n");
-			return;
+			return RETRY;
 		case RESET:
 			main();
+			return EXIT;
 		default:
-			return;
+			return NO_COMMAND;
 		}
 	}
+	return NO_COMMAND;
 }
 
 
 // MATCH STARTS WITH THE FOLLOWING FUNCTION:
 
 void start_match(int difficulty, string player1_name, string player2_name){
-	
-	player_turn = true; // starts with player1
 
 	while (true) { // GAME LOOP
 
@@ -406,8 +414,8 @@ void start_match(int difficulty, string player1_name, string player2_name){
 
 		current_player_name = is_player1_turn() ? player1_name : player2_name;  // Get the current turn Player's Name
 
-		board_pos origin_cell = get_origin();				// Get the origin position of the move
-		board_pos target_cell = get_target(origin_cell);	// Get the targeted position of the move
+		origin_cell = input_origin();				// Get the origin position of the move
+		target_cell = input_target();	// Get the targeted position of the move
 
 		move(origin_cell, target_cell);			// MAKES THE MOVE
 		check_and_promote(target_cell);			// PROMOTES IF THE PIECE REACHES PROMOTION AREA
