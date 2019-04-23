@@ -1,4 +1,4 @@
 # Script temporario para build e execução do jogo
 rm -rf jogo
-g++ main.cpp -o jogo
+g++ main.cpp display\ board.cpp pawn.cpp bishop.cpp rook.cpp lancer.cpp silver\ general.cpp king.cpp knigth.cpp golden\ general.cpp -o jogo
 ./jogo
