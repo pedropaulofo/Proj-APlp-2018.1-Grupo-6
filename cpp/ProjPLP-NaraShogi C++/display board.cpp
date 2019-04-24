@@ -217,17 +217,17 @@ void highlight_cell(board_pos move_origin, bool undo) { /// If UNDO is TRUE, cle
 	display_board[display_line][display_column - 1] = overlay; 	//lateral esq
 }
 
-void move(board_pos origin, board_pos target) {
+char move(board_pos origin, board_pos target) { //moves and return wich piece was replaced
 	int ori_line = origin.line_pos; //origin line
 	int ori_col = origin.column_pos;//origin column
 	int tar_line = target.line_pos; //target line
 	int tar_col = target.column_pos;//target colunn
-
+	char previous_piece = players_map[ori_line][ori_col]!=players_map[tar_line][tar_col] ? pieces_map[tar_line][tar_col] : BLANK_CELL; //check if is opponent pieces and store
 	pieces_map[tar_line][tar_col] = pieces_map[ori_line][ori_col];	// sets the selected piece to the targeted cell
 	pieces_map[ori_line][ori_col] = BLANK_CELL;							// clears the cell where the pieces was before moving
 	players_map[tar_line][tar_col] = players_map[ori_line][ori_col];// sets the targeted cell as having one of the player's piece
 	players_map[ori_line][ori_col] = NOPLAYER;							// sets the origin to have no player piece on it
-
+	return previous_piece;
 }
 
 void print_warning(string message) {
@@ -403,6 +403,7 @@ int check_command(string input, board_pos current_cell, bool enable_back) {
 }
 
 
+
 // MATCH STARTS WITH THE FOLLOWING FUNCTION:
 
 void start_match(int difficulty, string player1_name, string player2_name){
@@ -418,11 +419,13 @@ void start_match(int difficulty, string player1_name, string player2_name){
 		origin_cell = input_origin();				// Get the origin position of the move
 		target_cell = input_target();	// Get the targeted position of the move
 
-		move(origin_cell, target_cell);			// MAKES THE MOVE
+		char captured_piece = move(origin_cell, target_cell);			// MAKES THE MOVE
+		if(captured_piece == KING) break; //Checks if enemy king was captured after move
 		check_and_promote(target_cell);			// PROMOTES IF THE PIECE REACHES PROMOTION AREA
 		switch_turn();
 	}
-
+	//PARTE DE TELA FINAL DO JOGO PENDENTE...
+	cout << "Jogador " << current_player_name << " ganhou!";
 }
 
 
