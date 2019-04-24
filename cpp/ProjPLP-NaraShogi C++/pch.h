@@ -23,6 +23,7 @@
 #define BACK 'B'
 #define RESET 'R'
 #define HELP 'H'
+#define CLOSE 'C'
 
 #define NO_COMMAND 0
 #define RETRY 1
@@ -50,8 +51,10 @@ typedef struct board_pos {
 	int column_pos = -1;
 } board_pos;
 
+bool coordinate_isvalid(std::string input);
 void start_match(int tablesize, std::string player1, std::string player2);
 int main();
+
 
 // STANDARD PIECES:
 
