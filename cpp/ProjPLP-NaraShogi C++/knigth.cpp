@@ -15,3 +15,7 @@ bool is_knight_move(board_pos origin, board_pos target, bool is_player1) {
 
 	return false;
 }
+
+bool is_prom_knight_move(board_pos origin, board_pos target, bool is_player1) {
+	return is_goldeng_move(origin, target, is_player1);
+}

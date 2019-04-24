@@ -69,6 +69,12 @@ bool is_king_move(board_pos origin, board_pos target);
 
 // PROMOTED PIECES:
 
+bool is_prom_pawn_move(board_pos origin, board_pos target, bool is_player1);
 bool is_prom_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSIZE][BOARDSIZE]);
+bool is_prom_rook_move(board_pos origin, board_pos target, char players_map[BOARDSIZE][BOARDSIZE]);
+bool is_prom_lancer_move(board_pos origin, board_pos target, bool is_player1);
+bool is_prom_knight_move(board_pos origin, board_pos target, bool is_player1);
+bool is_prom_silverg_move(board_pos origin, board_pos target, bool is_player1);
+
 
 #endif //PCH_H

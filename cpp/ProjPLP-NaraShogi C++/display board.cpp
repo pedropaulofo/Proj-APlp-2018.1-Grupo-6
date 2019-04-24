@@ -274,7 +274,10 @@ void start_match(int difficulty, string player1_name, string player2_name) {
 	}
 
 	//PARTE DE TELA FINAL DO JOGO PENDENTE...
-	cout << "Jogador " << current_player_name << " ganhou!";
+	cout << "Jogador " << current_player_name << " ganhou!\n";
+	cout << "Entre com qualquer comando para voltar ao menu.";
+	cin;
+	main();
 
 }
 

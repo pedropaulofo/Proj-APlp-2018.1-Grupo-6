@@ -4,29 +4,26 @@
 
 bool is_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSIZE][BOARDSIZE]) {
 
-	char identifier = players_map[origin.line_pos][origin.column_pos];
+	if (origin.line_pos == target.line_pos || origin.column_pos == target.column_pos) {
+		return false; // Bishop cannot go to positions on the same line or column
+	}
 
-	int i = origin.column_pos; 
-	int j = origin.line_pos;   
-	int k = target.column_pos; 
-	int l = target.line_pos;
+	int line_iterator = origin.line_pos;
+	int column_iterator = origin.column_pos; 
+	int tar_l = target.line_pos;
+	int tar_c = target.column_pos; 
 
-	if (i == k || j == l) return false; // Bishop cannot go to positions on the same line or column
+	while(column_iterator != tar_c){
+		if (column_iterator < tar_c) column_iterator++;
+		if (column_iterator > tar_c) column_iterator--;
+		if (line_iterator < tar_l) line_iterator++;
+		if (line_iterator > tar_l) line_iterator--;
 
-	while(i != k){
-		if (i < k) i++;
-		if (i > k) i--;
-		if (j < l) j++;
-		if (j > l) j--;
-
-		if (players_map[j][i] == identifier) {
-			return false; // FOUND OWN PLAYER'S PIECE ON THE WAY
-		}
-		else if (i != k && players_map[j][i] != NOPLAYER) {
-			return false; // OPONENT PIECE FOUND HALFWAY, INVALID MOVE,
+		if (column_iterator != tar_c && players_map[line_iterator][column_iterator] != NOPLAYER) {
+			return false; // PIECE FOUND HALFWAY, INVALID MOVE,
 		}
 	}
-	return j == target.line_pos; // TRUE if for X moves towards targeted LINE, it has moved X COLUMNS in the same direction 
+	return line_iterator == target.line_pos; // TRUE if for X moves towards targeted LINE, it has moved X COLUMNS in the same direction 
 }
 
 bool is_prom_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSIZE][BOARDSIZE]) {

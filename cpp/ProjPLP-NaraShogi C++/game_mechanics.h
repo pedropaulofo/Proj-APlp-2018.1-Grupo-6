@@ -74,15 +74,15 @@ bool is_legal_move(char piece_type, board_pos origin, board_pos target) {
 	case KING:
 		return is_king_move(origin, target);
 	case PROMOTEDPAWN:
-		return false;
+		return is_prom_pawn_move(origin, target, player_turn);
 	case PROMOTEDBISHOP:
 		return is_prom_bishop_move(origin, target, players_map);
 	case PROMOTEDROOK:
-		return false;
+		return is_prom_rook_move(origin, target, players_map);
 	case PROMOTEDKNIGHT:
-		return false;
+		return is_prom_knight_move(origin, target, player_turn);
 	case PROMOTEDSILVERGENERAL:
-		return false;
+		return is_prom_silverg_move(origin, target, player_turn);
 	default:
 		return false;
 	}

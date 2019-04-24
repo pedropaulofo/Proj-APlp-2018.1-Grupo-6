@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "colors.h"
 #include <iostream>
 #include <string>
 
@@ -7,9 +8,11 @@ using namespace std;
 #define CLEAR_SCREEN "\033[2J\033[1;1H"
 
 void print_header() {printf(CLEAR_SCREEN);
+	foreground(MARGENTA);
 	cout << "---------------------------\n" << endl;
 	cout << "   Welcome to Nara Shogi!  \n" << endl;
 	cout << "---------------------------\n" << endl;
+	style(RESETALL);
 }
 
 int main()
