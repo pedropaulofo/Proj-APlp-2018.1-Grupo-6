@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <cstdio>
 #include "pch.h"
 
@@ -8,6 +9,11 @@ using namespace std;
 #ifndef GAME_MECHANICS_H
 
 bool player_turn = true;				//    true -> turn player1     false -> player2
+
+
+vector<char> p1_captured_pcs;
+vector<char> p2_captured_pcs;
+
 
 void switch_turn() {
 	player_turn = !player_turn;
@@ -50,6 +56,15 @@ char move(board_pos origin, board_pos target) {
 	pieces_map[ori_line][ori_col] = BLANK_CELL;							// clears the cell where the pieces was before moving
 	players_map[tar_line][tar_col] = players_map[ori_line][ori_col];// sets the targeted cell as having one of the player's piece
 	players_map[ori_line][ori_col] = NOPLAYER;							// sets the origin to have no player piece on it						// sets the origin to have no player piece on it
+
+	if (is_player1_turn() && overrid_cell_content != BLANK_CELL) {
+		p1_captured_pcs.push_back(overrid_cell_content);
+	}
+	else if (is_player2_turn() && overrid_cell_content != BLANK_CELL) {
+		p2_captured_pcs.push_back(overrid_cell_content);
+	}
+
+	switch_turn();							// SWITCHES TURNS
 
 	return overrid_cell_content;
 }
@@ -103,6 +118,57 @@ void check_and_promote(board_pos destino) {
 		}
 	}
 
+}
+
+bool drop_piece(char piece, board_pos position) {
+	if (players_map[position.line_pos][position.column_pos] != NOPLAYER) {
+		return false;
+	}
+	
+	vector<char> captured = is_player1_turn() ? p1_captured_pcs : p2_captured_pcs;
+
+
+	return false;
+}
+
+bool drop_piece(vector<char> captured, board_pos cell) {
+
+	
+	if (!captured.empty()) {
+
+		char answer;
+		std::cout << "Blank cell selected. Do you wish to drop a captured Piece? (Y/N): ";
+		std::cin >> answer;
+
+		if (toupper(answer) == 'Y') {
+			char piece;
+			std::cout << "What piece do you wish to DROP on the selected postion? (Ex: p): ";
+			std::cin >> piece;
+
+			if (std::find(captured.begin(), captured.end(), piece) != captured.end()) { // If you have the piece you wish to drop
+				char player = is_player1_turn() ? P1_IDENTIFER : P2_IDENTIFER;
+
+				pieces_map[cell.line_pos][cell.column_pos] = piece;
+				players_map[cell.line_pos][cell.column_pos] = player;
+
+				captured.erase(std::find(captured.begin(), captured.end(), piece));
+				cout << "dropou";
+				switch_turn();
+				return false;
+			}
+			else {
+				foreground(RED);
+				printf("The player doesn't have this piece captured.\n");
+			}
+		}
+	}
+	else {
+		foreground(RED);
+		printf("The player doesn't have any piece captured.\n");
+	}
+
+	style(RESETALL);
+	return false;
 }
 
 #endif

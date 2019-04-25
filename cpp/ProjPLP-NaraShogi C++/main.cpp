@@ -121,12 +121,12 @@ void get_players_names(int difficulty) {
 	cout << difficulties_text[difficulty - 1] << "\n\n";
 	style(RESETALL);
 	cout << "  Player 1 name: ";
-	foreground(YELLOW);
+	foreground(CYAN);
 	cin >> player1;
 	check_command(player1);
 	style(RESETALL);
 	cout << "  Player 2 name: ";
-	foreground(CYAN);
+	foreground(YELLOW);
 	cin >> player2;
 	check_command(player2);
 	style(RESETALL);
@@ -137,7 +137,7 @@ void get_players_names(int difficulty) {
 int main()
 {
 	//PARA AGILIZAR TESTES DURANTE O DESENVOLVIMENTO:
-	//start_match(2, "Fulano", "Sicrano");
+	start_match(2, "Fulano", "Sicrano");
 	//___________________________________
 
 
