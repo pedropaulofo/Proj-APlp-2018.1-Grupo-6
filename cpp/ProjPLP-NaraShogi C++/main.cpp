@@ -88,7 +88,7 @@ void main_menu() {
 			print_file("help.txt");
 			continue;
 		case '3':
-			print_file("regras.txt");
+			print_file("rules.txt");
 			continue;
 		default:
 			cout << "Invalid option. Try again: \n";

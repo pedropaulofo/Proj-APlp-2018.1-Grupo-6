@@ -2,6 +2,7 @@
 #include <string>
 #include <cstdio>
 #include <algorithm>
+#include <fstream>
 
 #include "pch.h"
 #include "colors.h"
@@ -23,6 +24,20 @@ bool piece_selected = false;
 
 
 // FUNCOES COMECAM ABAIXO:
+
+
+void print_file2(string filename){
+	string line;
+	ifstream myfile(filename);
+	if (myfile.is_open()){
+		while (getline(myfile, line)){
+			cout << line << endl;
+		}
+		myfile.close();
+	}else{
+		cout << "Unable to open " << filename;
+	}
+}
 
 void game_turn();
 
@@ -258,7 +273,7 @@ int check_command(string input, board_pos current_cell) {
 				}
 				return EXIT;
 			case HELP:
-				printf("NOT YET IMPLEMENTED\n");
+				print_file2("help.txt");
 				return RETRY;
 			case RESET:
 				main();
