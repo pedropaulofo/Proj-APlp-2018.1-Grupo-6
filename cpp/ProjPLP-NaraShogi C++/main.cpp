@@ -137,7 +137,7 @@ void get_players_names(int difficulty) {
 int main()
 {
 	//PARA AGILIZAR TESTES DURANTE O DESENVOLVIMENTO:
-	start_match(2, "Fulano", "Sicrano");
+	//start_match(2, "Fulano", "Sicrano");
 	//___________________________________
 
 

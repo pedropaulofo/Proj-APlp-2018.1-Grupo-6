@@ -52,7 +52,7 @@ board_pos text_to_pos(string input) {
 
 void print_board() {
 
-	printf(CLEAR_SCREEN);
+
 
 	background(BLACK);
 	int coluna = 0;
@@ -130,7 +130,7 @@ void print_warning(string message) {
 	style(RESETALL);
 }
 
-void input_target() {
+bool input_target() {
 	string input_text;
 	board_pos cell;
 
@@ -167,6 +167,8 @@ void input_target() {
 						foreground(BLUE);
 						std::cout << "Oponent's piece captured: '" << pieces_map[cell.line_pos][cell.column_pos] << "'!";
 					}
+					target_cell = cell;
+					return true;
 					break;
 				}
 				else {
@@ -181,7 +183,7 @@ void input_target() {
 			print_warning("Invalid input. Try again:");
 		}
 	}
-	target_cell = cell;
+	return false;
 }
 
 void input_origin() {
@@ -202,12 +204,11 @@ void input_origin() {
 
 		int command = check_command(input_text, cell); // Check if input is a game command
 		if (command == EXIT) {
-			game_turn();
 			break;
 		}
 		else if (command == RETRY) continue;
 
-		vector<char> captured = is_player1_turn() ? p1_captured_pcs : p2_captured_pcs;
+		list<char> captured = is_player1_turn() ? p1_captured_pcs : p2_captured_pcs;
 
 		if (coordinate_isvalid(input_text)) {					// CHECK IF THE INPUT REFER TO VALID COORDINATES ON THE BOARD
 			cell = text_to_pos(input_text);
@@ -215,7 +216,6 @@ void input_origin() {
 			if (is_from_player(cell, player_turn)) {		// CHECK IF THE CHOSEN COORDINATES CONTAIN ONE OF THE PLAYER'S PIECES
 
 				highlight_cell(cell, false);			// Highlights the selected piece
-				print_board();
 				piece_selected = true;
 				break;
 			}
@@ -225,13 +225,14 @@ void input_origin() {
 
 				std::cout << current_player_name << "'s captured pieces: ";
 
-				for (unsigned int i = 0; i < captured.size(); i++) {
-					std::cout << captured.at(i) << ", ";
+				for (auto const& i: captured) {
+					std::cout << i << ", ";
 				}
 
 				std:cout << endl;
 				highlight_cell(cell, true);
-				drop_piece(captured, cell);
+				try_dropping(captured, cell);
+				cin;
 				break;
 			}
 			else {
@@ -242,9 +243,7 @@ void input_origin() {
 			print_warning("'" + input_text + "' is an invalid input. Try again:");
 		}
 	}
-	origin_cell = cell;
-
-	
+	if (piece_selected) origin_cell = cell;
 }
 
 int check_command(string input, board_pos current_cell) {
@@ -257,12 +256,8 @@ int check_command(string input, board_pos current_cell) {
 				if (piece_selected) {
 					piece_selected = false;
 					highlight_cell(current_cell, true);
-					std::cout << "selecao desfeita.\n";
-					print_board();
-					input_origin();
 				}
-				print_board();
-				return RETRY;
+				return EXIT;
 			case HELP:
 				printf("NOT YET IMPLEMENTED\n");
 				return RETRY;
@@ -279,23 +274,31 @@ int check_command(string input, board_pos current_cell) {
 }
 
 void game_turn() {
+
 	input_origin();			// Get the ORIGIN position of the move
 	if (piece_selected) {
-		input_target();			// Get the TARGETED position of the move
-		overrid_cell_content = move(origin_cell, target_cell);			// MAKES THE MOVE
+		update_display_board(); // updates the current board configuration on the graphic board representation
+		print_board();			// prints the graphic board on display with colors according to the players pieces
+		
+		bool move_complete = input_target();			// Get the TARGETED position of the move
+		if (move_complete) overrid_cell_content = move(origin_cell, target_cell);			// MAKES THE MOVE
 	}
 	piece_selected = false;
 	check_and_promote(target_cell);			// PROMOTES IF THE PIECE REACHES PROMOTION AREA
+
+	update_display_board(); // updates the current board configuration on the graphic board representation
+	printf(CLEAR_SCREEN);
+	print_board();			// prints the graphic board on display with colors according to the players pieces
 }
 
 // MATCH STARTS WITH THE FOLLOWING FUNCTION:
 
 void start_match(int difficulty, string player1_name, string player2_name) {
 
-	while (true) { // GAME LOOP
+	update_display_board(); // updates the current board configuration on the graphic board representation
+	print_board();			// prints the graphic board on display with colors according to the players pieces
 
-		update_display_board(); // updates the current board configuration on the graphic board representation
-		print_board();			// prints the graphic board on display with colors according to the palyers pieces
+	while (true) { // GAME LOOP
 
 		current_player_name = is_player1_turn() ? player1_name : player2_name;  // Get the current turn Player's Name
 
@@ -308,9 +311,8 @@ void start_match(int difficulty, string player1_name, string player2_name) {
 	//PARTE DE TELA FINAL DO JOGO PENDENTE...
 	cout << "Jogador " << current_player_name << " ganhou!\n";
 	cout << "Entre com qualquer comando para voltar ao menu.";
-	cin;
 	main();
-
+	return;
 }
 
 

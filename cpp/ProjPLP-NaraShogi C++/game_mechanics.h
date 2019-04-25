@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <vector>
+#include <list>
 #include <cstdio>
 #include "pch.h"
 
@@ -11,9 +11,15 @@ using namespace std;
 bool player_turn = true;				//    true -> turn player1     false -> player2
 
 
-vector<char> p1_captured_pcs;
-vector<char> p2_captured_pcs;
+list<char> p1_captured_pcs;
+list<char> p2_captured_pcs;
 
+template <typename T>
+bool contains(std::list<T> & listOfElements, const T & element)
+{
+	auto it = std::find(listOfElements.begin(), listOfElements.end(), element);
+	return it != listOfElements.end();
+}
 
 void switch_turn() {
 	player_turn = !player_turn;
@@ -120,20 +126,8 @@ void check_and_promote(board_pos destino) {
 
 }
 
-bool drop_piece(char piece, board_pos position) {
-	if (players_map[position.line_pos][position.column_pos] != NOPLAYER) {
-		return false;
-	}
-	
-	vector<char> captured = is_player1_turn() ? p1_captured_pcs : p2_captured_pcs;
+bool try_dropping(list<char> captured, board_pos cell) {
 
-
-	return false;
-}
-
-bool drop_piece(vector<char> captured, board_pos cell) {
-
-	
 	if (!captured.empty()) {
 
 		char answer;
@@ -144,18 +138,19 @@ bool drop_piece(vector<char> captured, board_pos cell) {
 			char piece;
 			std::cout << "What piece do you wish to DROP on the selected postion? (Ex: p): ";
 			std::cin >> piece;
+			
 
-			if (std::find(captured.begin(), captured.end(), piece) != captured.end()) { // If you have the piece you wish to drop
+			if (contains(captured, piece)) { // If has the captured piece
 				char player = is_player1_turn() ? P1_IDENTIFER : P2_IDENTIFER;
 
 				pieces_map[cell.line_pos][cell.column_pos] = piece;
 				players_map[cell.line_pos][cell.column_pos] = player;
-
-				captured.erase(std::find(captured.begin(), captured.end(), piece));
+				
+				is_player1_turn() ? p1_captured_pcs.remove(piece) : p2_captured_pcs.remove(piece);
 				switch_turn();
 				return false;
 			}
-			else {
+			else{
 				foreground(RED);
 				printf("The player doesn't have this piece captured.\n");
 			}
