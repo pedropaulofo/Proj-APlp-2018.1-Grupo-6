@@ -2,22 +2,9 @@
 #include "colors.h"
 #include <iostream>
 #include <string>
-#include <fstream>
 
 using namespace std;
 
-void print_file(string filename){
-	string line;
-	ifstream myfile(filename);
-	if (myfile.is_open()){
-		while (getline(myfile, line)){
-			cout << line << endl;
-		}
-		myfile.close();
-	}else{
-		cout << "Unable to open " << filename;
-	}
-}
 
 void print_header() {
 	printf(CLEAR_SCREEN);
@@ -53,8 +40,6 @@ void print_header() {
 	style(RESETALL);
 }
 
-
-
 void check_command(string input);
 
 void main_menu() {
@@ -85,10 +70,10 @@ void main_menu() {
 		case '1':
 			break;
 		case '2':
-			print_file("help.txt");
+			// FAZER AQUI A CHAMADA PRA VER COMO JOGAR
 			continue;
 		case '3':
-			print_file("regras.txt");
+			// FAZER AQUI A CHAMADA PRA VER AS REGRAS
 			continue;
 		default:
 			cout << "Invalid option. Try again: \n";
@@ -152,7 +137,7 @@ void get_players_names(int difficulty) {
 int main()
 {
 	//PARA AGILIZAR TESTES DURANTE O DESENVOLVIMENTO:
-	//start_match(2, "Fulano", "Sicrano");
+	start_match(2, "Fulano", "Sicrano");
 	//___________________________________
 
 

@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <string>
 #include <cstdio>
+#include <algorithm>
 
 #include "pch.h"
 #include "colors.h"
@@ -11,7 +12,7 @@ using namespace std;
 
 /// DECLARACOES GLOBAIS COMECAM ABAIXO
 
-int check_command(string input, board_pos current_cell, bool disable_back);
+int check_command(string input, board_pos current_cell);
 
 board_pos origin_cell, target_cell;
 
@@ -19,8 +20,12 @@ string current_player_name;
 
 char overrid_cell_content;
 
+bool piece_selected = false;
+
+
 // FUNCOES COMECAM ABAIXO:
 
+void game_turn();
 
 void set_player_textxcolor(bool is_player1) {
 	if (is_player1) foreground(CYAN);
@@ -46,8 +51,10 @@ board_pos text_to_pos(string input) {
 }
 
 void print_board() {
-	background(BLACK);
 
+
+
+	background(BLACK);
 	int coluna = 0;
 	for (int i = 0; i < 39; i++) {
 		int linha = 0;
@@ -117,69 +124,34 @@ void highlight_cell(board_pos move_origin, bool undo) { /// If UNDO is TRUE, cle
 }
 
 void print_warning(string message) {
-	printf(CLEAR_SCREEN);
 	print_board();
 	foreground(RED);
-	cout << "\n" << message << "\n";
+	std::cout << "\n" << message << "\n";
 	style(RESETALL);
 }
 
-board_pos input_origin() {
-	string input_text;
-	board_pos  cell;
-
-	while (true) { // LOOP WAITING FOR A VALID ORIGIN POSITION
-
-		foreground(GREEN);
-		cout << "GAME COMMANDS: R - RESET GAME; H - HELP; C - CLOSE GAME\n";
-		style(RESETALL);
-
-		print_player_name(current_player_name);
-		cout << "'s turn. Choose the piece you want to make a move with by typing its coordinates. (Example: G2)\n" << "Piece of choice: ";
-		cin >> input_text;
-
-		int command = check_command(input_text, cell, false); // Check if input is a game command
-		if (command == 2) break;
-		else if (command == 1) continue;
-
-		if (coordinate_isvalid(input_text)) {					// CHECK IF THE INPUT REFER TO VALID COORDINATES ON THE BOARD
-			cell = text_to_pos(input_text);
-
-			if (is_from_player(cell, player_turn)) {		// CHECK IF THE CHOSEN COORDINATES CONTAIN ONE OF THE PLAYER'S PIECES
-
-				highlight_cell(cell, false);			// Highlights the selected piece
-				printf(CLEAR_SCREEN);
-				print_board();
-				break;
-			}
-			else {
-				print_warning("'" + input_text + "' does not contain the current player piece. Try again:");
-			}
-		}
-		else {
-			print_warning("'" + input_text + "' is an invalid input. Try again:");
-		}
-	}
-	return cell;
-}
-
-board_pos input_target() {
+bool input_target() {
 	string input_text;
 	board_pos cell;
 
 	while (true) { // LOOP WAITING FOR A VALID TARGET POSITION
 
 		foreground(GREEN);
-		cout << "GAME COMMANDS: B - UNDO SELECTION; R - RESET GAME; H - HELP; C - CLOSE GAME\n";
+		std::cout << "GAME COMMANDS: B - UNDO SELECTION; R - RESET GAME; H - HELP; C - CLOSE GAME\n";
 		style(RESETALL);
 
 		print_player_name(current_player_name);
-		cout << ", choose the where to you want to move with your selected piece.\n" << "Target coordinates: ";
-		cin >> input_text;
+		std::cout << ", choose the where to you want to move with your selected piece.\n" << "Target coordinates: ";
+		std::cin >> input_text;
 
-		int command = check_command(input_text, origin_cell, true); // Check if input is a game command
-		if (command == 2) break;
-		else if (command == 1) continue;
+
+		int command = check_command(input_text, origin_cell); // Check if input is a game command
+		if (command == EXIT) {
+			break;
+		}
+		else if (command == RETRY) {
+			continue;
+		}
 
 		if (coordinate_isvalid(input_text)) {								// CHECK IF THE INPUT IS A VALID POSITION ON THE BOARD
 			cell = text_to_pos(input_text);
@@ -193,8 +165,10 @@ board_pos input_target() {
 
 					if (is_from_player(cell, !player_turn)) {
 						foreground(BLUE);
-						cout << "Oponent's piece captured: '" << pieces_map[cell.line_pos][cell.column_pos] << "'!";
+						std::cout << "Oponent's piece captured: '" << pieces_map[cell.line_pos][cell.column_pos] << "'!";
 					}
+					target_cell = cell;
+					return true;
 					break;
 				}
 				else {
@@ -208,77 +182,137 @@ board_pos input_target() {
 		else {
 			print_warning("Invalid input. Try again:");
 		}
-	} // END LOOP FOR TARGET POSITION
-
-	return cell;
+	}
+	return false;
 }
 
-int check_command(string input, board_pos current_cell, bool enable_back) {
+void input_origin() {
+	string input_text;
+	board_pos  cell;
+
+	if(piece_selected) return;
+
+	while (true) { // LOOP WAITING FOR A VALID ORIGIN POSITION
+		piece_selected = false;
+		foreground(GREEN);
+		std::cout << "GAME COMMANDS: R - RESET GAME; H - HELP; C - CLOSE GAME\n";
+		style(RESETALL);
+
+		print_player_name(current_player_name);
+		std::cout << "'s turn. Choose the piece you want to make a move with by typing its coordinates. (Example: G2)\n" << "Piece of choice: ";
+		std::cin >> input_text;
+
+		int command = check_command(input_text, cell); // Check if input is a game command
+		if (command == EXIT) {
+			break;
+		}
+		else if (command == RETRY) continue;
+
+		list<char> captured = is_player1_turn() ? p1_captured_pcs : p2_captured_pcs;
+
+		if (coordinate_isvalid(input_text)) {					// CHECK IF THE INPUT REFER TO VALID COORDINATES ON THE BOARD
+			cell = text_to_pos(input_text);
+
+			if (is_from_player(cell, player_turn)) {		// CHECK IF THE CHOSEN COORDINATES CONTAIN ONE OF THE PLAYER'S PIECES
+
+				highlight_cell(cell, false);			// Highlights the selected piece
+				piece_selected = true;
+				break;
+			}
+			else if (players_map[cell.line_pos][cell.column_pos] == NOPLAYER) {
+				highlight_cell(cell, false);
+				print_board();
+
+				std::cout << current_player_name << "'s captured pieces: ";
+
+				for (auto const& i: captured) {
+					std::cout << i << ", ";
+				}
+
+				std:cout << endl;
+				highlight_cell(cell, true);
+				try_dropping(captured, cell);
+				cin;
+				break;
+			}
+			else {
+				print_warning("'" + input_text + "' does not contain the current player piece. Try again:");
+			}
+		}
+		else {
+			print_warning("'" + input_text + "' is an invalid input. Try again:");
+		}
+	}
+	if (piece_selected) origin_cell = cell;
+}
+
+int check_command(string input, board_pos current_cell) {
+
 	if (input.length() == 1) {
 		char command = toupper(input[0]);
 
 		switch (command) {
-		case BACK:
-			if (enable_back) {
-				highlight_cell(current_cell, true);
-				cout << "selecao desfeita.\n";
-				printf(CLEAR_SCREEN);
-				print_board();
-				origin_cell = input_origin();
-			}
-			printf(CLEAR_SCREEN);
-			print_board();
-			return RETRY;
-		case HELP:
-			printf("NOT YET IMPLEMENTED\n");
-			return RETRY;
-		case RESET:
-			main();
-			return EXIT;
-		case CLOSE:
-			exit(0);
-			return EXIT;
-		default:
-			return NO_COMMAND;
+			case BACK:
+				if (piece_selected) {
+					piece_selected = false;
+					highlight_cell(current_cell, true);
+				}
+				return EXIT;
+			case HELP:
+				printf("NOT YET IMPLEMENTED\n");
+				return RETRY;
+			case RESET:
+				main();
+				return EXIT;
+			case CLOSE:
+				exit(0);
+			default:
+				return NO_COMMAND;
 		}
 	}
 	return NO_COMMAND;
 }
 
 void game_turn() {
-	origin_cell = input_origin();			// Get the ORIGIN position of the move
-	target_cell = input_target();			// Get the TARGETED position of the move
 
-	overrid_cell_content = move(origin_cell, target_cell);			// MAKES THE MOVE
-	
+	input_origin();			// Get the ORIGIN position of the move
+	if (piece_selected) {
+		update_display_board(); // updates the current board configuration on the graphic board representation
+		print_board();			// prints the graphic board on display with colors according to the players pieces
+		
+		bool move_complete = input_target();			// Get the TARGETED position of the move
+		if (move_complete) overrid_cell_content = move(origin_cell, target_cell);			// MAKES THE MOVE
+	}
+	piece_selected = false;
 	check_and_promote(target_cell);			// PROMOTES IF THE PIECE REACHES PROMOTION AREA
-	switch_turn();							// SWITCHES TURNS
+
+	update_display_board(); // updates the current board configuration on the graphic board representation
+	printf(CLEAR_SCREEN);
+	print_board();			// prints the graphic board on display with colors according to the players pieces
 }
 
 // MATCH STARTS WITH THE FOLLOWING FUNCTION:
 
 void start_match(int difficulty, string player1_name, string player2_name) {
 
-	while (true) { // GAME LOOP
+	update_display_board(); // updates the current board configuration on the graphic board representation
+	print_board();			// prints the graphic board on display with colors according to the players pieces
 
-		printf(CLEAR_SCREEN);
-		update_display_board(); // updates the current board configuration on the graphic board representation
-		print_board();			// prints the graphic board on display with colors according to the palyers pieces
+	while (true) { // GAME LOOP
 
 		current_player_name = is_player1_turn() ? player1_name : player2_name;  // Get the current turn Player's Name
 
 		game_turn();
 
 		if (overrid_cell_content == KING) break; //Checks if enemy king was captured after move
-
+			
 	}
 
 	//PARTE DE TELA FINAL DO JOGO PENDENTE...
 	cout << "Jogador " << current_player_name << " ganhou!\n";
 	cout << "Entre com qualquer comando para voltar ao menu.";
-	cin;
 	main();
-
+	return;
 }
 
 

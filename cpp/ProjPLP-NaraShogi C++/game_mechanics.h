@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <list>
 #include <cstdio>
 #include "pch.h"
 
@@ -8,6 +9,17 @@ using namespace std;
 #ifndef GAME_MECHANICS_H
 
 bool player_turn = true;				//    true -> turn player1     false -> player2
+
+
+list<char> p1_captured_pcs;
+list<char> p2_captured_pcs;
+
+template <typename T>
+bool contains(std::list<T> & listOfElements, const T & element)
+{
+	auto it = std::find(listOfElements.begin(), listOfElements.end(), element);
+	return it != listOfElements.end();
+}
 
 void switch_turn() {
 	player_turn = !player_turn;
@@ -50,6 +62,15 @@ char move(board_pos origin, board_pos target) {
 	pieces_map[ori_line][ori_col] = BLANK_CELL;							// clears the cell where the pieces was before moving
 	players_map[tar_line][tar_col] = players_map[ori_line][ori_col];// sets the targeted cell as having one of the player's piece
 	players_map[ori_line][ori_col] = NOPLAYER;							// sets the origin to have no player piece on it						// sets the origin to have no player piece on it
+
+	if (is_player1_turn() && overrid_cell_content != BLANK_CELL) {
+		p1_captured_pcs.push_back(overrid_cell_content);
+	}
+	else if (is_player2_turn() && overrid_cell_content != BLANK_CELL) {
+		p2_captured_pcs.push_back(overrid_cell_content);
+	}
+
+	switch_turn();							// SWITCHES TURNS
 
 	return overrid_cell_content;
 }
@@ -103,6 +124,45 @@ void check_and_promote(board_pos destino) {
 		}
 	}
 
+}
+
+bool try_dropping(list<char> captured, board_pos cell) {
+
+	if (!captured.empty()) {
+
+		char answer;
+		std::cout << "Blank cell selected. Do you wish to drop a captured Piece? (Y/N): ";
+		std::cin >> answer;
+
+		if (toupper(answer) == 'Y') {
+			char piece;
+			std::cout << "What piece do you wish to DROP on the selected postion? (Ex: p): ";
+			std::cin >> piece;
+			
+
+			if (contains(captured, piece)) { // If has the captured piece
+				char player = is_player1_turn() ? P1_IDENTIFER : P2_IDENTIFER;
+
+				pieces_map[cell.line_pos][cell.column_pos] = piece;
+				players_map[cell.line_pos][cell.column_pos] = player;
+				
+				is_player1_turn() ? p1_captured_pcs.remove(piece) : p2_captured_pcs.remove(piece);
+				switch_turn();
+				return false;
+			}
+			else{
+				foreground(RED);
+				printf("The player doesn't have this piece captured.\n");
+			}
+		}
+	}
+	else {
+		foreground(RED);
+		printf("The player doesn't have any piece captured.\n");
+	}
+
+	style(RESETALL);
+	return false;
 }
 
 #endif

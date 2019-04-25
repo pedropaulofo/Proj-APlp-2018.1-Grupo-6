@@ -24,6 +24,7 @@
 #define RESET 'R'
 #define HELP 'H'
 #define CLOSE 'C'
+#define DROP 'D'
 
 #define NO_COMMAND 0
 #define RETRY 1
@@ -45,6 +46,7 @@
 #define PROMOTEDKNIGHT 'N'
 #define PROMOTEDSILVERGENERAL 'S'
 
+using namespace std;
 
 typedef struct board_pos {
 	int line_pos = -1;
