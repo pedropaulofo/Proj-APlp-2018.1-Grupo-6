@@ -2,7 +2,7 @@
 
 #ifndef BOARDS_H
 
-char display_board[39][59] = { //visual representation of the 9x9 board on screen
+char display_board_medium[39][59] = { //visual representation of the 9x9 board on screen
 	{' ', ' ', ' ', ' ', ' ', ' ', ' ', '0', ' ', ' ', ' ', ' ', ' ', '1', ' ', ' ', ' ', ' ', ' ', '2', ' ', ' ', ' ', ' ', ' ', '3', ' ', ' ', ' ', ' ', ' ', '4', ' ', ' ', ' ', ' ', ' ', '5', ' ', ' ', ' ', ' ', ' ', '6', ' ', ' ', ' ', ' ', ' ', '7', ' ', ' ', ' ', ' ', ' ', '8', ' ', ' ', ' '},
 	{' ', ' ', ' ', ' ', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
 	{' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', '#'},
@@ -44,7 +44,7 @@ char display_board[39][59] = { //visual representation of the 9x9 board on scree
 	{' ', ' ', ' ', ' ', ' ', ' ', ' ', '0', ' ', ' ', ' ', ' ', ' ', '1', ' ', ' ', ' ', ' ', ' ', '2', ' ', ' ', ' ', ' ', ' ', '3', ' ', ' ', ' ', ' ', ' ', '4', ' ', ' ', ' ', ' ', ' ', '5', ' ', ' ', ' ', ' ', ' ', '6', ' ', ' ', ' ', ' ', ' ', '7', ' ', ' ', ' ', ' ', ' ', '8', ' ', ' ', ' '}
 };
 
-board_pos transf_matrix[BOARDSIZE][BOARDSIZE] = { // correlates each board cell to the corresponding slot on the display board
+board_pos transf_matrix_MEDIUM[BOARDSIZE][BOARDSIZE] = { // correlates each board cell to the corresponding slot on the display board
 	{ board_pos{  3, 7 }, board_pos{  3, 13 }, board_pos{  3, 19 }, board_pos{  3, 25 }, board_pos{  3, 31 }, board_pos{  3, 37 }, board_pos{  3, 43 }, board_pos{  3, 49 }, board_pos{  3, 55}},
 	{ board_pos{  7, 7 }, board_pos{  7, 13 }, board_pos{  7, 19 }, board_pos{  7, 25 }, board_pos{  7, 31 }, board_pos{  7, 37 }, board_pos{  7, 43 }, board_pos{  7, 49 }, board_pos{  7, 55} },
 	{ board_pos{ 11, 7 }, board_pos{ 11, 13 }, board_pos{ 11, 19 }, board_pos{ 11, 25 }, board_pos{ 11, 31 }, board_pos{ 11, 37 }, board_pos{ 11, 43 }, board_pos{ 11, 49 }, board_pos{  11, 55} },
@@ -56,7 +56,7 @@ board_pos transf_matrix[BOARDSIZE][BOARDSIZE] = { // correlates each board cell 
 	{ board_pos{ 35, 7 }, board_pos{ 35, 13 }, board_pos{ 35, 19 }, board_pos{ 35, 25 }, board_pos{ 35, 31 }, board_pos{ 35, 37 }, board_pos{ 35, 43 }, board_pos{ 35, 49 }, board_pos{  35, 55} },
 };
 
-char  players_map[BOARDSIZE][BOARDSIZE] = {
+char  players_map_medium[BOARDSIZE][BOARDSIZE] = {
 		{ '2', '2', '2', '2', '2', '2', '2', '2', '2'},
 		{ '0', '2', '0', '0', '0', '0', '0', '2', '0' },
 		{ '2', '2', '2', '2', '2', '2', '2', '2', '2' },
@@ -68,7 +68,7 @@ char  players_map[BOARDSIZE][BOARDSIZE] = {
 		{ '1', '1', '1', '1', '1', '1', '1', '1', '1' }
 };
 
-char pieces_map[BOARDSIZE][BOARDSIZE] = {  // K-King, G- Gold general, s-Silver general, n-Knight, l-Lance, b-Bishop, r-Rook, p-Pawn
+char pieces_map_medium[BOARDSIZE][BOARDSIZE] = {  // K-King, G- Gold general, s-Silver general, n-Knight, l-Lance, b-Bishop, r-Rook, p-Pawn
 	{'l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'},
 	{'_', 'r', '_', '_', '_', '_', '_', 'b', '_'},
 	{'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'},
@@ -116,7 +116,7 @@ char  players_map_EASY[4][3] = {
 };
 
 char pieces_map_EASY[4][3] = {  // K-King, b-Bishop, r-Rook, p-Pawn
-	{'r', 'K', 't'},
+	{'r', 'K', 'b'},
 	{'_', 'p', '_'},
 	{'_', 'p', '_'},
 	{'b', 'K', 'r'},

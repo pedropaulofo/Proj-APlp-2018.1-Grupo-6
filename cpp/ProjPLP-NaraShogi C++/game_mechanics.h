@@ -3,16 +3,100 @@
 #include <list>
 #include <cstdio>
 #include "pch.h"
+#include "boards.h"
 
 using namespace std;
 
 #ifndef GAME_MECHANICS_H
 
-bool player_turn = true;				//    true -> turn player1     false -> player2
+bool player_turn;				//    true -> turn player1     false -> player2
+int dif= 2;
+
+int get_board_linesize(int dif){
+	switch(dif){
+		case 1:
+			return 3;
+		case 2:
+			return 9;
+		case 3:
+			return 13;
+		default:
+			return 9;
+	}
+}
+
+int get_board_columnsize(int dif){
+	switch(dif){
+		case 1:
+			return 4;
+		case 2:
+			return 9;
+		case 3:
+			return 13;
+		default:
+			return 9;
+	}
+}
 
 
 list<char> p1_captured_pcs;
 list<char> p2_captured_pcs;
+
+char display_board[39][59];
+char pieces_map[BOARDSIZE][BOARDSIZE];
+char players_map[BOARDSIZE][BOARDSIZE];
+board_pos transf_matrix[BOARDSIZE][BOARDSIZE]; 
+
+void resetMaps(){
+	int lines, columns;
+	if(dif == 1){
+		lines = 18;
+		columns = 23;
+	}
+	else{
+		lines = 39;
+		columns = 59;
+	}
+
+	for(int i = 0; i< lines; i++){
+		for(int j = 0; j< columns; j++){
+			switch(dif){
+				case 1:
+				display_board[i][j] = display_board_EASY[i][j];
+				break;
+				case 2:
+				display_board[i][j] = display_board_medium[i][j];
+				break;
+				default:
+				display_board[i][j] = display_board_medium[i][j];
+				break;
+			}
+		}
+	}
+
+	for(int i = 0; i< get_board_linesize(dif); i++){
+		for(int j = 0; j< get_board_columnsize(dif); j++){
+			switch(dif){
+				case 1:
+					players_map[i][j] = players_map_EASY[i][j];
+					pieces_map[i][j] = pieces_map_EASY[i][j];
+					transf_matrix[i][j] = transf_matrix_EASY[i][j];
+					break;
+				case 2:
+					players_map[i][j] = players_map_medium[i][j];
+					pieces_map[i][j] = pieces_map_medium[i][j];
+					transf_matrix[i][j] = transf_matrix_MEDIUM[i][j];
+					break;
+				default:
+					players_map[i][j] = players_map_medium[i][j];
+					pieces_map[i][j] = pieces_map_medium[i][j];
+					transf_matrix[i][j] = transf_matrix_MEDIUM[i][j];
+					break;
+			}
+		}
+	}
+	
+}
 
 template <typename T>
 bool contains(std::list<T> & listOfElements, const T & element)
@@ -158,7 +242,9 @@ bool try_dropping(list<char> captured, board_pos cell) {
 	}
 	else {
 		foreground(RED);
-		printf("The player doesn't have any piece captured.\n");
+		printf("The player doesn't have any piece captured. Enter any key to continue: \n");
+		string wait;
+		cin >> wait;
 	}
 
 	style(RESETALL);

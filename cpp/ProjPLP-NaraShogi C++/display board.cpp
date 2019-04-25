@@ -5,7 +5,6 @@
 
 #include "pch.h"
 #include "colors.h"
-#include "boards.h"
 #include "game_mechanics.h"
 
 using namespace std;
@@ -52,7 +51,7 @@ board_pos text_to_pos(string input) {
 
 void print_board() {
 
-
+	printf(CLEAR_SCREEN);
 
 	background(BLACK);
 	int coluna = 0;
@@ -70,7 +69,7 @@ void print_board() {
 					set_player_textxcolor(true);; // if the piece is from player 1, displays in CYAN
 				}
 				coluna += 1;
-				if (linha > BOARDSIZE) {
+				if (linha > get_board_columnsize(dif)) {
 					coluna = 0;
 					linha += 1;
 				}
@@ -287,13 +286,16 @@ void game_turn() {
 	check_and_promote(target_cell);			// PROMOTES IF THE PIECE REACHES PROMOTION AREA
 
 	update_display_board(); // updates the current board configuration on the graphic board representation
-	printf(CLEAR_SCREEN);
 	print_board();			// prints the graphic board on display with colors according to the players pieces
 }
 
 // MATCH STARTS WITH THE FOLLOWING FUNCTION:
 
 void start_match(int difficulty, string player1_name, string player2_name) {
+	dif = difficulty;
+
+	resetMaps();
+	player_turn = true; // Starts with PLAYER1
 
 	update_display_board(); // updates the current board configuration on the graphic board representation
 	print_board();			// prints the graphic board on display with colors according to the players pieces
@@ -309,8 +311,10 @@ void start_match(int difficulty, string player1_name, string player2_name) {
 	}
 
 	//PARTE DE TELA FINAL DO JOGO PENDENTE...
-	cout << "Jogador " << current_player_name << " ganhou!\n";
-	cout << "Entre com qualquer comando para voltar ao menu.";
+	cout << "Player " << current_player_name << " wins!\n";
+	cout << "Enter any key to continue: \n";
+	string wait;
+	cin >> wait;
 	main();
 	return;
 }
