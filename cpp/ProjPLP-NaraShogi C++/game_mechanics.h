@@ -152,7 +152,6 @@ bool drop_piece(vector<char> captured, board_pos cell) {
 				players_map[cell.line_pos][cell.column_pos] = player;
 
 				captured.erase(std::find(captured.begin(), captured.end(), piece));
-				cout << "dropou";
 				switch_turn();
 				return false;
 			}
