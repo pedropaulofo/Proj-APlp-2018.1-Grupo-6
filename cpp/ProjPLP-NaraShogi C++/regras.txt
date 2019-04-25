@@ -3,7 +3,6 @@
     The usual goal of a game is for one player to checkmate the other player's king, winning the game.
 
 --------------- Movements ---------------
-
     Most shogi pieces can move only to an adjacent square.
     A few may move across the board, and one jumps over intervening pieces.
 
@@ -103,15 +102,15 @@ It is common to keep captured pieces on a wooden stand (駒台 komadai) which is
 
     Illegal moves include:
 
-    >Violating the Two Pawns (nifu) restriction
-    >Violating the Drop Pawn Mate (uchifuzume) restriction
-    >Dropping or moving a piece to position where it cannot move (such as dropping a knight to an opponent's last two ranks, etc.)
-    >Dropping a piece with its promoted value
-    >Making more than one move (that is, playing out of turn)
-    >Making perpetual check four times (cf. sennichite)
-    >Leaving one's king in check, or moving one's king into check
-    >Moving a piece contrary to how its movements are defined (for example, moving a gold like a silver or moving a bishop off its legal diagonal)
-    >White moving first instead of moving second
+    > Violating the Two Pawns (nifu) restriction
+    > Violating the Drop Pawn Mate (uchifuzume) restriction
+    > Dropping or moving a piece to position where it cannot move (such as dropping a knight to an opponent's last two ranks, etc.)
+    > Dropping a piece with its promoted value
+    > Making more than one move (that is, playing out of turn)
+    > Making perpetual check four times (cf. sennichite)
+    > Leaving one's king in check, or moving one's king into check
+    > Moving a piece contrary to how its movements are defined (for example, moving a gold like a silver or moving a bishop off its legal diagonal)
+    > White moving first instead of moving second
 
     In friendly amateur games, this rule is sometimes relaxed, and the player may be able to take back the illegal move and replay a new legal move.
 
