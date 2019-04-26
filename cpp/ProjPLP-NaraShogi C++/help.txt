@@ -1,3 +1,12 @@
+ (K) A king moves one square in any direction, orthogonal or diagonal;
+ (r) A rook moves any numeer of squares in an orthogonal direction;
+ (b) A bishop moves any number of squares in a diagonal direction;
+ (G) A gold general moves one square orthogonally, or one square diagonally forward. It cannot move diagonally backwards;
+ (s) A silver general moves one square diagonally, one square straight forward, or one square diaggonally bacwards;
+ (n) A Knightjumps at an angle intermediate to orthogonal and diagonal in a single move;
+ (L) A lance moves only straight ahead, it cannot jump other pieces;
+ (p) moves one square straight forward. It cannot retreat.
+
 When the game starts you will see the board on screen. So, the player in turn can choose his piece to move typing its coordinates. Sample:
     1. Player one's turn;
     2. First type: G4 <--> this coordinate points the piece that the player wants to move
@@ -12,7 +21,5 @@ Other commands:
 (R) Reset Game --> Type R if you want to reset the game. You can reset the game after the game starts
 (H) Help with commands --> Type H if you want to get help with the game commands. You can get help after the game starts
 (C) Close game --> Type C if you want to close the game. You can close the game anytime you type this command
-
-
 
 
