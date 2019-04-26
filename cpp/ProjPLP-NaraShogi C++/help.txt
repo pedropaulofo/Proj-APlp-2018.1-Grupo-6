@@ -1,1 +1,17 @@
-AJUDA AQUI
+When the game starts you will see the board on screen. So, the player in turn can choose his piece to move typing its coordinates. Sample:
+    1. Player one's turn;
+    2. First type: G4 <--> this coordinate points the piece that the player wants to move
+    3. The selected piece will be colored to make it easy to show what piece the player choose
+    4. Second type: F4 <--> this coordinate points where the chosen piece goes
+    5. If it is a valid move, the piece will be placed. Else, the player will be asked to type the coordinates again
+
+Other commands:
+
+(B) Undo piece selection --> Type B if you want to select another piece
+(R) Reset Game --> Type R if you want to reset the game. You can reset the game after the game starts
+(H) Help with commands --> Type H if you want to get help with the game commands. You can get help after the game starts
+(C) Close game --> Type C if you want to close the game. You can close the game anytime you type this command
+
+
+
+
