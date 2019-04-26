@@ -116,8 +116,30 @@ void main_menu() {
 				}
 			}
 		case '3':
-			print_file("rules.txt");
-			continue;
+				cout << "1-Rules. \n";
+				cout << "2-Regras. \n";
+				cout << "B-Back to main menu. \n";
+				cin >> newInput;
+				newChoice = newInput[0];
+				switch (newChoice)
+				{
+					case '1':
+						print_file("rules.txt");
+						continue;
+					case '2':
+						print_file("ajuda.txt");
+						continue;
+					case 'B':
+						bolean=false;
+						break;
+					case 'b':
+						bolean=false;
+						break;
+					default:
+						cout << "Invalid option. Try again: \n";
+						continue;
+				}
+			}
 		default:
 			cout << "Invalid option. Try again: \n";
 			continue;
