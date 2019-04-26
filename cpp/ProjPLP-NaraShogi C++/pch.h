@@ -11,13 +11,13 @@
 #define BOARDLINES_E	4		// EASY
 #define BOARDCOLUMNS_E	3
 #define BOARDSIZE_M		9		// MEDIUM
-#define BOARDSIZE_H		13		// HARD
+#define BOARDSIZE_H	    13		// HARD
 
 #define DISPLAY_LINES_E 19
 #define DISPLAY_COLUMNS_E 23
 #define DISPLAY_LINES_M 39
 #define DISPLAY_COLUMNS_M 59
-#define DISPLAY_LINES_H 67
+#define DISPLAY_LINES_H 59
 #define DISPLAY_COLUMNS_H 85
 
 #define PROMOTION_AREA1_M 2
@@ -69,7 +69,7 @@
 #define IRONGENERAL 'i'
 #define COPPERGENERAL 'c'
 #define SIDEMOVER 'm'
-#define PROMOTEDFLYINGDRAGON 'F'
+#define PROMOTEDFLYINGDRAGON 'D'
 #define PROMOTEDFIERCETIGER 'T'
 #define PROMOTEDFREECHARIOT 'F'
 #define PROMOTEDGOBETWEEN 'W'
@@ -92,9 +92,9 @@ int main();
 // STANDARD PIECES:
 
 bool is_pawn_move(board_pos origin, board_pos target, bool is_player1);
-bool is_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_M][BOARDSIZE_M]);
-bool is_rook_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_M][BOARDSIZE_M]);
-bool is_lancer_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_M][BOARDSIZE_M]);
+bool is_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
+bool is_rook_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
+bool is_lancer_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
 bool is_knight_move(board_pos origin, board_pos target, bool is_player1);
 bool is_silverg_move(board_pos origin, board_pos target, bool is_player1);
 bool is_goldeng_move(board_pos origin, board_pos target, bool is_player1);
@@ -103,8 +103,8 @@ bool is_king_move(board_pos origin, board_pos target);
 // PROMOTED PIECES:
 
 bool is_prom_pawn_move(board_pos origin, board_pos target, bool is_player1);
-bool is_prom_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_M][BOARDSIZE_M]);
-bool is_prom_rook_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_M][BOARDSIZE_M]);
+bool is_prom_bishop_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
+bool is_prom_rook_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
 bool is_prom_lancer_move(board_pos origin, board_pos target, bool is_player1);
 bool is_prom_knight_move(board_pos origin, board_pos target, bool is_player1);
 bool is_prom_silverg_move(board_pos origin, board_pos target, bool is_player1);

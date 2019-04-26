@@ -38,10 +38,10 @@ int get_board_columnsize(int dif){
 list<char> p1_captured_pcs;
 list<char> p2_captured_pcs;
 
-char display_board[39][59];
-char pieces_map[BOARDSIZE_M][BOARDSIZE_M];
-char players_map[BOARDSIZE_M][BOARDSIZE_M];
-board_pos transf_matrix[BOARDSIZE_M][BOARDSIZE_M]; 
+char display_board[DISPLAY_LINES_H][DISPLAY_COLUMNS_H];
+char pieces_map[BOARDSIZE_H][BOARDSIZE_H];
+char players_map[BOARDSIZE_H][BOARDSIZE_H];
+board_pos transf_matrix[BOARDSIZE_H][BOARDSIZE_H]; 
 
 
 template <typename T>
@@ -93,42 +93,56 @@ void resetMaps() {
 				display_board[i][j] = display_board_MEDIUM[i][j];
 				break;
 			case HARD:
-				// ADD HARD AQUI
+				display_board[i][j] = display_board_HARD[i][j];
 				break;
 			}
 		}
-	}
 
-	for (int i = 0; i < get_board_linesize(dif); i++) {
-		for (int j = 0; j < get_board_columnsize(dif); j++) {
-			switch (dif) {
-			case EASY:
-				players_map[i][j] = players_map_EASY[i][j];
-				pieces_map[i][j] = pieces_map_EASY[i][j];
-				transf_matrix[i][j] = transf_matrix_EASY[i][j];
-				break;
-			case MEDIUM:
-				players_map[i][j] = players_map_MEDIUM[i][j];
-				pieces_map[i][j] = pieces_map_MEDIUM[i][j];
-				transf_matrix[i][j] = transf_matrix_MEDIUM[i][j];
-				break;
-			default:
-				players_map[i][j] = players_map_MEDIUM[i][j];
-				pieces_map[i][j] = pieces_map_MEDIUM[i][j];
-				transf_matrix[i][j] = transf_matrix_MEDIUM[i][j];
-				break;
+		for (int i = 0; i < get_board_linesize(dif); i++) {
+			for (int j = 0; j < get_board_columnsize(dif); j++) {
+				switch (dif) {
+				case EASY:
+					players_map[i][j] = players_map_EASY[i][j];
+					pieces_map[i][j] = pieces_map_EASY[i][j];
+					transf_matrix[i][j] = transf_matrix_EASY[i][j];
+					break;
+				case MEDIUM:
+					players_map[i][j] = players_map_MEDIUM[i][j];
+					pieces_map[i][j] = pieces_map_MEDIUM[i][j];
+					transf_matrix[i][j] = transf_matrix_MEDIUM[i][j];
+					break;
+				case HARD:
+					players_map[i][j] = players_map_HARD[i][j];
+					pieces_map[i][j] = pieces_map_HARD[i][j];
+					transf_matrix[i][j] = transf_matrix_HARD[i][j];
+					break;
+				}
 			}
 		}
-	}
 
+	}
 }
 
 bool coordinate_isvalid(string input) {
 	if (input.length() != 2) return false; // input must follow the model LetterNumber, ex: A0, G2, B5
 	int line = int(toupper(input[0]));
 	int column = int(input[1]);
-	if (line < int('A') || line > int('I')) return false;
-	if (column < int('0') || column > int('8')) return false;
+
+	char limit;
+	switch (dif) {
+	case EASY:
+		limit = 'D';
+		break;
+	case MEDIUM:
+		limit = 'I';
+		break;
+	case HARD:
+		limit = 'M';
+		break;
+	}
+
+	if (line < int('A') || line > int('M')) return false;
+	if (column < int('0') || column > int('13')) return false;
 
 	return true;
 }
@@ -204,7 +218,7 @@ void check_and_promote(board_pos destino) {
 	
 	char player = players_map[destino.line_pos][destino.column_pos];
 	
-	if (dif < 2 && pieces_map[destino.line_pos][destino.column_pos] != PAWN) return;
+	if (dif == EASY && pieces_map[destino.line_pos][destino.column_pos] != PAWN) return;
 
 	if (player == P1_IDENTIFER) {
 		if (destino.line_pos <= PROMOTION_AREA1_M) {
@@ -219,7 +233,7 @@ void check_and_promote(board_pos destino) {
 
 }
 
-bool try_dropping(list<char> captured, board_pos cell) {
+bool drop(list<char> captured, board_pos cell) {
 
 	if (!captured.empty()) {
 		char answer;

@@ -252,16 +252,17 @@ void input_origin() {
 			else if (players_map[cell.line_pos][cell.column_pos] == NOPLAYER) {
 				highlight_cell(cell, false);
 				print_board();
-
+				
+				foreground(BLUE);
 				std::cout << current_player_name << "'s captured pieces: ";
-
 				for (auto const& i: captured) {
 					std::cout << i << ", ";
 				}
+				style(RESETALL);
 
 				std:cout << endl;
 				highlight_cell(cell, true);
-				try_dropping(captured, cell);
+				drop(captured, cell);
 				cin;
 				break;
 			}

@@ -1,6 +1,6 @@
 #include "pch.h"
 
-bool is_lancer_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_M][BOARDSIZE_M]) {
+bool is_lancer_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]) {
 	if (origin.column_pos != target.column_pos) {
 		return false;
 	}

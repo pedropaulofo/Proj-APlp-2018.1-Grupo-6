@@ -1,6 +1,6 @@
 #include "pch.h"
 
-bool is_rook_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_M][BOARDSIZE_M]) {
+bool is_rook_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]) {
 
 	if (origin.line_pos != target.line_pos && origin.column_pos != target.column_pos) {
 		return false; // Rook cannot go to positions on both different line or column from origin
@@ -49,6 +49,6 @@ bool is_rook_move(board_pos origin, board_pos target, char players_map[BOARDSIZE
 	return false;
 }
 
-bool is_prom_rook_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_M][BOARDSIZE_M]) {
+bool is_prom_rook_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]) {
 	return is_king_move(origin, target) || is_rook_move(origin, target, players_map);
 }

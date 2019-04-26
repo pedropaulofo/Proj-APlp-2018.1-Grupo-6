@@ -1,6 +1,6 @@
 #include "pch.h"
 
-bool is_fchariot_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_M][BOARDSIZE_M]) {
+bool is_fchariot_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]) {
 
 	int or_l = origin.line_pos;
 	int or_c = origin.column_pos;

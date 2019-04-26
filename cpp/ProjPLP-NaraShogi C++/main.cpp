@@ -117,9 +117,7 @@ int get_difficulty() {
 
 		check_command(difficulty);
 
-		if (difficulty == "2") break;
-		if (difficulty == "1") break;
-		else if ( difficulty == "3") cout << "\nUnimplemented yet. Try medium or easy.\n";
+		if (difficulty == "1" || difficulty == "2" || difficulty == "3") break;
 		else cout << "\nInvalid entry, try again:\n";
 	}
 	return stoi(difficulty);
@@ -136,11 +134,15 @@ void get_players_names(int difficulty) {
 	foreground(MARGENTA);
 	cout << difficulties_text[difficulty - 1] << "\n\n";
 	style(RESETALL);
+	
+	//PLAYER 1
 	cout << "  Player 1 name: ";
 	foreground(CYAN);
 	cin >> player1;
 	check_command(player1);
 	style(RESETALL);
+	
+	//PLAYER 2
 	cout << "  Player 2 name: ";
 	foreground(YELLOW);
 	cin >> player2;
