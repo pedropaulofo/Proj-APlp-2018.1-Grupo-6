@@ -6,6 +6,8 @@
 
 using namespace std;
 
+bool bolean;
+
 void print_file(string filename){
 	string line;
 	ifstream myfile(filename);
@@ -69,6 +71,8 @@ void main_menu() {
 	string input;
 	char choice;
 
+	string newInput;
+	char newChoice;
 	
 	while (true) {
 		cout << " > ";
@@ -85,8 +89,31 @@ void main_menu() {
 		case '1':
 			break;
 		case '2':
-			print_file("help.txt");
-			continue;
+			bolean = true;
+			while (true) {
+				cout << "1-Help. \n";
+				cout << "2-Ajuda. \n";
+				cout << "B-back to main menu. \n";
+				cin >> newInput;
+				newChoice = newInput[0];
+				switch (newChoice)
+				{
+					case '1':
+						print_file("help.txt");
+						continue;
+					case '2':
+						print_file("ajuda.txt");
+						continue;
+					case 'B' || 'b':
+						bolean=false;
+						break;
+					default:
+						cout << "Invalid option. Try again: \n";
+						continue;
+				}
+				if(bolean)
+					break;
+			}
 		case '3':
 			print_file("rules.txt");
 			continue;

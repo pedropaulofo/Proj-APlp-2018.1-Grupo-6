@@ -1,0 +1,282 @@
+
+--------------- Objective ---------------
+The usual goal of a game is for one player to checkmate the other player's king,
+winning the game.
+
+--------------- Movements ---------------
+Most shogi pieces can move only to an adjacent square.
+A few may move across the board, and one jumps over intervening pieces.
+
+The lance, bishop, and rook are ranging pieces:
+They can move any number of squares along a straight line limited only by
+intervening pieces and the edge of the board.
+If an opposing piece intervenes, it may be captured by removing it from the board
+and replacing it with the moving piece.
+If a friendly piece intervenes, the moving piece must stop short of that square; if
+the friendly piece is adjacent, the moving piece may not move in that direction at
+all.
+
+(K) A king moves one square in any direction, orthogonal or diagonal;
+(r) A rook moves any numeer of squares in an orthogonal direction;
+(b) A bishop moves any number of squares in a diagonal direction. Because they
+cannot move orthogonally, the players' unpromoted bishops can reach only half the
+squares of the board, unless one is captured and then dropped;
+(G) A gold general moves one square orthogonally, or one square diagonally forward,
+giving it six possible destinations. It cannot move diagonally backwards;
+(s) A silver general moves one square diagonally, or one square straight forward,
+giving it five possible destinations. Because an unpromoted silver can retreat more
+easily than a promoted one, it is common to leave a silver unpromoted at the far
+side of the board;
+(n) A Knightjumps at an angle intermediate to orthogonal and diagonal, amounting to
+one square straight forward plus one square diagonally forward, in a single move.
+Thus the knight has two possible forward destinations. Unlike international chess
+knights, shogi knights cannot move to the sides or in a backwards direction. The
+knight is the only piece that ignores intervening pieces on the way to its
+destination. It is not blocked from moving if the square in front of it is
+occupied, but neither can it capture a piece on that square. It is often useful to
+leave a knight unpromoted at the far side of the board. A knight must promote,
+however, if it reaches either of the two furthest ranks;
+(L) A lance just like the rook except it cannot move backwards or to the sides. It
+is often useful to leave a lance unpromoted at the far side of the board. A lance
+must promote, however, if it reaches the furthest rank;
+(p) moves one square straight forward. It cannot retreat. Unlike international
+chess pawns, shogi pawns capture the same as they move. A pawn must promote if it
+arrives at the furthest rank. (See Promotion.) In practice, however, a pawn is
+usually promoted whenever possible. There are two restrictions on where a pawn may
+be dropped.
+
+
+All pieces but the knight move either horizontally, vertically, or diagonally.
+These directions cannot be combined in a single move; one direction must be
+chosen.
+
+Every piece blocks the movement of all other non-jumping pieces through the square
+it occupies.
+
+If a piece occupies a legal destination for an opposing piece, it may be captured
+by removing it from the board and replacing it with the opposing piece. The
+capturing piece may not continue beyond that square on that turn. Shogi pieces
+capture the same as they move.
+
+Normally when moving a piece, a player snaps it to the board with the ends of the
+fingers of the same hand. This makes a sudden sound effect, bringing the piece to
+the attention of the opponent. This is also true for capturing and dropping pieces.
+On a traditional shogi-ban, the pitch of the snap is deeper, delivering a subtler
+effect.
+
+
+--------------- PROMOTION -----------------
+A player's promotion zone consists of the furthest one-third of the board – the
+three ranks occupied by the opponent's pieces at setup. The zone is typically
+delineated on shogi boards by two inscribed dots. When a piece is moved, if part of
+the piece's path lies within the promotion zone (that is, if the piece moves into,
+out of, or wholly within the zone; but not if it is dropped into the zone – see
+Drops), then the player has the option to promote the piece at the end of the turn.
+Promotion is indicated by turning the piece over after it moves, revealing the
+character of the promoted piece.
+
+If a pawn or lance is moved to the furthest rank, or a knight is moved to either of
+the two furthest ranks, that piece must promote (otherwise, it would have no legal
+move on subsequent turns). A silver general is never required to promote, and it is
+often advantageous to keep a silver general unpromoted. (It is easier, for example,
+to extract an unpromoted silver from behind enemy lines; whereas a promoted silver,
+with only one line of retreat, can be easily blocked.)
+
+Promoting a piece changes the way it moves. The various pieces promote as
+follows:
+
+A silver general, knight, lance, or pawn has its normal power of movement replaced
+by that of a gold general.
+A rook or bishop keeps its original movement and gains the power to move one square
+in any direction (like a king). For a promoted bishop, this means it is able to
+reach any square on the board, given enough moves.
+A king or a gold general does not promote; nor can a piece that is already
+promoted.
+When captured, a piece loses its promoted status. Otherwise promotion is
+permanent.
+
+--------------- PROMOTED MOVEMENTS ---------------
+
+> A promoted rook moves as a rook and as a king;
+> A promoted bishop moves as a bishop and as a king;
+> A promoted silver moves the same as a gold general;
+> A promoted knight moves the same as a gold general;
+> A promoted lance moves the same as a gold general;
+> A promoted pawn moves the same as a gold general;
+> Pieces not listed cannot be promoted.
+
+--------------- DROPS ---------------
+Captured pieces are retained in hand and can be brought back into play under the
+capturing player's control. On any turn, instead of moving a piece on the board, a
+player may select a piece in hand and place it – unpromoted side up and facing the
+opposing side – on any empty square. The piece is then one of that player's active
+pieces on the board and can be moved accordingly. This is called dropping the
+piece, or simply, a drop. A drop counts as a complete move.
+
+A drop cannot capture a piece, nor does dropping within the promotion zone result
+in immediate promotion. Capture and/or promotion may occur normally, however, on
+subsequent moves of the piece.
+
+A pawn, knight, or lance may not be dropped on the furthest rank, since those
+pieces would have no legal moves on subsequent turns. For the same reason, a knight
+may not be dropped on the penultimate (player's 8th) rank.
+
+There are two additional restrictions when dropping pawns:
+
+Two Pawns: A pawn cannot be dropped onto a file (column) containing another
+unpromoted pawn of the same player (promoted pawns do not count). A player with an
+unpromoted pawn on every file is therefore unable to drop a pawn anywhere. For this
+reason it is common to sacrifice a pawn in order to gain flexibility for
+drops.
+
+Drop Pawn Mate: A pawn cannot be dropped to give an immediate checkmate. (Although
+other pieces may be dropped to give immediate checkmate.) A pawn may, however, be
+dropped to give immediate check as long as it is not also mate. It is also
+permissible to mate a king with a pawn that is already on the board.
+It is common to keep captured pieces on a wooden stand (駒台 komadai) which is
+traditionally placed so that its bottom left corner aligns with the bottom right
+corner of the board from the perspective of each player. It is not permissible to
+hide pieces from full view.
+
+It is common for players to swap bishops, which oppose each other across the board,
+early in the game. This leaves each player with a bishop in hand to be dropped
+later. The ability for drops in shogi give the game tactical richness and
+complexity. The fact that no piece ever goes entirely out of play accounts for the
+rarity of draws.
+
+
+--------------- CHECK ---------------
+When a player's move threatens to capture the opposing king on the next turn, the
+move is said to give check to the king and the king is said to be in check. If a
+player's king is in check, that player's responding move must remove the check if
+possible.[8] Ways to remove a check include moving the king away from the threat,
+capturing the threatening piece, or placing another interposing piece between the
+king and the threatening piece.
+
+To announce check in Japanese, one can say ōte (王手). However, this is an influence
+of international chess and is not required, even as a courtesy.[9] Announcing a
+check vocally is unheard of in serious play.
+
+--------------- End of the game ---------------
+The usual way for shogi games to end is for one side to checkmate the other side's
+king, after which the losing player will be given the opportunity to admit defeat.
+Unlike western chess or xiangqi, checkmate is almost always the end result in shogi
+since pieces never retire from play which gives the players a sufficient number of
+pieces to deliver checkmate. However, there are three other possible ways for a
+game to end: repetition, impasse, and an illegal move. The first two – repetition
+and impasse – are particularly uncommon. Illegal moves are also uncommon in
+professional games although this may not be true with amateur players (especially
+beginners).
+
+Unlike western chess, there is no tradition of offering a mutual draw by
+agreement.
+
+--------------------------
+|Game End ----- Win State|
+|------------------------|
+(1) |checkmate ------ loss   |
+(2) |resignation ---- loss   |
+(3) |illegal move --- loss   |
+(4) |repetition ----- draw   |
+(5) |impasse -------- draw   | (usually)
+--------------------------
+
+(1)
+If the king is in check and there is no possible move which could protect the king,
+the move is said to checkmate (tsumi 詰み) the king. Checkmate effectively means that
+the opponent wins the game as the player would have no remaining legal moves
+
+(2)
+The losing player will usually resign when the situation is thought to be hopeless
+and may declare the resignation at any time during their turn. Although a player
+may resign just after they are checkmated, playing up to the checkmate point rarely
+occurs in practice as players normally resign as soon as a loss is deemed
+inevitable – such as when a tsume (forced mate sequence) is realized by the losing
+player. Similarly, if a player were to lose in an Entering King situation (see
+section below) by having less than 24 points (or by any of the other Impasse rules
+used by amateurs), then the player will usually resign before that point.
+
+In traditional tournament play, a formal resignation is required – that is, a
+checkmate is not a sufficient condition for winning. The resignation is indicated
+by bowing and/or saying 'I lost' and/or placing the right hand over the piece
+stands. Placing the hand over the piece stand is a vestige of an older practice of
+gently dropping one's pieces in hand over the board in order to indicate
+resignation. In western practice, a handshake may be used.
+
+(3)
+In professional and serious (tournament) amateur games, a player who makes an
+illegal move loses immediately.[c] The loss stands even if play continued and the
+move was discovered later in game. However, if neither the opponent nor a third
+party points out the illegal move and the opponent later resigned, the resignation
+stands as the result.
+
+Illegal moves include:
+
+> Violating the Two Pawns (nifu) restriction
+> Violating the Drop Pawn Mate (uchifuzume) restriction
+> Dropping or moving a piece to position where it cannot move (such as dropping a
+knight to an opponent's last two ranks, etc.)
+> Dropping a piece with its promoted value
+> Making more than one move (that is, playing out of turn)
+> Making perpetual check four times (cf. sennichite)
+> Leaving one's king in check, or moving one's king into check
+> Moving a piece contrary to how its movements are defined (for example, moving a
+gold like a silver or moving a bishop off its legal diagonal)
+> White moving first instead of moving second
+
+In friendly amateur games, this rule is sometimes relaxed, and the player may be
+able to take back the illegal move and replay a new legal move.
+
+In particular, the Two Pawn violation is most common illegal move played by
+professional players. The Two Pawn violation played by Takahiro Toyokawa (against
+Kōsuke Tamura) in the 2004 NHK Cup is infamous since it was broadcast on
+television. On the 109th move, Toyokawa (playing as Black) dropped a pawn to the 29
+square while he already had a pawn in play on the board on the 23 square and, thus,
+lost the game
+
+
+(4)
+If the same game position occurs four times with the same player to move and the
+same pieces in hand for each player, then the game ends in a repetition draw or
+sennichite (lit. "moves for a thousand days"), as long as the positions are not due
+to perpetual check. Perpetual check is an illegal move (see above), which ends the
+game in a loss in tournament play.
+
+In professional shogi, a repetition draw outcome is not a final result as draws
+essentially do not count. There can be only one victorious through wins. In the
+case of a repetition draw, professional shogi players will have to immediately play
+a subsequent game (or as many games as necessary) with sides reversed in order to
+obtain a true win outcome. (That is, the player who was White becomes Black, and
+vice versa.) Also, depending on the tournament, professional players play the
+subsequent game in the remainder of the allowed game time.
+
+Thus, aiming for a repetition draw may be a possible professional strategy for the
+White player in order to play the second replay game as Black, which has a slight
+statistical advantage and/or greater initiative. For instance, Bishop Exchange
+Fourth File Rook is a passive strategy for White with the goal of a repetition draw
+(as it requires two tempo losses – swinging the rook and trading the bishops) while
+it is a very aggressive strategy if played by Black.
+
+Repetition draws are rare in professional shogi occurring in about 1–2% of games
+and even rarer in amateur games. In professional shogi, repetition draws usually
+occur in the opening as certain positions are reached that are theoretically
+disadvantaged for both sides. In amateur shogi, repetition draws tend to occur in
+the middle or endgame as a result of player errors.
+
+
+(5)
+The game reaches an Impasse or Deadlock (jishōgi) if both kings have advanced into
+their respective promotion zones – a situation known as "double entering kings" –
+and neither player can hope to mate the other or to gain any further material. An
+Impasse can result in either a win or a draw. If an Impasse happens, the winner is
+decided as follows: each player agrees to an Impasse, then each rook or bishop,
+promoted or not, scores 5 points for the owning player, and all other pieces except
+kings score 1 point each. A player scoring fewer than 24 points loses. (If neither
+player has fewer than 24, the game is no contest—a draw.) Jishōgi is considered an
+outcome in its own right rather than no contest, but there is no practical
+difference.
+
+As an Impasse needs to be agreed on for the rule to be invoked, a player may refuse
+to do so and attempt to win the game in future moves. If that happens, there is no
+official rule about the verdict of the game
+

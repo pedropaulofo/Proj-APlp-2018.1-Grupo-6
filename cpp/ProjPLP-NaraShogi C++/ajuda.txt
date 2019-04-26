@@ -1,0 +1,18 @@
+O Nara Shogi é um jogo de tabuleiro de origem japonesa. 
+O jogo possui inúmeras semelhanças com o tradicional xadrez europeu. 
+
+COMANDOS BASICOS
+
+B-Retorna a tela anterior.
+C-Fecha o jogo.
+H-Abre o menu de ajuda.
+R-Reseta o jogo.
+
+COMO INICIAR O JOGO 
+
+No menu inicial ao escolher a opção "1-Start Game" os jogadores serão redirecionados a uma nova tela que apresenta a seleção de dificuldades, Fácil(4X3), Médio(9x9) e Difícil l(13x13). Os jogadores devem escolher a opção que melhor condiz com seus níveis de habilidade, após feita a escolha, o jogo será iniciado. 
+
+COMO JOGAR NARA SHOGI 
+
+O sistema de jogo é semelhante ao jogo de xadrez. O jogador da vez deve inserir uma primeira coordenada indicando a letra e número da casa em que se encontra a peça que o jogador deseja mover, em seguida uma nova entrada é feita, com a casa de destino final da peça. Se a jogada for invalida o Nara Shogi exibira uma mensagem informando o jogador e solicitara uma nova entrada.
+
