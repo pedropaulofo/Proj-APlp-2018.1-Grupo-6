@@ -20,6 +20,9 @@ void print_file(string filename){
 	}else{
 		cout << "Unable to open " << filename;
 	}
+	cout << "\n Press any key to return to the match\n";
+	string wait;
+	cin >> wait;
 }
 
 void print_header() {
