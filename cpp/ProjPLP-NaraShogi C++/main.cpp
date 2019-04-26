@@ -139,7 +139,6 @@ void main_menu() {
 						cout << "Invalid option. Try again: \n";
 						continue;
 				}
-			}
 		default:
 			cout << "Invalid option. Try again: \n";
 			continue;
