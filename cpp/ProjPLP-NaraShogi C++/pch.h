@@ -89,6 +89,24 @@ void start_match(int tablesize, std::string player1, std::string player2);
 int main();
 
 
+//heian dai shogi
+
+bool is_gobetween_move(board_pos origin, board_pos target);
+bool is_copperg_move(board_pos origin, board_pos target, bool is_player1);
+bool is_ftiger_move(board_pos origin, board_pos target);
+bool is_fdragon_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
+bool is_fchariot_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
+bool is_smover_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
+bool is_ironrg_move(board_pos origin,board_pos target, bool is_player1);
+
+bool is_prom_gobetween_move(board_pos origin, board_pos target);
+bool is_prom_copperg_move(board_pos origin, board_pos target, bool is_player1);
+bool is_prom_ftiger_move(board_pos origin, board_pos target);
+bool is_prom_fdragon_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
+bool is_prom_fchariot_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
+bool is_prom_smover_move(board_pos origin, board_pos target, char players_map[BOARDSIZE_H][BOARDSIZE_H]);
+bool is_prom_irong_move(board_pos origin, board_pos target, bool is_player1);
+
 // STANDARD PIECES:
 
 bool is_pawn_move(board_pos origin, board_pos target, bool is_player1);
@@ -110,8 +128,6 @@ bool is_prom_knight_move(board_pos origin, board_pos target, bool is_player1);
 bool is_prom_silverg_move(board_pos origin, board_pos target, bool is_player1);
 
 
-//heian dai shogi
-bool is_gobetween_move(board_pos origin, board_pos target);
 
 
 #endif //PCH_H

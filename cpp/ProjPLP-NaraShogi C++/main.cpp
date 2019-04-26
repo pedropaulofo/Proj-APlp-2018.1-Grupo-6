@@ -182,7 +182,8 @@ int get_difficulty() {
 
 		check_command(difficulty);
 
-		if (difficulty == "1" || difficulty == "2" || difficulty == "3") break;
+		if (difficulty == "1" || difficulty == "2" ) break;
+		else if(difficulty == "3") cout << "Not implemented yet.\n";
 		else cout << "\nInvalid entry, try again:\n";
 	}
 	return stoi(difficulty);

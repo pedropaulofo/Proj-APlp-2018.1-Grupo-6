@@ -208,6 +208,35 @@ bool is_legal_move(char piece_type, board_pos origin, board_pos target) {
 		return is_prom_knight_move(origin, target, player_turn);
 	case PROMOTEDSILVERGENERAL:
 		return is_prom_silverg_move(origin, target, player_turn);
+	/*case COPPERGENERAL:
+		return is_copperg_move(origin, target, player_turn);
+	case IRONGENERAL:
+		return is_ironrg_move(origin, target, player_turn);
+	case GOBETWEEN:
+		return is_gobetween_move(origin, target);
+	case FREECHARIOT:
+		return is_fchariot_move(origin, target, players_map);
+	case FLYINGDRAGON:
+		return is_fdragon_move(origin, target, players_map);
+	case FIERCETIGER:
+		return is_ftiger_move(origin, target);
+	case SIDEMOVER:
+		return is_smover_move(origin, target, players_map);
+	case PROMOTEDCOPPERGENERAL:
+		return is_prom_copperg_move(origin, target, player_turn);
+	case PROMOTEDIRONGENERAL:
+		return is_prom_irong_move(origin, target, player_turn);
+	case PROMOTEDGOBETWEEN:
+		return is_prom_gobetween_move(origin, target);
+	case PROMOTEDFREECHARIOT:
+		return is_prom_fchariot_move(origin, target, players_map);
+	case PROMOTEDFLYINGDRAGON:
+		return is_prom_fdragon_move(origin, target, players_map);
+	case PROMOTEDFIERCETIGER:
+		return is_prom_ftiger_move(origin, target);
+	case PROMOTEDSIDEMOVER:
+		return is_prom_smover_move(origin, target, players_map);
+	*/
 	default:
 		return false;
 	}

@@ -22,6 +22,8 @@ char overrid_cell_content;
 
 bool piece_selected = false;
 
+void print_board();
+
 
 string newInput;
 char newChoice;
@@ -32,6 +34,7 @@ bool bol;
 
 
 void print_file2(string filename){
+	printf(CLEAR_SCREEN);
 	string line;
 	ifstream myfile(filename);
 	if (myfile.is_open()){
@@ -42,6 +45,9 @@ void print_file2(string filename){
 	}else{
 		cout << "Unable to open " << filename;
 	}
+	cout << "\n Press any key to return to the match\n";
+	wait_confirmation();
+	print_board();
 }
 
 void game_turn();
