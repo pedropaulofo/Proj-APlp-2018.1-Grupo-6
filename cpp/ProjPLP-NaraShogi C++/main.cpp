@@ -90,7 +90,7 @@ void main_menu() {
 			break;
 		case '2':
 			bolean = true;
-			while (true) {
+			while (bolean) {
 				cout << "1-Help. \n";
 				cout << "2-Ajuda. \n";
 				cout << "B-back to main menu. \n";
@@ -104,15 +104,16 @@ void main_menu() {
 					case '2':
 						print_file("ajuda.txt");
 						continue;
-					case 'B' || 'b':
+					case 'B':
+						bolean=false;
+						break;
+					case 'b':
 						bolean=false;
 						break;
 					default:
 						cout << "Invalid option. Try again: \n";
 						continue;
 				}
-				if(bolean)
-					break;
 			}
 		case '3':
 			print_file("rules.txt");
