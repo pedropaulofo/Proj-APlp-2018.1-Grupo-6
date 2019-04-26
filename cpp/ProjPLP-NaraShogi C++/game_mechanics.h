@@ -141,8 +141,8 @@ bool coordinate_isvalid(string input) {
 		break;
 	}
 
-	if (line < int('A') || line > int('M')) return false;
-	if (column < int('0') || column > int('13')) return false;
+	if (line < int('A') || line > int('I')) return false;
+	if (column < int('0') || column > int('9')) return false;
 
 	return true;
 }
