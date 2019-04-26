@@ -23,6 +23,11 @@ char overrid_cell_content;
 bool piece_selected = false;
 
 
+string newInput;
+char newChoice;
+bool bol;
+
+
 // FUNCOES COMECAM ABAIXO:
 
 
@@ -290,7 +295,34 @@ int check_command(string input, board_pos current_cell) {
 				}
 				return EXIT;
 			case HELP:
-				print_file2("help.txt");
+					bol = true;
+				while (bol) {
+					cout << "1-Help. \n";
+					cout << "2-Ajuda. \n";
+					cout << "B-back to main menu. \n";
+					cin >> newInput;
+					newChoice = newInput[0];
+					switch (newChoice)
+					{
+						case '1':
+							print_file2("help.txt");
+							bol=false;							
+							break;
+						case '2':
+							print_file2("ajuda.txt");
+							bol=false;
+							break;
+						case 'B':
+							bol=false;
+							break;
+						case 'b':
+							bol=false;
+							break;
+						default:
+							cout << "Invalid option. Try again: \n";
+							continue;
+					}
+				}
 				return RETRY;
 			case RESET:
 				main();

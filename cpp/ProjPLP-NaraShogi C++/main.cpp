@@ -7,6 +7,7 @@
 using namespace std;
 
 bool bolean;
+string wait;
 
 void print_file(string filename){
 	string line;
@@ -75,6 +76,13 @@ void main_menu() {
 	char newChoice;
 	
 	while (true) {
+		print_header();
+
+		cout << "  > Welcome to shogi! Choose from the options below:\n\n" << endl;
+		cout << "   1 - Start game\n";
+		cout << "   2 - How to play\n";
+		cout << "   3 - Shogi rules\n" << endl;
+
 		cout << " > ";
 		cin >> input;
 
@@ -100,10 +108,12 @@ void main_menu() {
 				{
 					case '1':
 						print_file("help.txt");
-						continue;
+						bolean=false;
+						break;
 					case '2':
 						print_file("ajuda.txt");
-						continue;
+						bolean=false;
+						break;
 					case 'B':
 						bolean=false;
 						break;
@@ -115,6 +125,9 @@ void main_menu() {
 						continue;
 				}
 			}
+			cout << "Enter any key to continue: \n";
+			cin >> wait;
+			continue;
 		case '3':
 				cout << "1-Rules. \n";
 				cout << "2-Regras. \n";
@@ -139,6 +152,9 @@ void main_menu() {
 						cout << "Invalid option. Try again: \n";
 						continue;
 				}
+				cout << "Enter any key to continue: \n";
+				cin >> wait;
+				continue;
 		default:
 			cout << "Invalid option. Try again: \n";
 			continue;
