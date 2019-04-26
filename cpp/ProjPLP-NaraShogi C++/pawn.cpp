@@ -4,6 +4,10 @@
 
 bool is_pawn_move(board_pos origin, board_pos target, bool is_player1) {
 
+	if (!is_king_move(origin, target)) {
+		return false;
+	}
+
 	if (is_player1 && (origin.column_pos != target.column_pos || origin.line_pos - 1 != target.line_pos)) {
 		return false;
 	}

@@ -10,31 +10,27 @@ using namespace std;
 #ifndef GAME_MECHANICS_H
 
 bool player_turn;				//    true -> turn player1     false -> player2
-int dif= 2;
+int dif;
 
 int get_board_linesize(int dif){
 	switch(dif){
-		case 1:
-			return 3;
-		case 2:
-			return 9;
-		case 3:
-			return 13;
-		default:
-			return 9;
+		case EASY:
+			return BOARDLINES_E;
+		case MEDIUM:
+			return BOARDSIZE_M;
+		case HARD:
+			return BOARDSIZE_H;
 	}
 }
 
 int get_board_columnsize(int dif){
-	switch(dif){
-		case 1:
-			return 4;
-		case 2:
-			return 9;
-		case 3:
-			return 13;
-		default:
-			return 9;
+	switch (dif) {
+	case EASY:
+		return BOARDCOLUMNS_E;
+	case MEDIUM:
+		return BOARDSIZE_M;
+	case HARD:
+		return BOARDSIZE_H;
 	}
 }
 
@@ -43,60 +39,10 @@ list<char> p1_captured_pcs;
 list<char> p2_captured_pcs;
 
 char display_board[39][59];
-char pieces_map[BOARDSIZE][BOARDSIZE];
-char players_map[BOARDSIZE][BOARDSIZE];
-board_pos transf_matrix[BOARDSIZE][BOARDSIZE]; 
+char pieces_map[BOARDSIZE_M][BOARDSIZE_M];
+char players_map[BOARDSIZE_M][BOARDSIZE_M];
+board_pos transf_matrix[BOARDSIZE_M][BOARDSIZE_M]; 
 
-void resetMaps(){
-	int lines, columns;
-	if(dif == 1){
-		lines = 18;
-		columns = 23;
-	}
-	else{
-		lines = 39;
-		columns = 59;
-	}
-
-	for(int i = 0; i< lines; i++){
-		for(int j = 0; j< columns; j++){
-			switch(dif){
-				case 1:
-				display_board[i][j] = display_board_EASY[i][j];
-				break;
-				case 2:
-				display_board[i][j] = display_board_medium[i][j];
-				break;
-				default:
-				display_board[i][j] = display_board_medium[i][j];
-				break;
-			}
-		}
-	}
-
-	for(int i = 0; i< get_board_linesize(dif); i++){
-		for(int j = 0; j< get_board_columnsize(dif); j++){
-			switch(dif){
-				case 1:
-					players_map[i][j] = players_map_EASY[i][j];
-					pieces_map[i][j] = pieces_map_EASY[i][j];
-					transf_matrix[i][j] = transf_matrix_EASY[i][j];
-					break;
-				case 2:
-					players_map[i][j] = players_map_medium[i][j];
-					pieces_map[i][j] = pieces_map_medium[i][j];
-					transf_matrix[i][j] = transf_matrix_MEDIUM[i][j];
-					break;
-				default:
-					players_map[i][j] = players_map_medium[i][j];
-					pieces_map[i][j] = pieces_map_medium[i][j];
-					transf_matrix[i][j] = transf_matrix_MEDIUM[i][j];
-					break;
-			}
-		}
-	}
-	
-}
 
 template <typename T>
 bool contains(std::list<T> & listOfElements, const T & element)
@@ -115,6 +61,66 @@ bool is_player1_turn() {
 
 bool is_player2_turn() {
 	return !player_turn;
+}
+
+void wait_confirmation() {
+	string wait;
+	cin >> wait;
+}
+
+void resetMaps() {
+	int display_lines, display_columns;
+	if (dif == EASY) {
+		display_lines = DISPLAY_LINES_E;
+		display_columns = DISPLAY_COLUMNS_E;
+	}
+	else if (dif == MEDIUM) {
+		display_lines = DISPLAY_LINES_M;
+		display_columns = DISPLAY_COLUMNS_M;
+	}
+	else {
+		display_lines = DISPLAY_LINES_H;
+		display_columns = DISPLAY_COLUMNS_H;
+	}
+
+	for (int i = 0; i < display_lines; i++) {
+		for (int j = 0; j < display_columns; j++) {
+			switch (dif) {
+			case EASY:
+				display_board[i][j] = display_board_EASY[i][j];
+				break;
+			case MEDIUM:
+				display_board[i][j] = display_board_MEDIUM[i][j];
+				break;
+			case HARD:
+				// ADD HARD AQUI
+				break;
+			}
+		}
+	}
+
+	for (int i = 0; i < get_board_linesize(dif); i++) {
+		for (int j = 0; j < get_board_columnsize(dif); j++) {
+			switch (dif) {
+			case EASY:
+				players_map[i][j] = players_map_EASY[i][j];
+				pieces_map[i][j] = pieces_map_EASY[i][j];
+				transf_matrix[i][j] = transf_matrix_EASY[i][j];
+				break;
+			case MEDIUM:
+				players_map[i][j] = players_map_MEDIUM[i][j];
+				pieces_map[i][j] = pieces_map_MEDIUM[i][j];
+				transf_matrix[i][j] = transf_matrix_MEDIUM[i][j];
+				break;
+			default:
+				players_map[i][j] = players_map_MEDIUM[i][j];
+				pieces_map[i][j] = pieces_map_MEDIUM[i][j];
+				transf_matrix[i][j] = transf_matrix_MEDIUM[i][j];
+				break;
+			}
+		}
+	}
+
 }
 
 bool coordinate_isvalid(string input) {
@@ -165,9 +171,9 @@ bool is_legal_move(char piece_type, board_pos origin, board_pos target) {
 	case PAWN:
 		return is_pawn_move(origin, target, player_turn);
 	case BISHOP:
-		return is_bishop_move(origin, target, players_map);
+		return (dif != 1) ? is_bishop_move(origin, target, players_map) : is_bishop_move(origin, target, players_map) && is_king_move(origin, target);
 	case ROOK:
-		return is_rook_move(origin, target, players_map);
+		return (dif != 1) ? is_rook_move(origin, target, players_map) : is_rook_move(origin, target, players_map) && is_king_move(origin, target);
 	case LANCER:
 		return is_lancer_move(origin, target, players_map);
 	case KNIGHT:
@@ -195,15 +201,18 @@ bool is_legal_move(char piece_type, board_pos origin, board_pos target) {
 }
 
 void check_and_promote(board_pos destino) {
+	
 	char player = players_map[destino.line_pos][destino.column_pos];
+	
+	if (dif < 2 && pieces_map[destino.line_pos][destino.column_pos] != PAWN) return;
 
 	if (player == P1_IDENTIFER) {
-		if (destino.line_pos <= PROMOTION_AREA1) {
+		if (destino.line_pos <= PROMOTION_AREA1_M) {
 			pieces_map[destino.line_pos][destino.column_pos] = toupper(pieces_map[destino.line_pos][destino.column_pos]);
 		}
 	}
 	else if (player == P2_IDENTIFER) {
-		if (destino.line_pos >= PROMOTION_AREA2) {
+		if (destino.line_pos >= PROMOTION_AREA2_M) {
 			pieces_map[destino.line_pos][destino.column_pos] = toupper(pieces_map[destino.line_pos][destino.column_pos]);
 		}
 	}
@@ -213,7 +222,6 @@ void check_and_promote(board_pos destino) {
 bool try_dropping(list<char> captured, board_pos cell) {
 
 	if (!captured.empty()) {
-
 		char answer;
 		std::cout << "Blank cell selected. Do you wish to drop a captured Piece? (Y/N): ";
 		std::cin >> answer;
@@ -222,11 +230,28 @@ bool try_dropping(list<char> captured, board_pos cell) {
 			char piece;
 			std::cout << "What piece do you wish to DROP on the selected postion? (Ex: p): ";
 			std::cin >> piece;
+
+			char player = is_player1_turn() ? P1_IDENTIFER : P2_IDENTIFER;
 			
+			int prohibited_line = is_player1_turn() ? 0 : get_board_linesize(dif)-1;
+			if ((piece == PAWN || piece == LANCER || piece == KNIGHT) && cell.line_pos == prohibited_line) {  // Pieces that cannot be placed on the opponent first row
+				foreground(RED);
+				printf("This piece cannot be placed on the extreme opposite line.\n");
+				wait_confirmation();
+				return false;
+			}
+			else if (piece == PAWN) {
+				for (int i = 0; i < get_board_linesize(dif); i++) {
+					if (pieces_map[i][cell.column_pos] == PAWN && players_map[i][cell.column_pos] == player) {
+						foreground(RED);
+						printf("The Pawn cannot be dropped on the column that contains one of the same player's Pawn.\n");
+						wait_confirmation();
+						return false;
+					}
+				}
+			}
 
 			if (contains(captured, piece)) { // If has the captured piece
-				char player = is_player1_turn() ? P1_IDENTIFER : P2_IDENTIFER;
-
 				pieces_map[cell.line_pos][cell.column_pos] = piece;
 				players_map[cell.line_pos][cell.column_pos] = player;
 				
@@ -237,14 +262,15 @@ bool try_dropping(list<char> captured, board_pos cell) {
 			else{
 				foreground(RED);
 				printf("The player doesn't have this piece captured.\n");
+				wait_confirmation();
+				return false;
 			}
 		}
 	}
 	else {
 		foreground(RED);
 		printf("The player doesn't have any piece captured. Enter any key to continue: \n");
-		string wait;
-		cin >> wait;
+		wait_confirmation();
 	}
 
 	style(RESETALL);

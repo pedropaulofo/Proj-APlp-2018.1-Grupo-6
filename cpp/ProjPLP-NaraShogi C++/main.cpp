@@ -119,7 +119,7 @@ int get_difficulty() {
 
 		if (difficulty == "2") break;
 		if (difficulty == "1") break;
-		else if ( difficulty == "3") cout << "\nUnimplemented yet. Try medium.\n";
+		else if ( difficulty == "3") cout << "\nUnimplemented yet. Try medium or easy.\n";
 		else cout << "\nInvalid entry, try again:\n";
 	}
 	return stoi(difficulty);
@@ -156,8 +156,6 @@ int main()
 	//start_match(2, "Fulano", "Sicrano");
 	//___________________________________
 
-
-
 	main_menu();
 
 	int difficulty = get_difficulty();
@@ -172,6 +170,7 @@ void check_command(string input) {
 		switch (command) {
 		case BACK:
 			main();
+			break;
 		case CLOSE:
 			exit(0);
 		default:

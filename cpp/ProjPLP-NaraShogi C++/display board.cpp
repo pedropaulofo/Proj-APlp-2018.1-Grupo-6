@@ -68,25 +68,42 @@ void print_board() {
 
 	printf(CLEAR_SCREEN);
 
-	background(BLACK);
-	int coluna = 0;
-	for (int i = 0; i < 39; i++) {
-		int linha = 0;
-		for (int j = 0; j < 59; j++) {
-			char out = display_board[i][j];
-			foreground(WHITE);
-			if (i == transf_matrix[linha][coluna].line_pos && j == transf_matrix[linha][coluna].column_pos) { // if the char displays one of the cells
+	int display_lines, display_columns;
+	if (dif == EASY) {
+		display_lines = DISPLAY_LINES_E;
+		display_columns = DISPLAY_COLUMNS_E;
+	}
+	else if(dif == MEDIUM){
+		display_lines = DISPLAY_LINES_M;
+		display_columns = DISPLAY_COLUMNS_M;
+	}
+	else {
+		display_lines = DISPLAY_LINES_H;
+		display_columns = DISPLAY_COLUMNS_H;
+	}
 
-				if (players_map[linha][coluna] == '2') {
-					set_player_textxcolor(false); // if the piece is from player 2, displays in RED
+	background(BLACK);
+	int pcs_col = 0;
+	int pcs_line = 0;
+
+	for (int i = 0; i < display_lines; i++) {
+		for (int j = 0; j < display_columns; j++) {
+			
+			char out = display_board[i][j];
+
+			foreground(WHITE);
+			if (i == transf_matrix[pcs_line][pcs_col].line_pos && j == transf_matrix[pcs_line][pcs_col].column_pos) { // if the char displays one of the cells
+				if (players_map[pcs_line][pcs_col] == P2_IDENTIFER) {
+					set_player_textxcolor(false); // if the piece is from player 2, displays in YELLOW
 				}
-				else if (players_map[linha][coluna] == '1') {
-					set_player_textxcolor(true);; // if the piece is from player 1, displays in CYAN
+				else if (players_map[pcs_line][pcs_col] == P1_IDENTIFER) {
+					set_player_textxcolor(true); // if the piece is from player 1, displays in CYAN
 				}
-				coluna += 1;
-				if (linha > get_board_columnsize(dif)) {
-					coluna = 0;
-					linha += 1;
+				pcs_col++;
+
+				if (pcs_col >= get_board_columnsize(dif)) {
+					pcs_col = 0;
+					pcs_line++;
 				}
 
 			}
@@ -96,10 +113,9 @@ void print_board() {
 			else if (out == HIGHLIGHT_CHAR) {
 				foreground(GREEN); // higlights the selected cell with green slashes around it
 			}
-			else if (i == 0 || i == 38 || j == 2) {
+			else if (i == 0 || i == display_lines-1 || j == 2) {
 				foreground(MARGENTA); // cells indexes
 			}
-
 			printf("%C", out); // PRINTS CHAR
 
 		}
@@ -291,24 +307,27 @@ void game_turn() {
 
 	input_origin();			// Get the ORIGIN position of the move
 	if (piece_selected) {
-		update_display_board(); // updates the current board configuration on the graphic board representation
-		print_board();			// prints the graphic board on display with colors according to the players pieces
+		update_display_board();
+		print_board();			
 		
 		bool move_complete = input_target();			// Get the TARGETED position of the move
-		if (move_complete) overrid_cell_content = move(origin_cell, target_cell);			// MAKES THE MOVE
+
+		if (move_complete){
+			overrid_cell_content = move(origin_cell, target_cell);			// MAKES THE MOVE
+			check_and_promote(target_cell);			// PROMOTES IF THE PIECE REACHES PROMOTION AREA
+		}
 	}
 	piece_selected = false;
-	check_and_promote(target_cell);			// PROMOTES IF THE PIECE REACHES PROMOTION AREA
 
-	update_display_board(); // updates the current board configuration on the graphic board representation
-	print_board();			// prints the graphic board on display with colors according to the players pieces
+	update_display_board(); 
+	print_board();		
 }
 
 // MATCH STARTS WITH THE FOLLOWING FUNCTION:
 
 void start_match(int difficulty, string player1_name, string player2_name) {
+	
 	dif = difficulty;
-
 	resetMaps();
 	player_turn = true; // Starts with PLAYER1
 
@@ -321,15 +340,14 @@ void start_match(int difficulty, string player1_name, string player2_name) {
 
 		game_turn();
 
-		if (overrid_cell_content == KING) break; //Checks if enemy king was captured after move
+		if (overrid_cell_content == KING) break; // Checks if enemy king was captured
 			
 	}
 
 	//PARTE DE TELA FINAL DO JOGO PENDENTE...
 	cout << "Player " << current_player_name << " wins!\n";
 	cout << "Enter any key to continue: \n";
-	string wait;
-	cin >> wait;
+	wait_confirmation();
 	main();
 	return;
 }

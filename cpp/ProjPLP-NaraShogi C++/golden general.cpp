@@ -4,7 +4,7 @@ bool is_goldeng_move(board_pos origin, board_pos target, bool is_player1) {
 
 	bool is_player2 = !is_player1;
 
-	if (!is_king_move) { // The Golden General can move to all directions that the King can
+	if (!is_king_move(origin, target)) { // The Golden General can move to all directions that the King can
 		return false;
 	}
 
