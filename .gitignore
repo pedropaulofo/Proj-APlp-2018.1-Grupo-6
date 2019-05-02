@@ -25,3 +25,4 @@ bld/
 *.vcxproj.user
 *.vcxproj
 *.vcxproj.filters
+cpp/projplp-narashogi c++/main.cpp
