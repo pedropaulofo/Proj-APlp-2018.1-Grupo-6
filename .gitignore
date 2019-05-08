@@ -26,3 +26,5 @@ bld/
 *.vcxproj
 *.vcxproj.filters
 cpp/projplp-narashogi c++/main.cpp
+haskell/Nara Shogi - Haskell/shogi.hi
+haskell/Nara Shogi - Haskell/shogi.o
