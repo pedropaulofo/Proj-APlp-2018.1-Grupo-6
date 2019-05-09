@@ -4,6 +4,7 @@ module Main
   ) where
     
 import qualified Data.Map
+import Data.Char
 import System.Console.ANSI
 
 
@@ -27,16 +28,60 @@ pieceAtPos :: Data.Map.Map (Char, Char) (Char, Char) ->  (Char, Char) -> Char
 pieceAtPos board position = getPiece $ Data.Map.findWithDefault invalidCell position board 
 
 newMediumBoard :: Data.Map.Map (Char, Char) (Char, Char)
-newMediumBoard = Data.Map.fromList[(('A', '0'), ('l', '2')), (('A', '1'), ('2', 'n')), (('A', '2'), ('s', '2')),  (('A', '3'), ('G', '2')), (('A', '4'), ('K', '2')), (('A', '5'), ('G', '2')), (('A', '6'), ('s', '2')), (('A', '7'), ('n', '2')), (('A', '8'), ('l', '2')),
-                                   (('B', '0'), (' ', '2')), (('B', '1'), ('r', '2')), (('B', '2'), (' ', '2')),  (('B', '3'), (' ', '2')), (('B', '4'), (' ', '2')), (('B', '5'), (' ', '2')), (('B', '6'), (' ', '2')), (('B', '7'), ('b', '2')), (('B', '8'), (' ', '2')),
-                                   (('C', '0'), ('p', '2')), (('C', '1'), ('p', '2')), (('C', '2'), ('p', '2')),  (('C', '3'), ('p', '2')), (('C', '4'), ('p', '2')), (('C', '5'), ('p', '2')), (('C', '6'), ('p', '2')), (('D', '7'), ('p', '2')), (('D', '8'), ('p', '2')),
+newMediumBoard = Data.Map.fromList[(('A', '0'), ('l', '2')), (('A', '1'), ('n', '2')), (('A', '2'), ('s', '2')),  (('A', '3'), ('G', '2')), (('A', '4'), ('K', '2')), (('A', '5'), ('G', '2')), (('A', '6'), ('s', '2')), (('A', '7'), ('n', '2')), (('A', '8'), ('l', '2')),
+                                   (('B', '0'), (' ', '0')), (('B', '1'), ('r', '2')), (('B', '2'), (' ', '0')),  (('B', '3'), (' ', '0')), (('B', '4'), (' ', '0')), (('B', '5'), (' ', '0')), (('B', '6'), (' ', '0')), (('B', '7'), ('b', '2')), (('B', '8'), (' ', '0')),
+                                   (('C', '0'), ('p', '2')), (('C', '1'), ('p', '2')), (('C', '2'), ('p', '2')),  (('C', '3'), ('p', '2')), (('C', '4'), ('p', '2')), (('C', '5'), ('p', '2')), (('C', '6'), ('p', '2')), (('C', '7'), ('p', '2')), (('C', '8'), ('p', '2')),
                                    (('D', '0'), (' ', '0')), (('D', '1'), (' ', '0')), (('D', '2'), (' ', '0')),  (('D', '3'), (' ', '0')), (('D', '4'), (' ', '0')), (('D', '5'), (' ', '0')), (('D', '6'), (' ', '0')), (('D', '7'), (' ', '0')), (('D', '8'), (' ', '0')),
                                    (('E', '0'), (' ', '0')), (('E', '1'), (' ', '0')), (('E', '2'), (' ', '0')),  (('E', '3'), (' ', '0')), (('E', '4'), (' ', '0')), (('E', '5'), (' ', '0')), (('E', '6'), (' ', '0')), (('E', '7'), (' ', '0')), (('E', '8'), (' ', '0')),
                                    (('F', '0'), (' ', '0')), (('F', '1'), (' ', '0')), (('F', '2'), (' ', '0')),  (('F', '3'), (' ', '0')), (('F', '4'), (' ', '0')), (('F', '5'), (' ', '0')), (('F', '6'), (' ', '0')), (('F', '7'), (' ', '0')), (('F', '8'), (' ', '0')),
                                    (('G', '0'), ('p', '1')), (('G', '1'), ('p', '1')), (('G', '2'), ('p', '1')),  (('G', '3'), ('p', '1')), (('G', '4'), ('p', '1')), (('G', '5'), ('p', '1')), (('G', '6'), ('p', '1')), (('G', '7'), ('p', '1')), (('G', '8'), ('p', '1')),
-                                   (('H', '0'), (' ', '1')), (('H', '1'), ('b', '1')), (('H', '2'), (' ', '1')),  (('H', '3'), (' ', '1')), (('H', '4'), (' ', '1')), (('H', '5'), (' ', '1')), (('H', '6'), (' ', '1')), (('H', '7'), ('r', '1')), (('H', '8'), (' ', '1')),
+                                  (('H', '0'), (' ', '0')), (('H', '1'), ('b', '1')), (('H', '2'), (' ', '0')),  (('H', '3'), (' ', '0')), (('H', '4'), (' ', '0')), (('H', '5'), (' ', '0')), (('H', '6'), (' ', '0')), (('H', '7'), ('r', '1')), (('H', '8'), (' ', '0')),
                                    (('I', '0'), ('l', '1')), (('I', '1'), ('n', '1')), (('I', '2'), ('s', '1')),  (('I', '3'), ('G', '1')), (('I', '4'), ('K', '1')), (('I', '5'), ('G', '1')), (('I', '6'), ('s', '1')), (('I', '7'), ('n', '1')), (('I', '8'), ('l', '1'))]
 
+
+printBoard :: Data.Map.Map (Char, Char) (Char, Char) -> IO()
+printBoard board = do
+    putStrLn "      0     1     2     3     4     5     6     7     8   "
+    putStrLn "   #######################################################"
+    printLines board ['A'..'I']
+
+
+printLines :: Data.Map.Map (Char, Char) (Char, Char) -> [Char] -> IO()
+printLines board [] = putStrLn  "      0     1     2     3     4     5     6     7     8   \n"
+printLines board (x:xs) = do
+    putStrLn "   #     #     #     #     #     #     #     #     #     #"
+    putStr (" " ++ [x] ++ " #  ")
+    displayLine (lineItems board x) (linePlayers board x)
+    putStrLn "   #     #     #     #     #     #     #     #     #     #"
+    putStrLn "   #######################################################"
+    printLines board xs
+    
+
+lineItems :: Data.Map.Map (Char, Char) (Char, Char) -> Char -> [Char]
+lineItems board line = [pieceAtPos (board) ((line, b)) | b <- ['0'..'8']] 
+
+linePlayers :: Data.Map.Map (Char, Char) (Char, Char) -> Char -> [Char]
+linePlayers board line = [playerAtPos (board) ((line, b)) | b <- ['0'..'8']] 
+
+
+displayLine :: [Char] -> [Char] -> IO()
+displayLine [] [] = putStr "\n"
+displayLine (x:xs) (y:ys)
+    | y == '1' = do
+        setSGR [SetColor Foreground Vivid Cyan] 
+        putStr [x]
+        setSGR [Reset]
+        putStr "  #  "
+        displayLine xs ys
+    | y == '2' = do
+        setSGR [SetColor Foreground Vivid Yellow] 
+        putStr [x]
+        setSGR [Reset]
+        putStr "  #  "
+        displayLine xs ys
+    | otherwise = do
+        putStr ([x] ++ "  #  ")
+        displayLine xs ys
 
 
 getCellLine :: String -> Char
@@ -89,6 +134,9 @@ getPlayer2Name (dif, p1, p2) = p2
 getDifficulty :: (String, String, String) -> String
 getDifficulty (dif, p1, p2) = dif
 
+move :: Data.Map.Map (Char, Char) (Char, Char) -> (Char, Char) -> (Char, Char) -> Data.Map.Map (Char, Char) (Char, Char)
+move board origin target = Data.Map.insert target (pieceAtPos board origin, playerAtPos board origin) board
+
 startMatch :: (String, String, String) -> IO()
 startMatch matchData = startTurn '1' matchData newMediumBoard
 
@@ -111,7 +159,7 @@ startTurn currentPlayer matchData boardData = do
         else -- Game not over
             do
                 -- to do: Print board
-                putStrLn "\nFinge que aqui tem um tabuleiro, viu galera"
+                printBoard boardData
 
                 if currentPlayer == '1'
                     then do
@@ -129,7 +177,10 @@ startTurn currentPlayer matchData boardData = do
                         clearScreen
                         putStrLn ("Jogador na posicao " ++ input ++ " = " ++ [playerAtPos boardData (getCellLine(input), getCellColumn(input))])
                         putStrLn ("Peca na posicao " ++ input ++ " = " ++ [pieceAtPos boardData (getCellLine(input), getCellColumn(input))])
-                        startTurn (oponent(currentPlayer)) matchData boardData-- switches players TO DO: atualizar boardData para o novo board com a jogada
+                        let origin = ('G', '2')
+                        let target = ('F', '2') 
+                        -- print (move boardData origin target) 
+                        startTurn (oponent(currentPlayer)) matchData (move boardData origin target) -- switches players TO DO: atualizar boardData para o novo board com a jogada
                     else do
                         clearScreen
                         putStrLn "Invalid entry. Try again: "
@@ -203,6 +254,17 @@ mainMenuOptions x = do
     putStr x
     printWarning " is not a valid command. try again"
     main
+
+line :: (Int, Int) -> Int
+line (l, c) = l
+
+column :: (Int, Int) -> Int
+column (l, c) = c
+
+isPawnMove :: (Int, Int) -> (Int, Int) -> Char -> Bool
+isPawnMove origin target '1' = column(origin) == column(target) && line(origin) == (line(target) - 1)
+isPawnMove origin target '2' = column(origin) == column(target) && line(origin) == (line(target) + 1)
+isPawnMove origin target x = False 
 
 main :: IO()
 main = do
