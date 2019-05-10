@@ -47,7 +47,7 @@ printBoard board = do
 
 
 printLines :: Data.Map.Map (Char, Char) (Char, Char) -> [Char] -> IO()
-printLines board [] = putStrLn  "      0     1     2     3     4     5     6     7     8   \n"
+printLines board [] = putStrLn  "      0     1     2     3     4     5     6     7     8   "
 printLines board (x:xs) = do
     putStrLn "   #     #     #     #     #     #     #     #     #     #"
     putStr (" " ++ [x] ++ " #  ")
@@ -88,7 +88,7 @@ getCellLine :: String -> Char
 getCellLine "" = '*'
 getCellLine (x:xs) | xs == "" = '*'
                | length xs > 1 = '*'
-               | otherwise = x
+               | otherwise = Data.Char.toUpper x
 
 
 getCellColumn :: String -> Char
@@ -135,7 +135,13 @@ getDifficulty :: (String, String, String) -> String
 getDifficulty (dif, p1, p2) = dif
 
 move :: Data.Map.Map (Char, Char) (Char, Char) -> (Char, Char) -> (Char, Char) -> Data.Map.Map (Char, Char) (Char, Char)
-move board origin target = Data.Map.insert target (pieceAtPos board origin, playerAtPos board origin) board
+move board origin target = Data.Map.insert origin (' ', '0') (Data.Map.insert target (pieceAtPos board origin, playerAtPos board origin) board)
+
+posIndexes :: (Char, Char) -> (Int, Int)
+posIndexes (l, c) = (fromEnum(l) - fromEnum('A'), fromEnum(c) - fromEnum('0'))
+
+isValidMove :: (Char, Char) -> (Char, Char) -> Char -> Data.Map.Map (Char, Char) (Char, Char) -> Bool
+isValidMove origin target player board = (isPieceMove (posIndexes(origin)) (posIndexes(target)) player (pieceAtPos board origin)) && (player == (playerAtPos board origin)) && (player /= (playerAtPos board target))
 
 startMatch :: (String, String, String) -> IO()
 startMatch matchData = startTurn '1' matchData newMediumBoard
@@ -164,27 +170,41 @@ startTurn currentPlayer matchData boardData = do
                 if currentPlayer == '1'
                     then do
                         setSGR [SetColor Foreground Vivid Cyan]    
-                        putStrLn ("\n" ++ getPlayer1Name(matchData) ++ "'s turn.")
+                        putStrLn (getPlayer1Name(matchData) ++ "'s turn.")
                     else do
                         setSGR [SetColor Foreground Vivid Yellow]
-                        putStrLn ("\n" ++ getPlayer2Name(matchData) ++ "'s turn.")
+                        putStrLn (getPlayer2Name(matchData) ++ "'s turn.")
                 setSGR [Reset]  -- Reset to default colour scheme
-                putStrLn "Enter the coordinates of the piece you want to move (LETRA MAUISCULA) (ex.: G2): "
+                putStrLn "Enter the coordinates of the piece you want to move (ex.: G2): "
                 
-                input <- getLine
-                if isValidInputPosition input
+                inputOrigin <- getLine                  -- get ORIGIN
+                if isValidInputPosition inputOrigin
                     then do
                         clearScreen
-                        putStrLn ("Jogador na posicao " ++ input ++ " = " ++ [playerAtPos boardData (getCellLine(input), getCellColumn(input))])
-                        putStrLn ("Peca na posicao " ++ input ++ " = " ++ [pieceAtPos boardData (getCellLine(input), getCellColumn(input))])
-                        let origin = ('G', '2')
-                        let target = ('F', '2') 
-                        -- print (move boardData origin target) 
-                        startTurn (oponent(currentPlayer)) matchData (move boardData origin target) -- switches players TO DO: atualizar boardData para o novo board com a jogada
+                        printBoard boardData
+
+                        if currentPlayer == '1'
+                            then do
+                                setSGR [SetColor Foreground Vivid Cyan]    
+                                putStrLn (getPlayer1Name(matchData) ++ "'s turn.")
+                            else do
+                                setSGR [SetColor Foreground Vivid Yellow]
+                                putStrLn (getPlayer2Name(matchData) ++ "'s turn.")
+                        setSGR [Reset]
+                        putStrLn "Enter the coordinates of where you want to move to with your piece: "
+                        inputTarget <- getLine          -- get TARGET
+                        if isValidInputPosition inputTarget && isValidMove (getCellLine(inputOrigin), getCellColumn(inputOrigin)) (getCellLine(inputTarget), getCellColumn(inputTarget)) currentPlayer boardData
+                            then do
+                                clearScreen 
+                                startTurn (oponent(currentPlayer)) matchData (move boardData (getCellLine(inputOrigin), getCellColumn(inputOrigin)) (getCellLine(inputTarget), getCellColumn(inputTarget))) -- SUCESSFUL MOVE switches players
+                            else do
+                                clearScreen
+                                printWarning "Invalid move entry. Try again: "    -- INVALID TARGET
+                                startTurn currentPlayer matchData boardData
                     else do
                         clearScreen
-                        putStrLn "Invalid entry. Try again: "
-                        startTurn currentPlayer matchData boardData -- switches players
+                        printWarning "Invalid origin entry. Try again: "            -- INVALID ORIGIN
+                        startTurn currentPlayer matchData boardData
 
 printWarning :: String -> IO()
 printWarning message = do
@@ -261,9 +281,13 @@ line (l, c) = l
 column :: (Int, Int) -> Int
 column (l, c) = c
 
+isPieceMove :: (Int, Int) -> (Int, Int) -> Char -> Char -> Bool
+isPieceMove origin target player 'p' = isPawnMove origin target player
+isPieceMove origin target player piece = False
+
 isPawnMove :: (Int, Int) -> (Int, Int) -> Char -> Bool
-isPawnMove origin target '1' = column(origin) == column(target) && line(origin) == (line(target) - 1)
-isPawnMove origin target '2' = column(origin) == column(target) && line(origin) == (line(target) + 1)
+isPawnMove origin target '1' = column(origin) == column(target) && line(origin) == (line(target) + 1)
+isPawnMove origin target '2' = column(origin) == column(target) && line(origin) == (line(target) - 1)
 isPawnMove origin target x = False 
 
 main :: IO()
