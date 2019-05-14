@@ -271,6 +271,13 @@ isPawnMove :: Coordinates -> Coordinates -> Char -> Bool
 isPawnMove origin target '1' = column(origin) == column(target) && line(origin) == (line(target) + 1)
 isPawnMove origin target '2' = column(origin) == column(target) && line(origin) == (line(target) - 1)
 isPawnMove origin target x = False 
+
+isKingMove:: Coordinates -> Coordinates -> Bool	
+isKingMove origin target '1' = (column(origin) - column(target) <= 1) && (line(origin) - (line(target) <= 1))
+isPawnMove origin target '2' = (column(origin) - column(target) <= 1) && (line(origin) - (line(target) <= 1))
+isPawnMove origin target x = False 
+
+
 -- Mecanicas de cada peca END
 
 
