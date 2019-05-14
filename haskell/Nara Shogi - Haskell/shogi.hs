@@ -266,6 +266,8 @@ isPieceMove origin target b player 'G' = isGoldenMove origin target player
 isPieceMove origin target b player 's' = isSilverMove origin target player
 isPieceMove origin target b player 'n' = isKnightMove origin target player
 isPieceMove origin target b player 'l' = isLancerMove origin target b player
+isPieceMove origin target b player 'r' = isRookMove origin target b
+isPieceMove origin target b player 'b' = isBishopMove origin target b 
 isPieceMove origin target b player piece = False
 -- Mecanicas de jogo END
 
@@ -297,19 +299,54 @@ isKnightMove origin target '2' = ( (line(origin)+2) == line(target) ) && (column
 isKnightMove origin target x = False
 
 isLancerMove :: Coordinates -> Coordinates -> Board -> Char -> Bool
-isLancerMove origin target board '1' = freeWay (line (origin)-1) target board '1' && column(origin) == column(target) && (line (origin) > line (target))
-isLancerMove origin target board '2' = freeWay (line (origin)+1) target board '2' && column(origin) == column(target) && (line (origin) < line (target))
+isLancerMove origin target board '1' = freeWay (line (origin)-1) target board 'c' && column(origin) == column(target) && (line (origin) > line (target))
+isLancerMove origin target board '2' = freeWay (line (origin)+1) target board 'b' && column(origin) == column(target) && (line (origin) < line (target))
 
---isLancerMove origin target board '2' = freeWay(origin target board '2')
-
+isRookMove :: Coordinates -> Coordinates -> Board -> Bool
+isRookMove origin target board    | (line(origin) < line(target)) && column(origin) == column(target) = freeWay (line (origin)+1) target board 'b'
+                                    | (line(origin) > line(target)) && column(origin) == column(target) = freeWay (line (origin)-1) target board 'c'
+                                    | line(origin) == line(target) && (column(origin) < column(target)) = freeWay (column (origin)+1) target board 'd'
+                                    | line(origin) == line(target) && (column(origin) > column(target)) = freeWay (column (origin)-1) target board 'e'
+                                    | otherwise = False
+                                                                                                            
 
 freeWay :: Int -> Coordinates -> Board -> Char -> Bool
-freeWay index target board '1'  | index == line(target) = True
-                                | playerAtPos board (coordinateToPosition((index, column(target)))) /= '0' = False
-                                | otherwise = freeWay (index-1) target board '1'
-freeWay index target board '2'  | index == line(target) = True
-                                | playerAtPos board (coordinateToPosition((index, column(target)))) /= '0' = False
-                                | otherwise = freeWay (index+1) target board '2'
+freeWay index target board 'c'      | index == line(target) = True
+                                    | playerAtPos board (coordinateToPosition((index, column(target)))) /= '0' = False
+                                    | otherwise = freeWay (index-1) target board 'c'
+freeWay index target board 'b'      | index == line(target) = True
+                                    | playerAtPos board (coordinateToPosition((index, column(target)))) /= '0' = False
+                                    | otherwise = freeWay (index+1) target board 'b'
+freeWay index target board 'd'      | index == column(target) = True
+                                    | playerAtPos board (coordinateToPosition((line(target), index))) /= '0' = False
+                                    | otherwise = freeWay (index+1) target board 'd'
+freeWay index target board 'e'      | index == column(target) = True
+                                    | playerAtPos board (coordinateToPosition((line(target), index))) /= '0' = False
+                                    | otherwise = freeWay (index-1) target board 'e'
+
+
+isBishopMove :: Coordinates -> Coordinates -> Board -> Bool
+isBishopMove origin target board    | (line(origin) < line(target)) && column(origin) == column(target) = freeWay2 (line (origin)-1) (column (origin)+1) target board '1'
+                                    | (line(origin) > line(target)) && column(origin) == column(target) = freeWay2 (line (origin)-1) (column (origin)-1) target board '2'
+                                    | line(origin) == line(target) && (column(origin) < column(target)) = freeWay2 (line (origin)+1) (column (origin)-1) target board '3'
+                                    | line(origin) == line(target) && (column(origin) > column(target)) = freeWay2 (line (origin)+1) (column (origin)+1) target board '4'
+                                    | otherwise = False
+                                                                                                            
+
+freeWay2 :: Int -> Int -> Coordinates -> Board -> Char -> Bool
+freeWay2 l c target board '1'       | l == line(target) && c == column(target) = True
+                                    | playerAtPos board (coordinateToPosition((l, c))) /= '0' = False
+                                    | otherwise = freeWay2 (l-1) (c+1) target board '1'
+freeWay2 l c target board '2'       | l == line(target) && c == column(target) = True
+                                    | playerAtPos board (coordinateToPosition((l, c))) /= '0' = False
+                                    | otherwise = freeWay2 (l-1) (c-1) target board '2'
+freeWay2 l c target board '3'       | l == line(target) && c == column(target) = True
+                                    | playerAtPos board (coordinateToPosition((l, c))) /= '0' = False
+                                    | otherwise = freeWay2 (l+1) (c-1) target board '3'
+freeWay2 l c target board '4'       | l == line(target) && c == column(target) = True
+                                    | playerAtPos board (coordinateToPosition((l, c))) /= '0' = False
+                                    | otherwise = freeWay2 (l+1) (c+1) target board '4'
+
 
 
 -- Mecanicas de cada peca END
