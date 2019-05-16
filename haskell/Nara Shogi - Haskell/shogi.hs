@@ -184,6 +184,7 @@ isValidInputPosition input
     | otherwise = False
     where line = getCellLine input
           column = getCellColumn input
+
 -- Tratamento da entrada END
 
 
@@ -199,7 +200,7 @@ getDifficulty (dif, p1, p2) = dif
 -- Gets END
 
 
--- Mecanicas de jogo BEGIN
+-- Mecanicas de jogo BEGINisValidInputPosition
 move :: Board -> Position -> Position -> Board
 move board origin target = Data.Map.insert origin (' ', '0') (Data.Map.insert target (pieceAtPos board origin, playerAtPos board origin) board)
 
@@ -216,10 +217,36 @@ checkPromotion board target '2' | line(posIndexes(target)) > 5 = Data.Map.insert
 isValidMove :: Position -> Position -> Char -> Board -> Bool
 isValidMove origin target player board = (isPieceMove (posIndexes(origin)) (posIndexes(target)) board player (pieceAtPos board origin)) && (player == (playerAtPos board origin)) && (player /= (playerAtPos board target))
 
+checkCommand :: String -> Char -> MatchData -> Board -> IO()
+checkCommand "R" player match board = main
+checkCommand "E" player match board = printWarning "Leaving game."
+checkCommand "H" player match board = putStrLn "TO DO Help aqui"
+checkCommand x player match board= do
+    clearScreen
+    printWarning "Invalid origin entry. Try again: "            -- INVALID ORIGIN
+    startTurn player match board
+
+checkCommand2 :: String -> Char -> MatchData -> Board -> IO()
+checkCommand2 "R" player match board = main
+checkCommand2 "E" player match board = printWarning "Leaving game."
+checkCommand2 "H" player match board = putStrLn "TO DO Help aqui"
+checkCommand2 "B" player match board = do
+    clearScreen
+    playerInput player match board
+checkCommand2 x player match board = do
+    clearScreen
+    printWarning "Invalid move entry. Try again: "    -- INVALID TARGET
+    startTurn player match board
+
+capWord :: [Char] -> [Char]
+capWord [] = []
+capWord (h:t) = toUpper h : capWord t
+
 playerInput :: Char -> MatchData -> Board -> IO()
 playerInput currentPlayer matchData boardData = do
     
     printBoard boardData
+    putStrLn "R - Reset; E - Exit; H - Help"
 
     printPlayerName currentPlayer matchData
     putStr "'s turn. Enter the coordinates of the piece you want to move (ex.: G2): "
@@ -229,6 +256,7 @@ playerInput currentPlayer matchData boardData = do
         then do
             clearScreen
             printBoard boardData
+            putStrLn "R - Reset; E - Exit; H - Help; B - Back"
 
             printPlayerName currentPlayer matchData
             putStr "'s turn. Enter the coordinates of where you want to move to with your piece: "
@@ -244,14 +272,11 @@ playerInput currentPlayer matchData boardData = do
                     let newMove = move boardData originPos targetPos
                     let checkedBoard = checkPromotion newMove targetPos currentPlayer
                     startTurn (oponent(currentPlayer)) matchData checkedBoard-- SUCESSFUL MOVE switches players
-                else do
-                    clearScreen
-                    printWarning "Invalid move entry. Try again: "    -- INVALID TARGET
-                    startTurn currentPlayer matchData boardData
-        else do
-            clearScreen
-            printWarning "Invalid origin entry. Try again: "            -- INVALID ORIGIN
-            startTurn currentPlayer matchData boardData
+                else checkCommand2 (capWord (inputOrigin)) currentPlayer matchData boardData
+                   
+        else checkCommand (capWord (inputOrigin)) currentPlayer matchData boardData
+
+            
 
 startMatch :: MatchData -> IO()
 startMatch matchData = startTurn '1' matchData newMediumBoard
@@ -282,7 +307,13 @@ isPieceMove origin target b player 's' = isSilverMove origin target player
 isPieceMove origin target b player 'n' = isKnightMove origin target player
 isPieceMove origin target b player 'l' = isLancerMove origin target b player
 isPieceMove origin target b player 'r' = isRookMove origin target b
-isPieceMove origin target b player 'b' = isBishopMove origin target b 
+isPieceMove origin target b player 'b' = isBishopMove origin target b
+isPieceMove origin target b player 'P' = isGoldenMove origin target player
+isPieceMove origin target b player 'S' = isGoldenMove origin target player
+isPieceMove origin target b player 'N' = isGoldenMove origin target player
+isPieceMove origin target b player 'L' = isGoldenMove origin target player
+isPieceMove origin target b player 'R' = (isRookMove origin target b || isKingMove origin target player)
+isPieceMove origin target b player 'B' = (isBishopMove origin target b || isKingMove origin target player)
 isPieceMove origin target b player piece = False
 -- Mecanicas de jogo END
 
@@ -294,8 +325,8 @@ isPawnMove origin target '2' = column(origin) == column(target) && line(origin) 
 isPawnMove origin target x = False 
 
 isKingMove:: Coordinates -> Coordinates -> Char -> Bool
-isKingMove origin target '1' = (((column(origin) - column(target)) <= 1) && ((line(origin) - (line(target)) <= 1)))
-isKingMove origin target '2' = (((column(target) - column(origin)) <= 1) && ((line(target) - (line(origin)) <= 1)))
+isKingMove origin target '1' = (abs(column(origin) - column(target)) <= 1) && (abs (line(origin) - line(target)) <= 1)
+isKingMove origin target '2' = (abs(column(target) - column(origin)) <= 1) && (abs (line(target) - line(origin)) <= 1)
 isKingMove origin target x = False 
 
 isGoldenMove :: Coordinates -> Coordinates -> Char -> Bool
@@ -324,7 +355,15 @@ isRookMove origin target board    | (line(origin) < line(target)) && column(orig
                                     | line(origin) == line(target) && (column(origin) < column(target)) = freeWay (column (origin)+1) target board 'd'
                                     | line(origin) == line(target) && (column(origin) > column(target)) = freeWay (column (origin)-1) target board 'e'
                                     | otherwise = False
-                                                                                                            
+
+isBishopMove :: Coordinates -> Coordinates -> Board -> Bool
+isBishopMove origin target board    | (line(origin) > line(target)) && (column(origin) < column(target)) = freeWay2 (line (origin)-1) (column (origin)+1) target board '1'
+                                    | (line(origin) > line(target)) && (column(origin) > column(target)) = freeWay2 (line (origin)-1) (column (origin)-1) target board '2'
+                                    | (line(origin) < line(target)) && (column(origin) > column(target)) = freeWay2 (line (origin)+1) (column (origin)-1) target board '3'
+                                    | (line(origin) < line(target)) && (column(origin) < column(target)) = freeWay2 (line (origin)+1) (column (origin)+1) target board '4'
+                                    | otherwise = False
+          
+
 
 freeWay :: Int -> Coordinates -> Board -> Char -> Bool
 freeWay index target board 'c'      | index == line(target) = True
@@ -340,15 +379,6 @@ freeWay index target board 'e'      | index == column(target) = True
                                     | playerAtPos board (coordinateToPosition((line(target), index))) /= '0' = False
                                     | otherwise = freeWay (index-1) target board 'e'
 freeWay index target board x = False
-
-
-isBishopMove :: Coordinates -> Coordinates -> Board -> Bool
-isBishopMove origin target board    | (line(origin) < line(target)) && column(origin) == column(target) = freeWay2 (line (origin)-1) (column (origin)+1) target board '1'
-                                    | (line(origin) > line(target)) && column(origin) == column(target) = freeWay2 (line (origin)-1) (column (origin)-1) target board '2'
-                                    | line(origin) == line(target) && (column(origin) < column(target)) = freeWay2 (line (origin)+1) (column (origin)-1) target board '3'
-                                    | line(origin) == line(target) && (column(origin) > column(target)) = freeWay2 (line (origin)+1) (column (origin)+1) target board '4'
-                                    | otherwise = False
-                                                                                                            
 
 freeWay2 :: Int -> Int -> Coordinates -> Board -> Char -> Bool
 freeWay2 l c target board '1'       | l == line(target) && c == column(target) = True
