@@ -8,28 +8,30 @@ import Data.Char
 import System.Console.ANSI
 
 -- types and data
-data Player = Player1 | Player2 | Empty deriving (Eq, Show)
+data Player = Player1 | Player2 | EmptyPl | Selected deriving (Eq, Show)
+data Direction = UpD | DownD | LeftD | RightD
+data Quadrant = FirstQuad | SecondQuad | ThirdQuad | FourthQuad
 type Position = (Char, Char)
-type Cell = (Char, Char)
+type Cell = (Char, Player)
 type Board = Data.Map.Map Position Cell
 type MatchData = (String, String, String)
 type Coordinates = (Int, Int)
 
-oponent :: Char -> Char
-oponent player | player == '1' = '2'
-               | otherwise = '1'
+oponent :: Player -> Player
+oponent player | player == Player1 = Player2
+               | otherwise = Player1
 
 -- Mapeamento de posicoes BEGIN
 invalidCell :: Cell
-invalidCell = ('*', '*')
+invalidCell = ('*', EmptyPl)
 
 getPiece :: Cell -> Char
-getPiece (piece, player) = piece
+getPiece (piece, _) = piece
 
-getPlayer :: Cell -> Char
-getPlayer (piece, player) = player
+getPlayer :: Cell -> Player
+getPlayer (_, player) = player
 
-playerAtPos :: Board ->  Position -> Char
+playerAtPos :: Board ->  Position -> Player
 playerAtPos board position = getPlayer $ Data.Map.findWithDefault invalidCell position board 
 
 pieceAtPos :: Board -> Position -> Char
@@ -45,24 +47,24 @@ coordinateToPosition :: Coordinates -> Position
 coordinateToPosition (l, c) = (chr(l+65), chr(c + 48))
 
 line :: Coordinates -> Int
-line (l, c) = l
+line (l, _) = l
 
 column :: Coordinates -> Int
-column (l, c) = c
+column (_, c) = c
 -- Mapeamento de posicoes END
 
 
 -- Estruturas de amrazenamento BEGIN
 newMediumBoard :: Board
-newMediumBoard = Data.Map.fromList[(('A', '0'), ('l', '2')), (('A', '1'), ('n', '2')), (('A', '2'), ('s', '2')),  (('A', '3'), ('G', '2')), (('A', '4'), ('K', '2')), (('A', '5'), ('G', '2')), (('A', '6'), ('s', '2')), (('A', '7'), ('n', '2')), (('A', '8'), ('l', '2')),
-                                   (('B', '0'), (' ', '0')), (('B', '1'), ('r', '2')), (('B', '2'), (' ', '0')),  (('B', '3'), (' ', '0')), (('B', '4'), (' ', '0')), (('B', '5'), (' ', '0')), (('B', '6'), (' ', '0')), (('B', '7'), ('b', '2')), (('B', '8'), (' ', '0')),
-                                   (('C', '0'), ('p', '2')), (('C', '1'), ('p', '2')), (('C', '2'), ('p', '2')),  (('C', '3'), ('p', '2')), (('C', '4'), ('p', '2')), (('C', '5'), ('p', '2')), (('C', '6'), ('p', '2')), (('C', '7'), ('p', '2')), (('C', '8'), ('p', '2')),
-                                   (('D', '0'), (' ', '0')), (('D', '1'), (' ', '0')), (('D', '2'), (' ', '0')),  (('D', '3'), (' ', '0')), (('D', '4'), (' ', '0')), (('D', '5'), (' ', '0')), (('D', '6'), (' ', '0')), (('D', '7'), (' ', '0')), (('D', '8'), (' ', '0')),
-                                   (('E', '0'), (' ', '0')), (('E', '1'), (' ', '0')), (('E', '2'), (' ', '0')),  (('E', '3'), (' ', '0')), (('E', '4'), (' ', '0')), (('E', '5'), (' ', '0')), (('E', '6'), (' ', '0')), (('E', '7'), (' ', '0')), (('E', '8'), (' ', '0')),
-                                   (('F', '0'), (' ', '0')), (('F', '1'), (' ', '0')), (('F', '2'), (' ', '0')),  (('F', '3'), (' ', '0')), (('F', '4'), (' ', '0')), (('F', '5'), (' ', '0')), (('F', '6'), (' ', '0')), (('F', '7'), (' ', '0')), (('F', '8'), (' ', '0')),
-                                   (('G', '0'), ('p', '1')), (('G', '1'), ('p', '1')), (('G', '2'), ('p', '1')),  (('G', '3'), ('p', '1')), (('G', '4'), ('p', '1')), (('G', '5'), ('p', '1')), (('G', '6'), ('p', '1')), (('G', '7'), ('p', '1')), (('G', '8'), ('p', '1')),
-                                   (('H', '0'), (' ', '0')), (('H', '1'), ('b', '1')), (('H', '2'), (' ', '0')),  (('H', '3'), (' ', '0')), (('H', '4'), (' ', '0')), (('H', '5'), (' ', '0')), (('H', '6'), (' ', '0')), (('H', '7'), ('r', '1')), (('H', '8'), (' ', '0')),
-                                   (('I', '0'), ('l', '1')), (('I', '1'), ('n', '1')), (('I', '2'), ('s', '1')),  (('I', '3'), ('G', '1')), (('I', '4'), ('K', '1')), (('I', '5'), ('G', '1')), (('I', '6'), ('s', '1')), (('I', '7'), ('n', '1')), (('I', '8'), ('l', '1'))]
+newMediumBoard = Data.Map.fromList[(('A', '0'), ('l', Player2)), (('A', '1'), ('n', Player2)), (('A', '2'), ('s', Player2)),  (('A', '3'), ('G', Player2)), (('A', '4'), ('K', Player2)), (('A', '5'), ('G', Player2)), (('A', '6'), ('s', Player2)), (('A', '7'), ('n', Player2)), (('A', '8'), ('l', Player2)),
+                                   (('B', '0'), (' ', EmptyPl)), (('B', '1'), ('r', Player2)), (('B', '2'), (' ', EmptyPl)),  (('B', '3'), (' ', EmptyPl)), (('B', '4'), (' ', EmptyPl)), (('B', '5'), (' ', EmptyPl)), (('B', '6'), (' ', EmptyPl)), (('B', '7'), ('b', Player2)), (('B', '8'), (' ', EmptyPl)),
+                                   (('C', '0'), ('p', Player2)), (('C', '1'), ('p', Player2)), (('C', '2'), ('p', Player2)),  (('C', '3'), ('p', Player2)), (('C', '4'), ('p', Player2)), (('C', '5'), ('p', Player2)), (('C', '6'), ('p', Player2)), (('C', '7'), ('p', Player2)), (('C', '8'), ('p', Player2)),
+                                   (('D', '0'), (' ', EmptyPl)), (('D', '1'), (' ', EmptyPl)), (('D', '2'), (' ', EmptyPl)),  (('D', '3'), (' ', EmptyPl)), (('D', '4'), (' ', EmptyPl)), (('D', '5'), (' ', EmptyPl)), (('D', '6'), (' ', EmptyPl)), (('D', '7'), (' ', EmptyPl)), (('D', '8'), (' ', EmptyPl)),
+                                   (('E', '0'), (' ', EmptyPl)), (('E', '1'), (' ', EmptyPl)), (('E', '2'), (' ', EmptyPl)),  (('E', '3'), (' ', EmptyPl)), (('E', '4'), (' ', EmptyPl)), (('E', '5'), (' ', EmptyPl)), (('E', '6'), (' ', EmptyPl)), (('E', '7'), (' ', EmptyPl)), (('E', '8'), (' ', EmptyPl)),
+                                   (('F', '0'), (' ', EmptyPl)), (('F', '1'), (' ', EmptyPl)), (('F', '2'), (' ', EmptyPl)),  (('F', '3'), (' ', EmptyPl)), (('F', '4'), (' ', EmptyPl)), (('F', '5'), (' ', EmptyPl)), (('F', '6'), (' ', EmptyPl)), (('F', '7'), (' ', EmptyPl)), (('F', '8'), (' ', EmptyPl)),
+                                   (('G', '0'), ('p', Player1)), (('G', '1'), ('p', Player1)), (('G', '2'), ('p', Player1)),  (('G', '3'), ('p', Player1)), (('G', '4'), ('p', Player1)), (('G', '5'), ('p', Player1)), (('G', '6'), ('p', Player1)), (('G', '7'), ('p', Player1)), (('G', '8'), ('p', Player1)),
+                                   (('H', '0'), (' ', EmptyPl)), (('H', '1'), ('b', Player1)), (('H', '2'), (' ', EmptyPl)),  (('H', '3'), (' ', EmptyPl)), (('H', '4'), (' ', EmptyPl)), (('H', '5'), (' ', EmptyPl)), (('H', '6'), (' ', EmptyPl)), (('H', '7'), ('r', Player1)), (('H', '8'), (' ', EmptyPl)),
+                                   (('I', '0'), ('l', Player1)), (('I', '1'), ('n', Player1)), (('I', '2'), ('s', Player1)),  (('I', '3'), ('G', Player1)), (('I', '4'), ('K', Player1)), (('I', '5'), ('G', Player1)), (('I', '6'), ('s', Player1)), (('I', '7'), ('n', Player1)), (('I', '8'), ('l', Player1))]
 
 header :: String
 header = "                                                    d8b                          d8,\n" ++ 
@@ -89,9 +91,8 @@ printBoard board = do
     putStrLn "   #######################################################"
     printLines board ['A'..'I']
 
-
 printLines :: Board -> [Char] -> IO()
-printLines board [] = do
+printLines _ [] = do
     setSGR [SetColor Foreground Vivid Magenta]
     putStrLn  "      0     1     2     3     4     5     6     7     8   "
     setSGR [Reset]
@@ -100,48 +101,60 @@ printLines board (x:xs) = do
     setSGR [SetColor Foreground Vivid Magenta]
     putStr (" " ++ [x])
     setSGR [Reset]
-    putStr " #  "
-    displayLine (lineItems board x) (linePlayers board x)
+    putStr " #"
+    displayLine (linePieces board x) (linePlayers board x)
     putStrLn "   #     #     #     #     #     #     #     #     #     #"
     putStrLn "   #######################################################"
     printLines board xs
     
 
-lineItems :: Board -> Char -> [Char]
-lineItems board line = [pieceAtPos (board) ((line, b)) | b <- ['0'..'8']] 
+linePieces :: Board -> Char -> [Char]
+linePieces board l = [pieceAtPos (board) ((l, b)) | b <- ['0'..'8']] 
 
-linePlayers :: Board -> Char -> [Char]
-linePlayers board line = [playerAtPos (board) ((line, b)) | b <- ['0'..'8']] 
+linePlayers :: Board -> Char -> [Player]
+linePlayers board l = [playerAtPos (board) ((l, b)) | b <- ['0'..'8']] 
 
 
-displayLine :: [Char] -> [Char] -> IO()
+displayLine :: [Char] -> [Player] -> IO()
 displayLine [] [] = putStr "\n"
 displayLine (x:xs) (y:ys)
-    | y == '1' = do
+    | y == Player1 = do
+        putStr "  "
         setSGR [SetColor Foreground Vivid Cyan] 
         putStr [x]
         setSGR [Reset]
-        putStr "  #  "
+        putStr "  #"
         displayLine xs ys
-    | y == '2' = do
+    | y == Player2 = do
+        putStr "  "
         setSGR [SetColor Foreground Vivid Yellow] 
         putStr [x]
         setSGR [Reset]
-        putStr "  #  "
+        putStr "  #"
+        displayLine xs ys
+    | y == Selected = do
+        setSGR [SetColor Foreground Vivid Green] 
+        putStr (" <" ++ [x] ++ ">")
+        setSGR [Reset]
+        putStr " #"
         displayLine xs ys
     | otherwise = do
-        putStr ([x] ++ "  #  ")
+        putStr ("     #") 
         displayLine xs ys
+displayLine _ _ = print "Error on printing the Line"
 
-printPlayerName :: Char -> MatchData -> IO()
-printPlayerName '1' matchData = do
+printPlayerName :: Player -> MatchData -> IO()
+printPlayerName Player1 matchData = do
+    putStr " "
     setSGR [SetColor Foreground Vivid Cyan]    
     putStr (getPlayer1Name  matchData)
     setSGR [Reset]
-printPlayerName '2' matchData = do
+printPlayerName Player2 matchData = do
+    putStr " "
     setSGR [SetColor Foreground Vivid Yellow]
     putStr (getPlayer2Name matchData)
     setSGR [Reset]
+printPlayerName _ _ = printWarning "Error on handling the current Player."
 
 printWarning :: String -> IO()
 printWarning message = do
@@ -152,7 +165,7 @@ printWarning message = do
 difficultyCode :: String -> String
 -- difficultyCode "1" = "Easy"
 difficultyCode "2" = "Medium"
-difficultyCode x = "*"
+difficultyCode _ = "*"
 
 printHeader :: IO()
 printHeader = do
@@ -172,68 +185,68 @@ getCellLine (x:xs) | xs == "" = '*'
 
 getCellColumn :: String -> Char
 getCellColumn [] = '*'
-getCellColumn (x:y:ys) | (length(y:ys)) == 0 = '*'
+getCellColumn (_:y:ys) | (length(y:ys)) == 0 = '*'
                        | (length ys) /= 0 = '*'
                        | otherwise = y
-getColumn [_] = '*'
 
 isValidInputPosition :: String -> Bool
 isValidInputPosition input
     | length(input) /= 2 = False
-    | Data.Map.member (line, column) newMediumBoard = True
+    | Data.Map.member (l, c) newMediumBoard = True
     | otherwise = False
-    where line = getCellLine input
-          column = getCellColumn input
+    where l = getCellLine input
+          c = getCellColumn input
 
 -- Tratamento da entrada END
 
 
 -- Gets BEGIN
 getPlayer1Name :: MatchData -> String
-getPlayer1Name (dif, p1, p2) = p1
+getPlayer1Name (_, p1, _) = p1
 
 getPlayer2Name :: MatchData -> String
-getPlayer2Name (dif, p1, p2) = p2
+getPlayer2Name (_, _, p2) = p2
 
 getDifficulty :: MatchData -> String
-getDifficulty (dif, p1, p2) = dif
+getDifficulty (dif, _, _) = dif
 -- Gets END
 
 
 -- Mecanicas de jogo BEGINisValidInputPosition
 move :: Board -> Position -> Position -> Board
-move board origin target = Data.Map.insert origin (' ', '0') (Data.Map.insert target (pieceAtPos board origin, playerAtPos board origin) board)
+move board origin target = Data.Map.insert origin (' ', EmptyPl) (Data.Map.insert target (pieceAtPos board origin, playerAtPos board origin) board)
 
 promotedCell :: Cell -> Cell
 promotedCell (piece, player) = ((Data.Char.toUpper (piece)), player)
 
-checkPromotion :: Board -> Position -> Char -> Board
-checkPromotion board target '1' | line(posIndexes(target)) < 3 = Data.Map.insert target (promotedCell $ cellAtPos board target) board
-                                | otherwise = board
-checkPromotion board target '2' | line(posIndexes(target)) > 5 = Data.Map.insert target (promotedCell $ cellAtPos board target) board
-                                | otherwise = board                        
+checkPromotion :: Board -> Position -> Player -> Board
+checkPromotion board target Player1 | line(posIndexes(target)) < 3 = Data.Map.insert target (promotedCell $ cellAtPos board target) board
+                                    | otherwise = board
+checkPromotion board target Player2 | line(posIndexes(target)) > 5 = Data.Map.insert target (promotedCell $ cellAtPos board target) board
+                                    | otherwise = board  
+checkPromotion board _ _ = board                
 
 
-isValidMove :: Position -> Position -> Char -> Board -> Bool
+isValidMove :: Position -> Position -> Player -> Board -> Bool
 isValidMove origin target player board = (isPieceMove (posIndexes(origin)) (posIndexes(target)) board player (pieceAtPos board origin)) && (player == (playerAtPos board origin)) && (player /= (playerAtPos board target))
 
-checkCommand :: String -> Char -> MatchData -> Board -> IO()
-checkCommand "R" player match board = main
-checkCommand "E" player match board = printWarning "Leaving game."
-checkCommand "H" player match board = putStrLn "TO DO Help aqui"
-checkCommand x player match board= do
+checkCommand :: String -> Player -> MatchData -> Board -> IO()
+checkCommand "R" _ _ _ = main
+checkCommand "E" _ _ _ = printWarning "Leaving game."
+checkCommand "H" _ _ _ = putStrLn "TO DO Help aqui"
+checkCommand _ player match board= do
     clearScreen
     printWarning "Invalid origin entry. Try again: "            -- INVALID ORIGIN
     startTurn player match board
 
-checkCommand2 :: String -> Char -> MatchData -> Board -> IO()
-checkCommand2 "R" player match board = main
-checkCommand2 "E" player match board = printWarning "Leaving game."
-checkCommand2 "H" player match board = putStrLn "TO DO Help aqui"
+checkCommand2 :: String -> Player -> MatchData -> Board -> IO()
+checkCommand2 "R" _ _ _ = main
+checkCommand2 "E" _ _ _ = printWarning "Leaving game."
+checkCommand2 "H" _ _ _ = putStrLn "TO DO Help aqui"
 checkCommand2 "B" player match board = do
     clearScreen
     playerInput player match board
-checkCommand2 x player match board = do
+checkCommand2 _ player match board = do
     clearScreen
     printWarning "Invalid move entry. Try again: "    -- INVALID TARGET
     startTurn player match board
@@ -242,11 +255,13 @@ capWord :: [Char] -> [Char]
 capWord [] = []
 capWord (h:t) = toUpper h : capWord t
 
-playerInput :: Char -> MatchData -> Board -> IO()
+playerInput :: Player -> MatchData -> Board -> IO()
 playerInput currentPlayer matchData boardData = do
-    
+   
     printBoard boardData
-    putStrLn "R - Reset; E - Exit; H - Help"
+    setSGR [SetColor Foreground Vivid Green]
+    putStrLn " <Commands: R - Reset; E - Exit; H - Help>"
+    setSGR [Reset]
 
     printPlayerName currentPlayer matchData
     putStr "'s turn. Enter the coordinates of the piece you want to move (ex.: G2): "
@@ -254,16 +269,19 @@ playerInput currentPlayer matchData boardData = do
     inputOrigin <- getLine                  -- get ORIGIN
     if isValidInputPosition inputOrigin
         then do
-            clearScreen
-            printBoard boardData
-            putStrLn "R - Reset; E - Exit; H - Help; B - Back"
+            let originPos = (getCellLine(inputOrigin), getCellColumn(inputOrigin))
+            let selectedBoard = Data.Map.insert originPos ((pieceAtPos boardData originPos), Selected) boardData
 
+            clearScreen
+            printBoard selectedBoard
+            setSGR [SetColor Foreground Vivid Green]
+            putStrLn " <Commands: R - Reset; E - Exit; H - Help; B - Back>"
+            setSGR [Reset]
+            
             printPlayerName currentPlayer matchData
             putStr "'s turn. Enter the coordinates of where you want to move to with your piece: "
 
             inputTarget <- getLine          -- get TARGET
-
-            let originPos = (getCellLine(inputOrigin), getCellColumn(inputOrigin))
             let targetPos = (getCellLine(inputTarget), getCellColumn(inputTarget))
 
             if isValidInputPosition inputTarget && isValidMove originPos targetPos currentPlayer boardData
@@ -279,9 +297,9 @@ playerInput currentPlayer matchData boardData = do
             
 
 startMatch :: MatchData -> IO()
-startMatch matchData = startTurn '1' matchData newMediumBoard
+startMatch matchData = startTurn Player1 matchData newMediumBoard
 
-startTurn :: Char -> MatchData -> Board -> IO()
+startTurn :: Player -> MatchData -> Board -> IO()
 startTurn currentPlayer matchData boardData = do
     let gameOver = False
     if gameOver
@@ -290,7 +308,7 @@ startTurn currentPlayer matchData boardData = do
                 putStr "Game Over\n"
                 -- print the winner
                 putStr "The winner is "
-                if currentPlayer == '1'
+                if currentPlayer == Player1
                     then
                         putStr $ getPlayer1Name(matchData)
                     else
@@ -299,103 +317,97 @@ startTurn currentPlayer matchData boardData = do
         else
             playerInput currentPlayer matchData boardData
 
-isPieceMove :: Coordinates -> Coordinates -> Board -> Char -> Char -> Bool
-isPieceMove origin target b player 'p' = isPawnMove origin target player
-isPieceMove origin target b player 'K' = isKingMove origin target player
-isPieceMove origin target b player 'G' = isGoldenMove origin target player
-isPieceMove origin target b player 's' = isSilverMove origin target player
-isPieceMove origin target b player 'n' = isKnightMove origin target player
+isPieceMove :: Coordinates -> Coordinates -> Board -> Player -> Char -> Bool
+isPieceMove origin target _ player 'p' = isPawnMove origin target player
+isPieceMove origin target _ _ 'K' = isKingMove origin target
+isPieceMove origin target _ player 'G' = isGoldenMove origin target player
+isPieceMove origin target _ player 's' = isSilverMove origin target player
+isPieceMove origin target _ player 'n' = isKnightMove origin target player
 isPieceMove origin target b player 'l' = isLancerMove origin target b player
-isPieceMove origin target b player 'r' = isRookMove origin target b
-isPieceMove origin target b player 'b' = isBishopMove origin target b
-isPieceMove origin target b player 'P' = isGoldenMove origin target player
-isPieceMove origin target b player 'S' = isGoldenMove origin target player
-isPieceMove origin target b player 'N' = isGoldenMove origin target player
-isPieceMove origin target b player 'L' = isGoldenMove origin target player
-isPieceMove origin target b player 'R' = (isRookMove origin target b || isKingMove origin target player)
-isPieceMove origin target b player 'B' = (isBishopMove origin target b || isKingMove origin target player)
-isPieceMove origin target b player piece = False
+isPieceMove origin target b _ 'r' = isRookMove origin target b
+isPieceMove origin target b _ 'b' = isBishopMove origin target b
+isPieceMove origin target _ player 'P' = isGoldenMove origin target player
+isPieceMove origin target _ player 'S' = isGoldenMove origin target player
+isPieceMove origin target _ player 'N' = isGoldenMove origin target player
+isPieceMove origin target _ player 'L' = isGoldenMove origin target player
+isPieceMove origin target b _ 'R' = (isRookMove origin target b || isKingMove origin target)
+isPieceMove origin target b _ 'B' = (isBishopMove origin target b || isKingMove origin target)
+isPieceMove _ _ _ _ _ = False
 -- Mecanicas de jogo END
 
 
 -- Mecanicas de cada peca BEGIN
-isPawnMove :: Coordinates -> Coordinates -> Char -> Bool
-isPawnMove origin target '1' = column(origin) == column(target) && line(origin) == (line(target) + 1)
-isPawnMove origin target '2' = column(origin) == column(target) && line(origin) == (line(target) - 1)
-isPawnMove origin target x = False 
+isPawnMove :: Coordinates -> Coordinates -> Player -> Bool
+isPawnMove origin target Player1 = column(origin) == column(target) && line(origin) == (line(target) + 1)
+isPawnMove origin target Player2 = column(origin) == column(target) && line(origin) == (line(target) - 1)
+isPawnMove _ _ _ = False 
 
-isKingMove:: Coordinates -> Coordinates -> Char -> Bool
-isKingMove origin target '1' = (abs(column(origin) - column(target)) <= 1) && (abs (line(origin) - line(target)) <= 1)
-isKingMove origin target '2' = (abs(column(target) - column(origin)) <= 1) && (abs (line(target) - line(origin)) <= 1)
-isKingMove origin target x = False 
+isKingMove:: Coordinates -> Coordinates -> Bool
+isKingMove origin target = (abs(column(origin) - column(target)) <= 1) && (abs (line(origin) - line(target)) <= 1)
 
-isGoldenMove :: Coordinates -> Coordinates -> Char -> Bool
-isGoldenMove origin target '1' = ( isKingMove origin target '1' ) && not(line(target) == (line(origin) + 1)  && (column(target) /= column(origin) ) )
-isGoldenMove origin target '2' = ( isKingMove origin target '2' ) && not(line(target) == (line(origin) - 1)  && (column(target) /= column(origin) ) )
-isGoldenMove origin target x = False 
+isGoldenMove :: Coordinates -> Coordinates -> Player -> Bool
+isGoldenMove origin target Player1 = ( isKingMove origin target ) && not(line(target) == (line(origin) + 1)  && (column(target) /= column(origin) ) )
+isGoldenMove origin target Player2 = ( isKingMove origin target ) && not(line(target) == (line(origin) - 1)  && (column(target) /= column(origin) ) )
+isGoldenMove _ _ _ = False 
 
-isSilverMove :: Coordinates -> Coordinates -> Char -> Bool
-isSilverMove origin target '1' = ( isKingMove origin target '1' ) && not(line(target) == (line(origin)) || (line(target) == line(origin)+1 ) && column(target) == column(origin) )
-isSilverMove origin target '2' = ( isKingMove origin target '2' ) && not(line(target) == (line(origin)) || (line(target) == line(origin)-1 ) && column(target) == column(origin) )
-isSilverMove origin target x = False 
+isSilverMove :: Coordinates -> Coordinates -> Player -> Bool
+isSilverMove origin target Player1 = ( isKingMove origin target ) && not(line(target) == (line(origin)) || (line(target) == line(origin)+1 ) && column(target) == column(origin) )
+isSilverMove origin target Player2 = ( isKingMove origin target ) && not(line(target) == (line(origin)) || (line(target) == line(origin)-1 ) && column(target) == column(origin) )
+isSilverMove _ _ _ = False 
 
-isKnightMove :: Coordinates -> Coordinates -> Char -> Bool
-isKnightMove origin target '1' = ( (line(origin)-2) == line(target) ) && (column(origin) == (column(target)-1) || column(origin) == (column(target)+1))
-isKnightMove origin target '2' = ( (line(origin)+2) == line(target) ) && (column(origin) == (column(target)-1) || column(origin) == (column(target)+1))
-isKnightMove origin target x = False
+isKnightMove :: Coordinates -> Coordinates -> Player -> Bool
+isKnightMove origin target Player1 = ( (line(origin)-2) == line(target) ) && (column(origin) == (column(target)-1) || column(origin) == (column(target)+1))
+isKnightMove origin target Player2 = ( (line(origin)+2) == line(target) ) && (column(origin) == (column(target)-1) || column(origin) == (column(target)+1))
+isKnightMove _ _ _ = False
 
-isLancerMove :: Coordinates -> Coordinates -> Board -> Char -> Bool
-isLancerMove origin target board '1' = freeWay (line (origin)-1) target board 'c' && column(origin) == column(target) && (line (origin) > line (target))
-isLancerMove origin target board '2' = freeWay (line (origin)+1) target board 'b' && column(origin) == column(target) && (line (origin) < line (target))
-isLancerMove origin target board x = False
+isLancerMove :: Coordinates -> Coordinates -> Board -> Player -> Bool
+isLancerMove origin target board Player1 = freeWay (line (origin)-1) target board UpD && column(origin) == column(target) && (line (origin) > line (target))
+isLancerMove origin target board Player2 = freeWay (line (origin)+1) target board DownD && column(origin) == column(target) && (line (origin) < line (target))
+isLancerMove _ _ _ _ = False
 
 isRookMove :: Coordinates -> Coordinates -> Board -> Bool
-isRookMove origin target board    | (line(origin) < line(target)) && column(origin) == column(target) = freeWay (line (origin)+1) target board 'b'
-                                    | (line(origin) > line(target)) && column(origin) == column(target) = freeWay (line (origin)-1) target board 'c'
-                                    | line(origin) == line(target) && (column(origin) < column(target)) = freeWay (column (origin)+1) target board 'd'
-                                    | line(origin) == line(target) && (column(origin) > column(target)) = freeWay (column (origin)-1) target board 'e'
+isRookMove origin target board    | (line(origin) < line(target)) && column(origin) == column(target) = freeWay (line (origin)+1) target board DownD
+                                    | (line(origin) > line(target)) && column(origin) == column(target) = freeWay (line (origin)-1) target board UpD
+                                    | line(origin) == line(target) && (column(origin) < column(target)) = freeWay (column (origin)+1) target board RightD
+                                    | line(origin) == line(target) && (column(origin) > column(target)) = freeWay (column (origin)-1) target board LeftD
                                     | otherwise = False
 
 isBishopMove :: Coordinates -> Coordinates -> Board -> Bool
-isBishopMove origin target board    | (line(origin) > line(target)) && (column(origin) < column(target)) = freeWay2 (line (origin)-1) (column (origin)+1) target board '1'
-                                    | (line(origin) > line(target)) && (column(origin) > column(target)) = freeWay2 (line (origin)-1) (column (origin)-1) target board '2'
-                                    | (line(origin) < line(target)) && (column(origin) > column(target)) = freeWay2 (line (origin)+1) (column (origin)-1) target board '3'
-                                    | (line(origin) < line(target)) && (column(origin) < column(target)) = freeWay2 (line (origin)+1) (column (origin)+1) target board '4'
+isBishopMove origin target board    | (line(origin) > line(target)) && (column(origin) < column(target)) = freeWay2 (line (origin)-1) (column (origin)+1) target board FirstQuad
+                                    | (line(origin) > line(target)) && (column(origin) > column(target)) = freeWay2 (line (origin)-1) (column (origin)-1) target board SecondQuad
+                                    | (line(origin) < line(target)) && (column(origin) > column(target)) = freeWay2 (line (origin)+1) (column (origin)-1) target board ThirdQuad
+                                    | (line(origin) < line(target)) && (column(origin) < column(target)) = freeWay2 (line (origin)+1) (column (origin)+1) target board FourthQuad
                                     | otherwise = False
           
 
 
-freeWay :: Int -> Coordinates -> Board -> Char -> Bool
-freeWay index target board 'c'      | index == line(target) = True
-                                    | playerAtPos board (coordinateToPosition((index, column(target)))) /= '0' = False
-                                    | otherwise = freeWay (index-1) target board 'c'
-freeWay index target board 'b'      | index == line(target) = True
-                                    | playerAtPos board (coordinateToPosition((index, column(target)))) /= '0' = False
-                                    | otherwise = freeWay (index+1) target board 'b'
-freeWay index target board 'd'      | index == column(target) = True
-                                    | playerAtPos board (coordinateToPosition((line(target), index))) /= '0' = False
-                                    | otherwise = freeWay (index+1) target board 'd'
-freeWay index target board 'e'      | index == column(target) = True
-                                    | playerAtPos board (coordinateToPosition((line(target), index))) /= '0' = False
-                                    | otherwise = freeWay (index-1) target board 'e'
-freeWay index target board x = False
+freeWay :: Int -> Coordinates -> Board -> Direction -> Bool
+freeWay index target board UpD      | index == line(target) = True
+                                    | playerAtPos board (coordinateToPosition((index, column(target)))) /= EmptyPl = False
+                                    | otherwise = freeWay (index-1) target board UpD
+freeWay index target board DownD    | index == line(target) = True
+                                    | playerAtPos board (coordinateToPosition((index, column(target)))) /= EmptyPl = False
+                                    | otherwise = freeWay (index+1) target board DownD
+freeWay index target board RightD   | index == column(target) = True
+                                    | playerAtPos board (coordinateToPosition((line(target), index))) /= EmptyPl = False
+                                    | otherwise = freeWay (index+1) target board RightD
+freeWay index target board LeftD    | index == column(target) = True
+                                    | playerAtPos board (coordinateToPosition((line(target), index))) /= EmptyPl = False
+                                    | otherwise = freeWay (index-1) target board LeftD
 
-freeWay2 :: Int -> Int -> Coordinates -> Board -> Char -> Bool
-freeWay2 l c target board '1'       | l == line(target) && c == column(target) = True
-                                    | playerAtPos board (coordinateToPosition((l, c))) /= '0' = False
-                                    | otherwise = freeWay2 (l-1) (c+1) target board '1'
-freeWay2 l c target board '2'       | l == line(target) && c == column(target) = True
-                                    | playerAtPos board (coordinateToPosition((l, c))) /= '0' = False
-                                    | otherwise = freeWay2 (l-1) (c-1) target board '2'
-freeWay2 l c target board '3'       | l == line(target) && c == column(target) = True
-                                    | playerAtPos board (coordinateToPosition((l, c))) /= '0' = False
-                                    | otherwise = freeWay2 (l+1) (c-1) target board '3'
-freeWay2 l c target board '4'       | l == line(target) && c == column(target) = True
-                                    | playerAtPos board (coordinateToPosition((l, c))) /= '0' = False
-                                    | otherwise = freeWay2 (l+1) (c+1) target board '4'
-freeWay2 l c target board x = False
-
-
+freeWay2 :: Int -> Int -> Coordinates -> Board -> Quadrant -> Bool
+freeWay2 l c target board FirstQuad | l == line(target) && c == column(target) = True
+                                    | playerAtPos board (coordinateToPosition((l, c))) /= EmptyPl = False
+                                    | otherwise = freeWay2 (l-1) (c+1) target board FirstQuad
+freeWay2 l c target board SecondQuad | l == line(target) && c == column(target) = True
+                                     | playerAtPos board (coordinateToPosition((l, c))) /= EmptyPl = False
+                                     | otherwise = freeWay2 (l-1) (c-1) target board SecondQuad
+freeWay2 l c target board ThirdQuad | l == line(target) && c == column(target) = True
+                                    | playerAtPos board (coordinateToPosition((l, c))) /= EmptyPl = False
+                                    | otherwise = freeWay2 (l+1) (c-1) target board ThirdQuad
+freeWay2 l c target board FourthQuad | l == line(target) && c == column(target) = True
+                                     | playerAtPos board (coordinateToPosition((l, c))) /= EmptyPl = False
+                                     | otherwise = freeWay2 (l+1) (c+1) target board FourthQuad
 
 -- Mecanicas de cada peca END
 
