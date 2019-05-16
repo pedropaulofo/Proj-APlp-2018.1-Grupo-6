@@ -35,6 +35,9 @@ playerAtPos board position = getPlayer $ Data.Map.findWithDefault invalidCell po
 pieceAtPos :: Board -> Position -> Char
 pieceAtPos board position = getPiece $ Data.Map.findWithDefault invalidCell position board
 
+cellAtPos :: Board -> Position -> Cell
+cellAtPos board pos = Data.Map.findWithDefault invalidCell pos board
+
 posIndexes :: Position -> Coordinates
 posIndexes (l, c) = (fromEnum(l) - fromEnum('A'), fromEnum(c) - fromEnum('0'))
 
@@ -168,11 +171,11 @@ getCellLine (x:xs) | xs == "" = '*'
 
 
 getCellColumn :: String -> Char
-getCellColumn "" = '*'
+getCellColumn [] = '*'
 getCellColumn (x:y:ys) | (length(y:ys)) == 0 = '*'
                        | (length ys) /= 0 = '*'
                        | otherwise = y
-
+getColumn [_] = '*'
 
 isValidInputPosition :: String -> Bool
 isValidInputPosition input
@@ -199,6 +202,16 @@ getDifficulty (dif, p1, p2) = dif
 -- Mecanicas de jogo BEGIN
 move :: Board -> Position -> Position -> Board
 move board origin target = Data.Map.insert origin (' ', '0') (Data.Map.insert target (pieceAtPos board origin, playerAtPos board origin) board)
+
+promotedCell :: Cell -> Cell
+promotedCell (piece, player) = ((Data.Char.toUpper (piece)), player)
+
+checkPromotion :: Board -> Position -> Char -> Board
+checkPromotion board target '1' | line(posIndexes(target)) < 3 = Data.Map.insert target (promotedCell $ cellAtPos board target) board
+                                | otherwise = board
+checkPromotion board target '2' | line(posIndexes(target)) > 5 = Data.Map.insert target (promotedCell $ cellAtPos board target) board
+                                | otherwise = board                        
+
 
 isValidMove :: Position -> Position -> Char -> Board -> Bool
 isValidMove origin target player board = (isPieceMove (posIndexes(origin)) (posIndexes(target)) board player (pieceAtPos board origin)) && (player == (playerAtPos board origin)) && (player /= (playerAtPos board target))
@@ -228,7 +241,9 @@ playerInput currentPlayer matchData boardData = do
             if isValidInputPosition inputTarget && isValidMove originPos targetPos currentPlayer boardData
                 then do
                     clearScreen 
-                    startTurn (oponent(currentPlayer)) matchData (move boardData originPos targetPos) -- SUCESSFUL MOVE switches players
+                    let newMove = move boardData originPos targetPos
+                    let checkedBoard = checkPromotion newMove targetPos currentPlayer
+                    startTurn (oponent(currentPlayer)) matchData checkedBoard-- SUCESSFUL MOVE switches players
                 else do
                     clearScreen
                     printWarning "Invalid move entry. Try again: "    -- INVALID TARGET
@@ -278,7 +293,7 @@ isPawnMove origin target '1' = column(origin) == column(target) && line(origin) 
 isPawnMove origin target '2' = column(origin) == column(target) && line(origin) == (line(target) - 1)
 isPawnMove origin target x = False 
 
-isKingMove:: Coordinates -> Coordinates -> Char -> Bool	
+isKingMove:: Coordinates -> Coordinates -> Char -> Bool
 isKingMove origin target '1' = (((column(origin) - column(target)) <= 1) && ((line(origin) - (line(target)) <= 1)))
 isKingMove origin target '2' = (((column(target) - column(origin)) <= 1) && ((line(target) - (line(origin)) <= 1)))
 isKingMove origin target x = False 
@@ -301,6 +316,7 @@ isKnightMove origin target x = False
 isLancerMove :: Coordinates -> Coordinates -> Board -> Char -> Bool
 isLancerMove origin target board '1' = freeWay (line (origin)-1) target board 'c' && column(origin) == column(target) && (line (origin) > line (target))
 isLancerMove origin target board '2' = freeWay (line (origin)+1) target board 'b' && column(origin) == column(target) && (line (origin) < line (target))
+isLancerMove origin target board x = False
 
 isRookMove :: Coordinates -> Coordinates -> Board -> Bool
 isRookMove origin target board    | (line(origin) < line(target)) && column(origin) == column(target) = freeWay (line (origin)+1) target board 'b'
@@ -323,6 +339,7 @@ freeWay index target board 'd'      | index == column(target) = True
 freeWay index target board 'e'      | index == column(target) = True
                                     | playerAtPos board (coordinateToPosition((line(target), index))) /= '0' = False
                                     | otherwise = freeWay (index-1) target board 'e'
+freeWay index target board x = False
 
 
 isBishopMove :: Coordinates -> Coordinates -> Board -> Bool
@@ -346,6 +363,7 @@ freeWay2 l c target board '3'       | l == line(target) && c == column(target) =
 freeWay2 l c target board '4'       | l == line(target) && c == column(target) = True
                                     | playerAtPos board (coordinateToPosition((l, c))) /= '0' = False
                                     | otherwise = freeWay2 (l+1) (c+1) target board '4'
+freeWay2 l c target board x = False
 
 
 
