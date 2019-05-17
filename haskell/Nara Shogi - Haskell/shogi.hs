@@ -11,11 +11,15 @@ import System.Console.ANSI
 data Player = Player1 | Player2 | EmptyPl | Selected deriving (Eq, Show)
 data Direction = UpD | DownD | LeftD | RightD
 data Quadrant = FirstQuad | SecondQuad | ThirdQuad | FourthQuad
+
 type Position = (Char, Char)
 type Cell = (Char, Player)
 type Board = Data.Map.Map Position Cell
 type MatchData = (String, String, String)
 type Coordinates = (Int, Int)
+type CapturedPieces = ([Char], [Char])
+
+
 
 oponent :: Player -> Player
 oponent player | player == Player1 = Player2
@@ -230,38 +234,42 @@ checkPromotion board _ _ = board
 isValidMove :: Position -> Position -> Player -> Board -> Bool
 isValidMove origin target player board = (isPieceMove (posIndexes(origin)) (posIndexes(target)) board player (pieceAtPos board origin)) && (player == (playerAtPos board origin)) && (player /= (playerAtPos board target))
 
-checkCommand :: String -> Player -> MatchData -> Board -> IO()
-checkCommand "R" _ _ _ = main
-checkCommand "E" _ _ _ = printWarning "Leaving game."
-checkCommand "H" _ _ _ = putStrLn "TO DO Help aqui"
-checkCommand _ player match board= do
+checkCommand :: String -> Player -> MatchData -> Board -> CapturedPieces -> IO()
+checkCommand "R" _ _ _ _ = main
+checkCommand "E" _ _ _ _ = printWarning "Leaving game."
+checkCommand "H" _ _ _ _ = putStrLn "TO DO Help aqui"
+checkCommand _ player match board captured = do
     clearScreen
     printWarning "Invalid origin entry. Try again: "            -- INVALID ORIGIN
-    startTurn player match board
+    startTurn player match board captured 
 
-checkCommand2 :: String -> Player -> MatchData -> Board -> IO()
-checkCommand2 "R" _ _ _ = main
-checkCommand2 "E" _ _ _ = printWarning "Leaving game."
-checkCommand2 "H" _ _ _ = putStrLn "TO DO Help aqui"
-checkCommand2 "B" player match board = do
+checkCommand2 :: String -> Player -> MatchData -> Board -> CapturedPieces -> IO()
+checkCommand2 "R" _ _ _ _ = main
+checkCommand2 "E" _ _ _ _ = printWarning "Leaving game."
+checkCommand2 "H" _ _ _ _ = putStrLn "TO DO Help aqui"
+checkCommand2 "B" player match board captured = do
     clearScreen
-    playerInput player match board
-checkCommand2 _ player match board = do
+    printWarning "Coordinates selection undone."
+    playerInput player match board captured
+
+checkCommand2 _ player match board captured = do
     clearScreen
     printWarning "Invalid move entry. Try again: "    -- INVALID TARGET
-    startTurn player match board
+    startTurn player match board captured
 
-capWord :: [Char] -> [Char]
-capWord [] = []
-capWord (h:t) = toUpper h : capWord t
+uppercase :: [Char] -> [Char]
+uppercase [] = []
+uppercase (h:t) = toUpper h : uppercase t
 
-playerInput :: Player -> MatchData -> Board -> IO()
-playerInput currentPlayer matchData boardData = do
+playerInput :: Player -> MatchData -> Board -> CapturedPieces -> IO()
+playerInput currentPlayer matchData boardData capturedPcs = do
    
     printBoard boardData
     setSGR [SetColor Foreground Vivid Green]
     putStrLn " <Commands: R - Reset; E - Exit; H - Help>"
     setSGR [Reset]
+    putStr " Enemy pieces captured: ["
+    putStrLn $ printCapturedPcs $ getCapturedPcs currentPlayer capturedPcs
 
     printPlayerName currentPlayer matchData
     putStr "'s turn. Enter the coordinates of the piece you want to move (ex.: G2): "
@@ -289,50 +297,88 @@ playerInput currentPlayer matchData boardData = do
                     clearScreen 
                     let newMove = move boardData originPos targetPos
                     let checkedBoard = checkPromotion newMove targetPos currentPlayer
-                    startTurn (oponent(currentPlayer)) matchData checkedBoard-- SUCESSFUL MOVE switches players
-                else checkCommand2 (capWord (inputOrigin)) currentPlayer matchData boardData
+                    let newCaptured = capture (pieceAtPos boardData targetPos) currentPlayer capturedPcs
+                    startTurn (oponent(currentPlayer)) matchData checkedBoard newCaptured -- SUCESSFUL MOVE switches players
+
+                else checkCommand2 (uppercase (inputOrigin)) currentPlayer matchData boardData capturedPcs
                    
-        else checkCommand (capWord (inputOrigin)) currentPlayer matchData boardData
+        else checkCommand (uppercase (inputOrigin)) currentPlayer matchData boardData capturedPcs
 
             
 
 startMatch :: MatchData -> IO()
-startMatch matchData = startTurn Player1 matchData newMediumBoard
+startMatch matchData = startTurn Player1 matchData newMediumBoard ([], [])
 
-startTurn :: Player -> MatchData -> Board -> IO()
-startTurn currentPlayer matchData boardData = do
-    let gameOver = False
+startTurn :: Player -> MatchData -> Board -> CapturedPieces -> IO()
+startTurn currentPlayer matchData boardData capturedPcs= do
+    let gameOver = isKingCaptured capturedPcs
     if gameOver
         then
             do
-                putStr "Game Over\n"
+                printBoard boardData
+                printWarning " Game Over!\n"
                 -- print the winner
-                putStr "The winner is "
-                if currentPlayer == Player1
-                    then
-                        putStr $ getPlayer1Name(matchData)
-                    else
-                        putStr $ getPlayer2Name(matchData)
-                putStr "\n"
+                putStr " The winner is "
+                printPlayerName (oponent currentPlayer) matchData
+                putStrLn "!\n Press enter to go back to the menu."
+                _ <- getLine
+                clearScreen
+                main
         else
-            playerInput currentPlayer matchData boardData
+            playerInput currentPlayer matchData boardData capturedPcs
 
 isPieceMove :: Coordinates -> Coordinates -> Board -> Player -> Char -> Bool
-isPieceMove origin target _ player 'p' = isPawnMove origin target player
-isPieceMove origin target _ _ 'K' = isKingMove origin target
-isPieceMove origin target _ player 'G' = isGoldenMove origin target player
-isPieceMove origin target _ player 's' = isSilverMove origin target player
-isPieceMove origin target _ player 'n' = isKnightMove origin target player
-isPieceMove origin target b player 'l' = isLancerMove origin target b player
-isPieceMove origin target b _ 'r' = isRookMove origin target b
-isPieceMove origin target b _ 'b' = isBishopMove origin target b
-isPieceMove origin target _ player 'P' = isGoldenMove origin target player
-isPieceMove origin target _ player 'S' = isGoldenMove origin target player
-isPieceMove origin target _ player 'N' = isGoldenMove origin target player
-isPieceMove origin target _ player 'L' = isGoldenMove origin target player
-isPieceMove origin target b _ 'R' = (isRookMove origin target b || isKingMove origin target)
-isPieceMove origin target b _ 'B' = (isBishopMove origin target b || isKingMove origin target)
+isPieceMove origin target _ player 'p'  = isPawnMove origin target player
+isPieceMove origin target _ _ 'K'       = isKingMove origin target
+isPieceMove origin target _ player 'G'  = isGoldenMove origin target player
+isPieceMove origin target _ player 's'  = isSilverMove origin target player
+isPieceMove origin target _ player 'n'  = isKnightMove origin target player
+isPieceMove origin target b player 'l'  = isLancerMove origin target b player
+isPieceMove origin target b _ 'r'       = isRookMove origin target b
+isPieceMove origin target b _ 'b'       = isBishopMove origin target b
+isPieceMove origin target _ player 'P'  = isGoldenMove origin target player
+isPieceMove origin target _ player 'S'  = isGoldenMove origin target player
+isPieceMove origin target _ player 'N'  = isGoldenMove origin target player
+isPieceMove origin target _ player 'L'  = isGoldenMove origin target player
+isPieceMove origin target b _ 'R'       = (isRookMove origin target b || isKingMove origin target)
+isPieceMove origin target b _ 'B'       = (isBishopMove origin target b || isKingMove origin target)
 isPieceMove _ _ _ _ _ = False
+
+capture :: Char -> Player -> CapturedPieces -> CapturedPieces
+capture ' ' _ captured = captured
+capture piece Player1 (cap1, cap2) = ((piece:cap1), cap2)
+capture piece Player2 (cap1, cap2) = (cap1, (piece:cap2))
+capture _ _ cap = cap
+
+removePiece :: Char -> [Char] -> [Char]
+removePiece _ []                 = []
+removePiece x (y:ys) | x == y    = removePiece x ys
+                    | otherwise = y : removePiece x ys
+                    
+useCaptured :: Char -> Player -> CapturedPieces -> CapturedPieces
+useCaptured piece Player1 (cap1, cap2) = ((removePiece piece cap1), cap2)
+useCaptured piece Player2 (cap1, cap2) = (cap1, (removePiece piece cap2))
+useCaptured _ _ cap = cap
+
+getCapturedPcs :: Player -> CapturedPieces -> [Char]
+getCapturedPcs Player1 (cap1, _) = cap1
+getCapturedPcs Player2 (_, cap2) = cap2
+getCapturedPcs _ _ = []
+
+printCapturedPcs :: [Char] -> [Char]
+printCapturedPcs [] = "]"
+printCapturedPcs (x:xs) = ([x] ++ ", " ++ printCapturedPcs xs)
+
+isKingCaptured :: CapturedPieces -> Bool
+isKingCaptured ([], []) = False
+isKingCaptured ((x:xs), []) | x == 'K' = True
+                            | otherwise = isKingCaptured (xs, [])
+isKingCaptured ([], (y:ys)) | y == 'K' = True
+                            | otherwise = isKingCaptured (ys, [])
+isKingCaptured ((x:xs), (y:ys)) | x == 'K' || y == 'K'= True
+                                | xs == [] = isKingCaptured ([], ys)
+                                | ys == [] = isKingCaptured (xs, [])
+                                | otherwise = isKingCaptured (xs, ys)
 -- Mecanicas de jogo END
 
 
