@@ -11,11 +11,12 @@ import System.Console.ANSI
 data Player = Player1 | Player2 | EmptyPl | Selected deriving (Eq, Show)
 data Direction = UpD | DownD | LeftD | RightD
 data Quadrant = FirstQuad | SecondQuad | ThirdQuad | FourthQuad
+data Difficulty = Easy | Medium deriving Show
 
 type Position = (Char, Char)
 type Cell = (Char, Player)
 type Board = Data.Map.Map Position Cell
-type MatchData = (String, String, String)
+type MatchData = (Difficulty, String, String)
 type Coordinates = (Int, Int)
 type CapturedPieces = ([Char], [Char])
 
@@ -86,36 +87,60 @@ header = "                                                    d8b               
 
 
 -- Impressao do tabuleiro BEGIN
-printBoard :: Board -> IO()
-printBoard board = do
+printBoard :: Board -> Difficulty -> IO()
+printBoard board Medium = do
     setSGR [SetColor Foreground Vivid Magenta]
     putStrLn "      0     1     2     3     4     5     6     7     8   "
     setSGR [Reset]
     putStrLn "   #######################################################"
-    printLines board ['A'..'I']
-
-printLines :: Board -> [Char] -> IO()
-printLines _ [] = do
+    printLines board ['A'..'I'] Medium
+printBoard board Easy = do
     setSGR [SetColor Foreground Vivid Magenta]
-    putStrLn  "      0     1     2     3     4     5     6     7     8   "
+    putStrLn "      0     1     2"
     setSGR [Reset]
-printLines board (x:xs) = do
+    putStrLn "   ##################"
+    printLines board ['A'..'D'] Easy
+
+printLines :: Board -> [Char] -> Difficulty -> IO()
+printLines _ [] Medium = do
+    setSGR [SetColor Foreground Vivid Magenta]
+    putStrLn "      0     1     2     3     4     5     6     7     8   "
+    setSGR [Reset]
+printLines _ [] Easy = do
+    setSGR [SetColor Foreground Vivid Magenta]
+    putStrLn "      0     1     2"
+    setSGR [Reset]
+
+printLines board (x:xs) Medium = do
     putStrLn "   #     #     #     #     #     #     #     #     #     #"
     setSGR [SetColor Foreground Vivid Magenta]
     putStr (" " ++ [x])
     setSGR [Reset]
     putStr " #"
-    displayLine (linePieces board x) (linePlayers board x)
+    displayLine (linePieces board x Medium) (linePlayers board x Medium)
     putStrLn "   #     #     #     #     #     #     #     #     #     #"
     putStrLn "   #######################################################"
-    printLines board xs
+    printLines board xs Medium
+
+printLines board (x:xs) Easy = do
+    putStrLn "   #     #     #     #"
+    setSGR [SetColor Foreground Vivid Magenta]
+    putStr (" " ++ [x])
+    setSGR [Reset]
+    putStr " #"
+    displayLine (linePieces board x Medium) (linePlayers board x Medium)
+    putStrLn "   #     #     #     #"
+    putStrLn "   ###################"
+    printLines board xs Easy
     
 
-linePieces :: Board -> Char -> [Char]
-linePieces board l = [pieceAtPos (board) ((l, b)) | b <- ['0'..'8']] 
+linePieces :: Board -> Char -> Difficulty -> [Char]
+linePieces board l Medium = [pieceAtPos (board) ((l, b)) | b <- ['0'..'8']]
+linePieces board l Easy = [pieceAtPos (board) ((l, b)) | b <- ['0'..'2']]
 
-linePlayers :: Board -> Char -> [Player]
-linePlayers board l = [playerAtPos (board) ((l, b)) | b <- ['0'..'8']] 
+linePlayers :: Board -> Char -> Difficulty -> [Player]
+linePlayers board l Medium = [playerAtPos (board) ((l, b)) | b <- ['0'..'8']]
+linePlayers board l Easy = [playerAtPos (board) ((l, b)) | b <- ['0'..'2']] 
 
 
 displayLine :: [Char] -> [Player] -> IO()
@@ -165,10 +190,12 @@ printWarning message = do
     putStrLn message
     setSGR [Reset]
 
-difficultyCode :: String -> String
--- difficultyCode "1" = "Easy"
-difficultyCode "2" = "Medium"
-difficultyCode _ = "*"
+difficultyCode :: String -> Difficulty
+-- difficultyCode "1" = Easy
+difficultyCode "2" = Medium
+difficultyCode "1" = Easy
+difficultyCode _ = Medium
+
 
 printHeader :: IO()
 printHeader = do
@@ -212,7 +239,7 @@ getPlayer1Name (_, p1, _) = p1
 getPlayer2Name :: MatchData -> String
 getPlayer2Name (_, _, p2) = p2
 
-getDifficulty :: MatchData -> String
+getDifficulty :: MatchData -> Difficulty
 getDifficulty (dif, _, _) = dif
 -- Gets END
 
@@ -274,7 +301,7 @@ uppercase (h:t) = toUpper h : uppercase t
 
 targetInput :: Position -> Player -> MatchData -> Board -> CapturedPieces -> IO()
 targetInput origin currentPlayer matchData boardData capturedPcs = do
-    printBoard $ Data.Map.insert origin ((pieceAtPos boardData origin), Selected) boardData
+    printBoard (Data.Map.insert origin ((pieceAtPos boardData origin), Selected) boardData) (getDifficulty matchData)
 
     setSGR [SetColor Foreground Vivid Green]
     putStrLn " <Commands: R - Reset; E - Exit; H - Help; B - Back>"
@@ -298,7 +325,7 @@ targetInput origin currentPlayer matchData boardData capturedPcs = do
 
 originInput :: Player -> MatchData -> Board -> CapturedPieces -> IO()
 originInput currentPlayer matchData boardData capturedPcs = do
-    printBoard boardData
+    printBoard boardData (getDifficulty matchData)
 
     setSGR [SetColor Foreground Vivid Green]
     putStrLn " <Commands: R - Reset; E - Exit; H - Help>"
@@ -336,7 +363,7 @@ handleOrigin origin currentPlayer matchData boardData capturedPcs = do
 
 dropPiece :: Position -> Player -> MatchData -> Board -> CapturedPieces -> IO()
 dropPiece pos player matchData boardData capturedPcs = do
-    printBoard (Data.Map.insert pos (' ', Selected) boardData)
+    printBoard (Data.Map.insert pos (' ', Selected) boardData) (getDifficulty matchData)
 
     setSGR [SetColor Foreground Vivid Green]
     putStrLn " <Commands: R - Reset; E - Exit; H - Help; B - Back>"
@@ -361,9 +388,8 @@ dropPiece pos player matchData boardData capturedPcs = do
             
 
 startMatch :: MatchData -> IO()
-startMatch ("Medium", p1name, p2name) = startTurn Player1 ("Medium", p1name, p2name) newMediumBoard ([], [])
-startMatch ("Easy", p1name, p2name) = startTurn Player1 ("Easy", p1name, p2name) newMediumBoard ([], []) -- TO DO substituir por easyboard
-startMatch matchData = startTurn Player1 matchData newMediumBoard ([], [])
+startMatch (Medium, p1name, p2name) = startTurn Player1 (Medium, p1name, p2name) newMediumBoard ([], [])
+startMatch (Easy, p1name, p2name) = startTurn Player1 (Easy, p1name, p2name) newMediumBoard ([], []) -- TO DO substituir por easyboard
 
 
 startTurn :: Player -> MatchData -> Board -> CapturedPieces -> IO()
@@ -372,7 +398,7 @@ startTurn currentPlayer matchData boardData capturedPcs= do
     if gameOver
         then
             do
-                printBoard boardData
+                printBoard boardData (getDifficulty matchData)
                 printWarning " Game Over!\n"
                 -- print the winner
                 putStr " The winner is "
@@ -474,7 +500,7 @@ isLancerMove origin target board Player2 = freeWay (line (origin)+1) target boar
 isLancerMove _ _ _ _ = False
 
 isRookMove :: Coordinates -> Coordinates -> Board -> Bool
-isRookMove origin target board    | (line(origin) < line(target)) && column(origin) == column(target) = freeWay (line (origin)+1) target board DownD
+isRookMove origin target board      | (line(origin) < line(target)) && column(origin) == column(target) = freeWay (line (origin)+1) target board DownD
                                     | (line(origin) > line(target)) && column(origin) == column(target) = freeWay (line (origin)-1) target board UpD
                                     | line(origin) == line(target) && (column(origin) < column(target)) = freeWay (column (origin)+1) target board RightD
                                     | line(origin) == line(target) && (column(origin) > column(target)) = freeWay (column (origin)-1) target board LeftD
@@ -530,9 +556,7 @@ gameMenu = do
 
     putStr "Select the difficulty: "
     input <- getLine
-
-    let dif = difficultyCode(input)
-    if dif == "*"
+    if input /= "1" && input /= "2"
         then do
             clearScreen
             printWarning "Invalid entry. Try again: "
@@ -543,7 +567,7 @@ gameMenu = do
 
             putStr "Difficulty chosen: "
             setSGR [SetColor Foreground Vivid Magenta] 
-            putStrLn dif
+            putStrLn $ show $ difficultyCode(input)
             setSGR [Reset]
 
             putStr "\nPlayer 1 name: "
@@ -557,7 +581,7 @@ gameMenu = do
             setSGR [Reset]
 
             clearScreen
-            startMatch (dif, player1, player2)
+            startMatch (difficultyCode(input), player1, player2)
 
 
 
