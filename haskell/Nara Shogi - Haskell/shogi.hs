@@ -20,9 +20,8 @@ type Coordinates = (Int, Int)
 type CapturedPieces = ([Char], [Char])
 
 
-
-oponent :: Player -> Player
-oponent player | player == Player1 = Player2
+opponent :: Player -> Player
+opponent player | player == Player1 = Player2
                | otherwise = Player1
 
 -- Mapeamento de posicoes BEGIN
@@ -35,7 +34,7 @@ getPiece (piece, _) = piece
 getPlayer :: Cell -> Player
 getPlayer (_, player) = player
 
-playerAtPos :: Board ->  Position -> Player
+playerAtPos :: Board -> Position -> Player
 playerAtPos board position = getPlayer $ Data.Map.findWithDefault invalidCell position board 
 
 pieceAtPos :: Board -> Position -> Char
@@ -192,6 +191,8 @@ getCellColumn [] = '*'
 getCellColumn (_:y:ys) | (length(y:ys)) == 0 = '*'
                        | (length ys) /= 0 = '*'
                        | otherwise = y
+getCellColumn x | length(x) /= 2 = '*'
+                | otherwise = getCellColumn x
 
 isValidInputPosition :: String -> Bool
 isValidInputPosition input
@@ -235,39 +236,74 @@ isValidMove :: Position -> Position -> Player -> Board -> Bool
 isValidMove origin target player board = (isPieceMove (posIndexes(origin)) (posIndexes(target)) board player (pieceAtPos board origin)) && (player == (playerAtPos board origin)) && (player /= (playerAtPos board target))
 
 checkCommand :: String -> Player -> MatchData -> Board -> CapturedPieces -> IO()
-checkCommand "R" _ _ _ _ = main
+checkCommand "R" _ _ _ _ = do
+    clearScreen
+    main
 checkCommand "E" _ _ _ _ = printWarning "Leaving game."
-checkCommand "H" _ _ _ _ = putStrLn "TO DO Help aqui"
+checkCommand "H" player match board captured = do
+    clearScreen
+    putStrLn "TO DO Help aqui"                                  -- FAZER HELP AQUI
+    startTurn player match board captured
 checkCommand _ player match board captured = do
     clearScreen
-    printWarning "Invalid origin entry. Try again: "            -- INVALID ORIGIN
+    printWarning "Invalid origin entry. Try again: "
     startTurn player match board captured 
 
 checkCommand2 :: String -> Player -> MatchData -> Board -> CapturedPieces -> IO()
-checkCommand2 "R" _ _ _ _ = main
+checkCommand2 "R" _ _ _ _ = do
+    clearScreen
+    main
 checkCommand2 "E" _ _ _ _ = printWarning "Leaving game."
-checkCommand2 "H" _ _ _ _ = putStrLn "TO DO Help aqui"
+checkCommand2 "H" player match board captured = do
+    clearScreen
+    putStrLn "TO DO Help aqui"                                  -- FAZER HELP AQUI
+    startTurn player match board captured
 checkCommand2 "B" player match board captured = do
     clearScreen
     printWarning "Coordinates selection undone."
-    playerInput player match board captured
+    originInput player match board captured
 
 checkCommand2 _ player match board captured = do
     clearScreen
-    printWarning "Invalid move entry. Try again: "    -- INVALID TARGET
-    startTurn player match board captured
+    printWarning "Invalid move entry. Try again: "
+    originInput player match board captured
 
 uppercase :: [Char] -> [Char]
 uppercase [] = []
 uppercase (h:t) = toUpper h : uppercase t
 
-playerInput :: Player -> MatchData -> Board -> CapturedPieces -> IO()
-playerInput currentPlayer matchData boardData capturedPcs = do
-   
+targetInput :: Position -> Player -> MatchData -> Board -> CapturedPieces -> IO()
+targetInput origin currentPlayer matchData boardData capturedPcs = do
+    printBoard $ Data.Map.insert origin ((pieceAtPos boardData origin), Selected) boardData
+
+    setSGR [SetColor Foreground Vivid Green]
+    putStrLn " <Commands: R - Reset; E - Exit; H - Help; B - Back>"
+    setSGR [Reset]
+    
+    printPlayerName currentPlayer matchData
+    putStr "'s turn. Enter the coordinates of where you want to move to with your piece: "
+
+    inputTarget <- getLine          -- get TARGET
+    let targetPos = (getCellLine(inputTarget), getCellColumn(inputTarget))
+
+    if isValidInputPosition inputTarget && isValidMove origin targetPos currentPlayer boardData
+        then do
+            clearScreen 
+            let newMove = move boardData origin targetPos
+            let checkedBoard = checkPromotion newMove targetPos currentPlayer
+            let newCaptured = capture (pieceAtPos boardData targetPos) currentPlayer capturedPcs
+            startTurn (opponent(currentPlayer)) matchData checkedBoard newCaptured -- SUCESSFUL MOVE switches players
+
+        else checkCommand2 (uppercase (inputTarget)) currentPlayer matchData boardData capturedPcs
+
+originInput :: Player -> MatchData -> Board -> CapturedPieces -> IO()
+originInput currentPlayer matchData boardData capturedPcs = do
     printBoard boardData
+
     setSGR [SetColor Foreground Vivid Green]
     putStrLn " <Commands: R - Reset; E - Exit; H - Help>"
     setSGR [Reset]
+
     putStr " Enemy pieces captured: ["
     putStrLn $ printCapturedPcs $ getCapturedPcs currentPlayer capturedPcs
 
@@ -276,38 +312,59 @@ playerInput currentPlayer matchData boardData capturedPcs = do
     
     inputOrigin <- getLine                  -- get ORIGIN
     if isValidInputPosition inputOrigin
-        then do
-            let originPos = (getCellLine(inputOrigin), getCellColumn(inputOrigin))
-            let selectedBoard = Data.Map.insert originPos ((pieceAtPos boardData originPos), Selected) boardData
-
-            clearScreen
-            printBoard selectedBoard
-            setSGR [SetColor Foreground Vivid Green]
-            putStrLn " <Commands: R - Reset; E - Exit; H - Help; B - Back>"
-            setSGR [Reset]
-            
-            printPlayerName currentPlayer matchData
-            putStr "'s turn. Enter the coordinates of where you want to move to with your piece: "
-
-            inputTarget <- getLine          -- get TARGET
-            let targetPos = (getCellLine(inputTarget), getCellColumn(inputTarget))
-
-            if isValidInputPosition inputTarget && isValidMove originPos targetPos currentPlayer boardData
-                then do
-                    clearScreen 
-                    let newMove = move boardData originPos targetPos
-                    let checkedBoard = checkPromotion newMove targetPos currentPlayer
-                    let newCaptured = capture (pieceAtPos boardData targetPos) currentPlayer capturedPcs
-                    startTurn (oponent(currentPlayer)) matchData checkedBoard newCaptured -- SUCESSFUL MOVE switches players
-
-                else checkCommand2 (uppercase (inputOrigin)) currentPlayer matchData boardData capturedPcs
-                   
+        then
+            handleOrigin (getCellLine(inputOrigin), getCellColumn(inputOrigin)) currentPlayer matchData boardData capturedPcs
         else checkCommand (uppercase (inputOrigin)) currentPlayer matchData boardData capturedPcs
 
+handleOrigin :: Position -> Player -> MatchData -> Board -> CapturedPieces -> IO()
+handleOrigin origin currentPlayer matchData boardData capturedPcs = do
+    let cellPlayer = playerAtPos boardData origin
+    if cellPlayer == (opponent(currentPlayer)) -- Origin pos chosen has opponent piece = INVALID CHOICE
+        then do
+            clearScreen
+            printWarning "Invalid move. The chosen position contains opponent's piece. Try again: "
+            originInput currentPlayer matchData boardData capturedPcs
+        else do
+            if cellPlayer == EmptyPl -- && getCapturedPcs currentPlayer capturedPcs /= []
+                then do
+                    clearScreen
+                    dropPiece origin currentPlayer matchData boardData capturedPcs
+                else do
+                    clearScreen
+                    targetInput origin currentPlayer matchData boardData capturedPcs
+                    
+
+dropPiece :: Position -> Player -> MatchData -> Board -> CapturedPieces -> IO()
+dropPiece pos player matchData boardData capturedPcs = do
+    printBoard (Data.Map.insert pos (' ', Selected) boardData)
+
+    setSGR [SetColor Foreground Vivid Green]
+    putStrLn " <Commands: R - Reset; E - Exit; H - Help; B - Back>"
+    setSGR [Reset]
+    putStr " Enemy pieces captured: ["
+    putStrLn $ printCapturedPcs $ getCapturedPcs player capturedPcs
+
+    printPlayerName player matchData
+    putStr "'s turn. Empty cell selected. Enter the piece you want to dropPiece on this position: "
+
+    (piece:rest) <- getLine
+    if hasCaptured piece (getCapturedPcs player capturedPcs) && rest == ""
+        then do
+            let newCaptured = useCaptured piece player capturedPcs
+            let newBoard = Data.Map.insert pos (piece, player) boardData
+            clearScreen
+            startTurn (opponent(player)) matchData newBoard newCaptured -- SUCESSFUL MOVE switches players
+        else do
+            clearScreen
+            printWarning "Player doesn't own the piece selected. Try again: "
+            originInput player matchData boardData capturedPcs
             
 
 startMatch :: MatchData -> IO()
+startMatch ("Medium", p1name, p2name) = startTurn Player1 ("Medium", p1name, p2name) newMediumBoard ([], [])
+startMatch ("Easy", p1name, p2name) = startTurn Player1 ("Easy", p1name, p2name) newMediumBoard ([], []) -- TO DO substituir por easyboard
 startMatch matchData = startTurn Player1 matchData newMediumBoard ([], [])
+
 
 startTurn :: Player -> MatchData -> Board -> CapturedPieces -> IO()
 startTurn currentPlayer matchData boardData capturedPcs= do
@@ -319,13 +376,13 @@ startTurn currentPlayer matchData boardData capturedPcs= do
                 printWarning " Game Over!\n"
                 -- print the winner
                 putStr " The winner is "
-                printPlayerName (oponent currentPlayer) matchData
+                printPlayerName (opponent currentPlayer) matchData
                 putStrLn "!\n Press enter to go back to the menu."
                 _ <- getLine
                 clearScreen
                 main
         else
-            playerInput currentPlayer matchData boardData capturedPcs
+            originInput currentPlayer matchData boardData capturedPcs
 
 isPieceMove :: Coordinates -> Coordinates -> Board -> Player -> Char -> Bool
 isPieceMove origin target _ player 'p'  = isPawnMove origin target player
@@ -346,9 +403,9 @@ isPieceMove _ _ _ _ _ = False
 
 capture :: Char -> Player -> CapturedPieces -> CapturedPieces
 capture ' ' _ captured = captured
-capture piece Player1 (cap1, cap2) = ((piece:cap1), cap2)
-capture piece Player2 (cap1, cap2) = (cap1, (piece:cap2))
-capture _ _ cap = cap
+capture piece Player1 (cap1, cap2) = (((Data.Char.toLower(piece)):cap1), cap2)
+capture piece Player2 (cap1, cap2) = (cap1, ((Data.Char.toLower(piece)):cap2))
+capture _ _ captured = captured
 
 removePiece :: Char -> [Char] -> [Char]
 removePiece _ []                 = []
@@ -364,6 +421,11 @@ getCapturedPcs :: Player -> CapturedPieces -> [Char]
 getCapturedPcs Player1 (cap1, _) = cap1
 getCapturedPcs Player2 (_, cap2) = cap2
 getCapturedPcs _ _ = []
+
+hasCaptured :: Char -> [Char]  -> Bool
+hasCaptured _ [] = False
+hasCaptured p (x:xs) | x == p = True
+                     | otherwise = hasCaptured p xs
 
 printCapturedPcs :: [Char] -> [Char]
 printCapturedPcs [] = "]"
@@ -419,14 +481,12 @@ isRookMove origin target board    | (line(origin) < line(target)) && column(orig
                                     | otherwise = False
 
 isBishopMove :: Coordinates -> Coordinates -> Board -> Bool
-isBishopMove origin target board    | (line(origin) > line(target)) && (column(origin) < column(target)) = freeWay2 (line (origin)-1) (column (origin)+1) target board FirstQuad
-                                    | (line(origin) > line(target)) && (column(origin) > column(target)) = freeWay2 (line (origin)-1) (column (origin)-1) target board SecondQuad
-                                    | (line(origin) < line(target)) && (column(origin) > column(target)) = freeWay2 (line (origin)+1) (column (origin)-1) target board ThirdQuad
-                                    | (line(origin) < line(target)) && (column(origin) < column(target)) = freeWay2 (line (origin)+1) (column (origin)+1) target board FourthQuad
+isBishopMove origin target board    | (line(origin) > line(target)) && (column(origin) < column(target)) = freeWayDiagonal (line (origin)-1) (column (origin)+1) target board FirstQuad
+                                    | (line(origin) > line(target)) && (column(origin) > column(target)) = freeWayDiagonal (line (origin)-1) (column (origin)-1) target board SecondQuad
+                                    | (line(origin) < line(target)) && (column(origin) > column(target)) = freeWayDiagonal (line (origin)+1) (column (origin)-1) target board ThirdQuad
+                                    | (line(origin) < line(target)) && (column(origin) < column(target)) = freeWayDiagonal (line (origin)+1) (column (origin)+1) target board FourthQuad
                                     | otherwise = False
           
-
-
 freeWay :: Int -> Coordinates -> Board -> Direction -> Bool
 freeWay index target board UpD      | index == line(target) = True
                                     | playerAtPos board (coordinateToPosition((index, column(target)))) /= EmptyPl = False
@@ -441,19 +501,19 @@ freeWay index target board LeftD    | index == column(target) = True
                                     | playerAtPos board (coordinateToPosition((line(target), index))) /= EmptyPl = False
                                     | otherwise = freeWay (index-1) target board LeftD
 
-freeWay2 :: Int -> Int -> Coordinates -> Board -> Quadrant -> Bool
-freeWay2 l c target board FirstQuad | l == line(target) && c == column(target) = True
+freeWayDiagonal :: Int -> Int -> Coordinates -> Board -> Quadrant -> Bool
+freeWayDiagonal l c target board FirstQuad | l == line(target) && c == column(target) = True
                                     | playerAtPos board (coordinateToPosition((l, c))) /= EmptyPl = False
-                                    | otherwise = freeWay2 (l-1) (c+1) target board FirstQuad
-freeWay2 l c target board SecondQuad | l == line(target) && c == column(target) = True
+                                    | otherwise = freeWayDiagonal (l-1) (c+1) target board FirstQuad
+freeWayDiagonal l c target board SecondQuad | l == line(target) && c == column(target) = True
                                      | playerAtPos board (coordinateToPosition((l, c))) /= EmptyPl = False
-                                     | otherwise = freeWay2 (l-1) (c-1) target board SecondQuad
-freeWay2 l c target board ThirdQuad | l == line(target) && c == column(target) = True
+                                     | otherwise = freeWayDiagonal (l-1) (c-1) target board SecondQuad
+freeWayDiagonal l c target board ThirdQuad | l == line(target) && c == column(target) = True
                                     | playerAtPos board (coordinateToPosition((l, c))) /= EmptyPl = False
-                                    | otherwise = freeWay2 (l+1) (c-1) target board ThirdQuad
-freeWay2 l c target board FourthQuad | l == line(target) && c == column(target) = True
+                                    | otherwise = freeWayDiagonal (l+1) (c-1) target board ThirdQuad
+freeWayDiagonal l c target board FourthQuad | l == line(target) && c == column(target) = True
                                      | playerAtPos board (coordinateToPosition((l, c))) /= EmptyPl = False
-                                     | otherwise = freeWay2 (l+1) (c+1) target board FourthQuad
+                                     | otherwise = freeWayDiagonal (l+1) (c+1) target board FourthQuad
 
 -- Mecanicas de cada peca END
 
