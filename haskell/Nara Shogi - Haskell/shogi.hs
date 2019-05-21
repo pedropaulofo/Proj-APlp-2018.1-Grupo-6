@@ -22,8 +22,9 @@ type CapturedPieces = ([Char], [Char])
 
 
 opponent :: Player -> Player
-opponent player | player == Player1 = Player2
-               | otherwise = Player1
+opponent Player1 = Player2
+opponent Player2 = Player1
+opponent _ = EmptyPl
 
 -- Mapeamento de posicoes BEGIN
 invalidCell :: Cell
@@ -128,7 +129,7 @@ printLines board (x:xs) Easy = do
     putStr (" " ++ [x])
     setSGR [Reset]
     putStr " #"
-    displayLine (linePieces board x Medium) (linePlayers board x Medium)
+    displayLine (linePieces board x Easy) (linePlayers board x Easy)
     putStrLn "   #     #     #     #"
     putStrLn "   ###################"
     printLines board xs Easy
@@ -332,7 +333,7 @@ originInput currentPlayer matchData boardData capturedPcs = do
     setSGR [Reset]
 
     putStr " Enemy pieces captured: ["
-    putStrLn $ printCapturedPcs $ getCapturedPcs currentPlayer capturedPcs
+    putStrLn $ showCapturedPcs $ getCapturedPcs currentPlayer capturedPcs
 
     printPlayerName currentPlayer matchData
     putStr "'s turn. Enter the coordinates of the piece you want to move (ex.: G2): "
@@ -369,7 +370,7 @@ dropPiece pos player matchData boardData capturedPcs = do
     putStrLn " <Commands: R - Reset; E - Exit; H - Help; B - Back>"
     setSGR [Reset]
     putStr " Enemy pieces captured: ["
-    putStrLn $ printCapturedPcs $ getCapturedPcs player capturedPcs
+    putStrLn $ showCapturedPcs $ getCapturedPcs player capturedPcs
 
     printPlayerName player matchData
     putStr "'s turn. Empty cell selected. Enter the piece you want to dropPiece on this position: "
@@ -453,16 +454,16 @@ hasCaptured _ [] = False
 hasCaptured p (x:xs) | x == p = True
                      | otherwise = hasCaptured p xs
 
-printCapturedPcs :: [Char] -> [Char]
-printCapturedPcs [] = "]"
-printCapturedPcs (x:xs) = ([x] ++ ", " ++ printCapturedPcs xs)
+showCapturedPcs :: [Char] -> [Char]
+showCapturedPcs [] = "]"
+showCapturedPcs (x:xs) = ([x] ++ ", " ++ showCapturedPcs xs)
 
 isKingCaptured :: CapturedPieces -> Bool
 isKingCaptured ([], []) = False
 isKingCaptured ((x:xs), []) | x == 'K' = True
                             | otherwise = isKingCaptured (xs, [])
 isKingCaptured ([], (y:ys)) | y == 'K' = True
-                            | otherwise = isKingCaptured (ys, [])
+                            | otherwise = isKingCaptured ([], ys)
 isKingCaptured ((x:xs), (y:ys)) | x == 'K' || y == 'K'= True
                                 | xs == [] = isKingCaptured ([], ys)
                                 | ys == [] = isKingCaptured (xs, [])
