@@ -284,17 +284,44 @@ checkCommand2 "R" _ _ _ _ = do
 checkCommand2 "E" _ _ _ _ = printWarning "Leaving game."
 checkCommand2 "H" player match board captured = do
     clearScreen
-    putStrLn "TO DO Help aqui"                                  -- FAZER HELP AQUI
+    putStrLn Help ""                                  -- FAZER HELP AQUI
     startTurn player match board captured
 checkCommand2 "B" player match board captured = do
     clearScreen
     printWarning "Coordinates selection undone."
     originInput player match board captured
-
 checkCommand2 _ player match board captured = do
     clearScreen
     printWarning "Invalid move entry. Try again: "
     originInput player match board captured
+
+Help :: String -> IO()
+Help "" = do
+    putStrLn "(K) A king moves one square in any direction, orthogonal or diagonal;"
+    putStrLn "(r) A rook moves any numeer of squares in an orthogonal direction;"
+    putStrLn "(b) A bishop moves any number of squares in a diagonal direction;"
+    putStrLn "(G) A gold general moves one square orthogonally, or one square diagonally forward. It cannot move diagonally backwards;"
+    putStrLn "(s) A silver general moves one square diagonally, one square straight forward, or one square diaggonally bacwards;"
+    putStrLn "(n) A Knightjumps at an angle intermediate to orthogonal and diagonal in a single move;"
+    putStrLn "(L) A lance moves only straight ahead, it cannot jump other pieces;"
+    putStrLn "(p) moves one square straight forward. It cannot retreat."
+    putStrLn "   "
+    putStrLn "When the game starts you will see the board on screen. So, the player in turn can choose his piece to move typing its coordinates. Sample:"
+    putStrLn "   1. Player one's turn;"
+    putStrLn "   2. First type: G4 <--> this coordinate points the piece that the player wants to move"
+    putStrLn "   3. The selected piece will be colored to make it easy to show what piece the player choose"
+    putStrLn "   4. Second type: F4 <--> this coordinate points where the chosen piece goes"
+    putStrLn "   5. If it is a valid move, the piece will be placed. Else, the player will be asked to type the coordinates again"
+    putStrLn "   6. Turns the player"
+    putStrLn "          "
+    putStrLn "Other commands:"
+    putStrLn "        "
+    putStrLn "(B) Undo piece selection --> Type B if you want to select another piece"
+    putStrLn "(R) Reset Game --> Type R if you want to reset the game. You can reset the game after the game starts"
+    putStrLn "(H) Help with commands --> Type H if you want to get help with the game commands. You can get help after the game starts"
+    putStrLn "(C) Close game --> Type C if you want to close the game. You can close the game anytime you type this command"
+
+
 
 uppercase :: [Char] -> [Char]
 uppercase [] = []
