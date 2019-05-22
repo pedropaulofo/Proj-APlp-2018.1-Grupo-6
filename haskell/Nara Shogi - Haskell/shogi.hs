@@ -297,6 +297,18 @@ checkCommand2 _ player match board captured = do
 
 help :: IO()
 help = do
+    putStrLn "1 - English"
+    putStrLn "2 - Portugues"
+    k <- getLine
+    help2 k
+
+help2 :: String -> IO()
+help2 "1" = helpE
+help2 "2" = helpP
+help2 option = putStrLn"Invalid entry"
+
+helpE :: IO()
+helpE = do
     putStrLn "(K) A king moves one square in any direction, orthogonal or diagonal;"
     putStrLn "(r) A rook moves any numeer of squares in an orthogonal direction;"
     putStrLn "(b) A bishop moves any number of squares in a diagonal direction;"
@@ -324,6 +336,33 @@ help = do
     _ <- getLine
     clearScreen
 
+helpP :: IO()
+helpP = do
+    putStrLn "(K) O rei pode se mover uma casa em qualquer direção, ortogonal ou diagonal;"
+    putStrLn "(r) Uma torre move qualquer numero de casa em uma direção ortogonal;"
+    putStrLn "(b) Um bispo se move qualquer número de casa em uma direção diagonal;"
+    putStrLn "(G) Um general de ouro move uma casa ortogonalmente, ou uma casa diagonalmente para a frente. Não pode se mover diagonalmente para trás;"
+    putStrLn "(s) Um general de prata move-se uma casa na diagonal, um quadrado diretamente para frente ou um quadrado diagonalmente para trás;"
+    putStrLn "(n) Um cavaleiro salta em um ângulo intermediário a ortogonal e diagonal em um único movimento;"
+    putStrLn "(L) Uma lança se move apenas para frente, não pode pular outras peças;"
+    putStrLn "(p) move uma casa para a frente. Não pode recuar."
+    putStrLn "         "
+    putStrLn " Quando o jogo começar, você verá a placa na tela. Assim, o jogador, por sua vez, pode escolher sua peça para se mover digitando suas coordenadas. Amostra:"
+    putStrLn "   1. Vez do jogador um;"
+    putStrLn "    2. Primeira entrada: G4 <-> esta coordenada aponta a peça que o jogador quer mover."
+    putStrLn "    3. A peça selecionada será colorida para facilitar a exibição da peça escolhida pelo jogador."
+    putStrLn "    4. Segunda entrada: F4 <-> esta coordenada aponta para onde a peça escolhida vai."
+    putStrLn "    5. Se for um lance válido, a peça será colocada. Senão, o jogador será requerido a digitar as coordenadas novamente."
+    putStrLn "    6. Muda o jogador da vez."
+    putStrLn ""
+    putStrLn " Outros comandos:"
+    putStrLn "            "
+    putStrLn "(B) Desfazer seleção de peças -> Digite B se você quiser selecionar outra peça"
+    putStrLn " (R) Resetar jogo -> Digite R se você quiser redefinir o jogo. Você pode reiniciar o jogo depois que o jogo começar"
+    putStrLn "(H) Ajuda com comandos -> Digite H se você quiser obter ajuda com os comandos do jogo. Você pode obter ajuda depois que o jogo começar"
+    putStrLn " (C) Feche o jogo -> Digite C se quiser fechar o jogo. Você pode fechar o jogo sempre que digitar este comando"
+    _ <- getLine
+    clearScreen
 
 
 uppercase :: [Char] -> [Char]
