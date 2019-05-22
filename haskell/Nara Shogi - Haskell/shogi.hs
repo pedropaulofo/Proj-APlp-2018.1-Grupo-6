@@ -266,7 +266,7 @@ isValidMove origin target player board = (isPieceMove (posIndexes(origin)) (posI
 checkCommand :: String -> Player -> MatchData -> Board -> CapturedPieces -> IO()
 checkCommand "R" _ _ _ _ = do
     clearScreen
-    main
+    mainMenu
 checkCommand "E" _ _ _ _ = printWarning "Leaving game."
 checkCommand "H" player match board captured = do
     clearScreen
@@ -280,7 +280,7 @@ checkCommand _ player match board captured = do
 checkCommand2 :: String -> Player -> MatchData -> Board -> CapturedPieces -> IO()
 checkCommand2 "R" _ _ _ _ = do
     clearScreen
-    main
+    mainMenu
 checkCommand2 "E" _ _ _ _ = printWarning "Leaving game."
 checkCommand2 "H" player match board captured = do
     clearScreen
@@ -407,7 +407,7 @@ startTurn currentPlayer matchData boardData capturedPcs= do
                 putStrLn "!\n Press enter to go back to the menu."
                 _ <- getLine
                 clearScreen
-                main
+                mainMenu
         else
             originInput currentPlayer matchData boardData capturedPcs
 
@@ -430,6 +430,8 @@ isPieceMove _ _ _ _ _ = False
 
 capture :: Char -> Player -> CapturedPieces -> CapturedPieces
 capture ' ' _ captured = captured
+capture 'G' Player1 (cap1, cap2) = (('G':cap1), cap2)
+capture 'G' Player2 (cap1, cap2) = (cap1, ('G': cap2))
 capture piece Player1 (cap1, cap2) = (((Data.Char.toLower(piece)):cap1), cap2)
 capture piece Player2 (cap1, cap2) = (cap1, ((Data.Char.toLower(piece)):cap2))
 capture _ _ captured = captured
@@ -460,11 +462,11 @@ showCapturedPcs (x:xs) = ([x] ++ ", " ++ showCapturedPcs xs)
 
 isKingCaptured :: CapturedPieces -> Bool
 isKingCaptured ([], []) = False
-isKingCaptured ((x:xs), []) | x == 'K' = True
+isKingCaptured ((x:xs), []) | x == 'k' = True
                             | otherwise = isKingCaptured (xs, [])
-isKingCaptured ([], (y:ys)) | y == 'K' = True
+isKingCaptured ([], (y:ys)) | y == 'k' = True
                             | otherwise = isKingCaptured ([], ys)
-isKingCaptured ((x:xs), (y:ys)) | x == 'K' || y == 'K'= True
+isKingCaptured ((x:xs), (y:ys)) | x == 'k' || y == 'k'= True
                                 | xs == [] = isKingCaptured ([], ys)
                                 | ys == [] = isKingCaptured (xs, [])
                                 | otherwise = isKingCaptured (xs, ys)
@@ -593,17 +595,17 @@ mainMenuOptions "1" = do
 mainMenuOptions "2" = do
     clearScreen
     printWarning "Nao disponivel ainda."
-    main
+    mainMenu
 mainMenuOptions "3" = printWarning "Closing game." 
 mainMenuOptions x = do
     clearScreen
     putStr x
     printWarning " is not a valid command. try again"
-    main
+    mainMenu
 --  Menus de navegacao END
 
-main :: IO()
-main = do
+mainMenu :: IO()
+mainMenu = do
     printHeader
 
     putStrLn "1 - Start Game"
@@ -613,3 +615,8 @@ main = do
     putStr "Select your Option: "
     option <- getLine 
     mainMenuOptions(option)
+
+main :: IO()
+main = do 
+    clearScreen
+    mainMenu
