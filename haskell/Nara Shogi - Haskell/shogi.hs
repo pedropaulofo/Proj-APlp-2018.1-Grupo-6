@@ -270,7 +270,7 @@ checkCommand "R" _ _ _ _ = do
 checkCommand "E" _ _ _ _ = printWarning "Leaving game."
 checkCommand "H" player match board captured = do
     clearScreen
-    putStrLn "TO DO Help aqui"                                  -- FAZER HELP AQUI
+    help                               -- FAZER HELP AQUI
     startTurn player match board captured
 checkCommand _ player match board captured = do
     clearScreen
@@ -284,7 +284,7 @@ checkCommand2 "R" _ _ _ _ = do
 checkCommand2 "E" _ _ _ _ = printWarning "Leaving game."
 checkCommand2 "H" player match board captured = do
     clearScreen
-    putStrLn Help ""                                  -- FAZER HELP AQUI
+    help                               -- FAZER HELP AQUI
     startTurn player match board captured
 checkCommand2 "B" player match board captured = do
     clearScreen
@@ -295,8 +295,8 @@ checkCommand2 _ player match board captured = do
     printWarning "Invalid move entry. Try again: "
     originInput player match board captured
 
-Help :: String -> IO()
-Help "" = do
+help :: IO()
+help = do
     putStrLn "(K) A king moves one square in any direction, orthogonal or diagonal;"
     putStrLn "(r) A rook moves any numeer of squares in an orthogonal direction;"
     putStrLn "(b) A bishop moves any number of squares in a diagonal direction;"
@@ -320,6 +320,9 @@ Help "" = do
     putStrLn "(R) Reset Game --> Type R if you want to reset the game. You can reset the game after the game starts"
     putStrLn "(H) Help with commands --> Type H if you want to get help with the game commands. You can get help after the game starts"
     putStrLn "(C) Close game --> Type C if you want to close the game. You can close the game anytime you type this command"
+    putStrLn "Press enter to return!"
+    _ <- getLine
+    clearScreen
 
 
 
@@ -621,7 +624,7 @@ mainMenuOptions "1" = do
     gameMenu
 mainMenuOptions "2" = do
     clearScreen
-    printWarning "Nao disponivel ainda."
+    help
     mainMenu
 mainMenuOptions "3" = printWarning "Closing game." 
 mainMenuOptions x = do
