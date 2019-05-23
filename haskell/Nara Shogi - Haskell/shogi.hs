@@ -78,19 +78,19 @@ newMediumBoard = Data.Map.fromList[(('A', '0'), ('l', Player2)), (('A', '1'), ('
                                    (('I', '0'), ('l', Player1)), (('I', '1'), ('n', Player1)), (('I', '2'), ('s', Player1)),  (('I', '3'), ('G', Player1)), (('I', '4'), ('K', Player1)), (('I', '5'), ('G', Player1)), (('I', '6'), ('s', Player1)), (('I', '7'), ('n', Player1)), (('I', '8'), ('l', Player1))]
 
 newHardBoard :: Board
-newHardBoard = Data.Map.fromList[   (('A', '0'), ('l', Player2)), (('A', '1'), ('n', Player2)), (('A', '2'), ('i', Player2)), (('A', '3'), ('c', Player2)), (('A', '4'), ('s', Player2)), (('A', '5'), ('G', Player2)), (('A', '6'), ('K', Player2)), (('A', '7'), ('G', Player2)), (('A', '8'), ('s', Player2)), (('A', '9'), ('c', Player2)), (('A', 'Z'), ('i', Player2)), (('A', 'Y'), ('n', Player2)), (('A', 'X'), ('l', Player2)), 
-                                    (('B', '0'), ('f', Player2)), (('B', '1'), ('d', Player2)), (('B', '2'), (' ', EmptyPl)), (('B', '3'), (' ', EmptyPl)), (('B', '4'), ('t', Player2)), (('B', '5'), (' ', EmptyPl)), (('B', '6'), ('m', Player2)), (('B', '7'), (' ', EmptyPl)), (('B', '8'), ('t', Player2)), (('B', '9'), (' ', EmptyPl)), (('B', 'Z'), (' ', EmptyPl)), (('B', 'Y'), ('d', Player2)), (('B', 'X'), ('f', Player2)), 
-                                    (('C', '0'), ('p', Player2)), (('C', '1'), ('p', Player2)), (('C', '2'), ('p', Player2)), (('C', '3'), ('p', Player2)), (('C', '4'), ('p', Player2)), (('C', '5'), ('p', Player2)), (('C', '6'), ('p', Player2)), (('C', '7'), ('p', Player2)), (('C', '8'), ('p', Player2)), (('C', '9'), ('p', Player2)), (('C', 'Z'), ('p', Player2)), (('C', 'Y'), ('p', Player2)), (('C', 'X'), ('p', Player2)), 
-                                    (('D', '0'), (' ', EmptyPl)), (('D', '1'), (' ', EmptyPl)), (('D', '2'), (' ', EmptyPl)), (('D', '3'), (' ', EmptyPl)), (('D', '4'), (' ', EmptyPl)), (('D', '5'), (' ', EmptyPl)), (('D', '6'), ('w', Player2)), (('D', '7'), (' ', EmptyPl)), (('D', '8'), (' ', EmptyPl)), (('D', '9'), (' ', EmptyPl)), (('D', 'Z'), (' ', EmptyPl)), (('D', 'Y'), (' ', EmptyPl)), (('D', 'X'), (' ', EmptyPl)), 
-                                    (('E', '0'), (' ', EmptyPl)), (('E', '1'), (' ', EmptyPl)), (('E', '2'), (' ', EmptyPl)), (('E', '3'), (' ', EmptyPl)), (('E', '4'), (' ', EmptyPl)), (('E', '5'), (' ', EmptyPl)), (('E', '6'), (' ', EmptyPl)), (('E', '7'), (' ', EmptyPl)), (('E', '8'), (' ', EmptyPl)), (('E', '9'), (' ', EmptyPl)), (('E', 'Z'), (' ', EmptyPl)), (('E', 'Y'), (' ', EmptyPl)), (('E', 'X'), (' ', EmptyPl)), 
-                                    (('F', '0'), (' ', EmptyPl)), (('F', '1'), (' ', EmptyPl)), (('F', '2'), (' ', EmptyPl)), (('F', '3'), (' ', EmptyPl)), (('F', '4'), (' ', EmptyPl)), (('F', '5'), (' ', EmptyPl)), (('F', '6'), (' ', EmptyPl)), (('F', '7'), (' ', EmptyPl)), (('F', '8'), (' ', EmptyPl)), (('F', '9'), (' ', EmptyPl)), (('F', 'Z'), (' ', EmptyPl)), (('F', 'Y'), (' ', EmptyPl)), (('F', 'X'), (' ', EmptyPl)), 
-                                    (('G', '0'), (' ', EmptyPl)), (('G', '1'), (' ', EmptyPl)), (('G', '2'), (' ', EmptyPl)), (('G', '3'), (' ', EmptyPl)), (('G', '4'), (' ', EmptyPl)), (('G', '5'), (' ', EmptyPl)), (('G', '6'), (' ', EmptyPl)), (('G', '7'), (' ', EmptyPl)), (('G', '8'), (' ', EmptyPl)), (('G', '9'), (' ', EmptyPl)), (('G', 'Z'), (' ', EmptyPl)), (('G', 'Y'), (' ', EmptyPl)), (('G', 'X'), (' ', EmptyPl)), 
-                                    (('H', '0'), (' ', EmptyPl)), (('H', '1'), (' ', EmptyPl)), (('H', '2'), (' ', EmptyPl)), (('H', '3'), (' ', EmptyPl)), (('H', '4'), (' ', EmptyPl)), (('H', '5'), (' ', EmptyPl)), (('H', '6'), (' ', EmptyPl)), (('H', '7'), (' ', EmptyPl)), (('H', '8'), (' ', EmptyPl)), (('H', '9'), (' ', EmptyPl)), (('H', 'Z'), (' ', EmptyPl)), (('H', 'Y'), (' ', EmptyPl)), (('H', 'X'), (' ', EmptyPl)), 
-                                    (('I', '0'), (' ', EmptyPl)), (('I', '1'), (' ', EmptyPl)), (('I', '2'), (' ', EmptyPl)), (('I', '3'), (' ', EmptyPl)), (('I', '4'), (' ', EmptyPl)), (('I', '5'), (' ', EmptyPl)), (('I', '6'), (' ', EmptyPl)), (('I', '7'), (' ', EmptyPl)), (('I', '8'), (' ', EmptyPl)), (('I', '9'), (' ', EmptyPl)), (('I', 'Z'), (' ', EmptyPl)), (('I', 'Y'), (' ', EmptyPl)), (('I', 'X'), (' ', EmptyPl)), 
-                                    (('J', '0'), (' ', EmptyPl)), (('J', '1'), (' ', EmptyPl)), (('J', '2'), (' ', EmptyPl)), (('J', '3'), (' ', EmptyPl)), (('J', '4'), (' ', EmptyPl)), (('J', '5'), (' ', EmptyPl)), (('J', '6'), ('w', Player1)), (('J', '7'), (' ', EmptyPl)), (('J', '8'), (' ', EmptyPl)), (('J', '9'), (' ', EmptyPl)), (('J', 'Z'), (' ', EmptyPl)), (('J', 'Y'), (' ', EmptyPl)), (('J', 'X'), (' ', EmptyPl)), 
-                                    (('K', '0'), ('p', Player1)), (('K', '1'), ('p', Player1)), (('K', '2'), ('p', Player1)), (('K', '3'), ('p', Player1)), (('K', '4'), ('p', Player1)), (('K', '5'), ('p', Player1)), (('K', '6'), ('p', Player1)), (('K', '7'), ('p', Player1)), (('K', '8'), ('p', Player1)), (('K', '9'), ('p', Player1)), (('K', 'Z'), ('p', Player1)), (('K', 'Y'), ('p', Player1)), (('K', 'X'), ('p', Player1)), 
-                                    (('L', '0'), ('f', Player1)), (('L', '1'), ('d', Player1)), (('L', '2'), (' ', EmptyPl)), (('L', '3'), (' ', EmptyPl)), (('L', '4'), ('t', Player1)), (('L', '5'), (' ', EmptyPl)), (('L', '6'), ('m', Player1)), (('L', '7'), (' ', EmptyPl)), (('L', '8'), ('t', Player1)), (('L', '9'), (' ', EmptyPl)), (('L', 'Z'), (' ', EmptyPl)), (('L', 'Y'), ('d', Player1)), (('L', 'X'), ('f', Player1)), 
-                                    (('M', '0'), ('l', Player1)), (('M', '1'), ('n', Player1)), (('M', '2'), ('i', Player1)), (('M', '3'), ('c', Player1)), (('M', '4'), ('s', Player1)), (('M', '5'), ('G', Player1)), (('M', '6'), ('K', Player1)), (('M', '7'), ('G', Player1)), (('M', '8'), ('s', Player1)), (('M', '9'), ('c', Player1)), (('M', 'Z'), ('i', Player1)), (('M', 'Y'), ('n', Player1)), (('M', 'X'), ('l', Player1))]
+newHardBoard = Data.Map.fromList[   (('A', '0'), ('l', Player2)), (('A', '1'), ('n', Player2)), (('A', '2'), ('i', Player2)), (('A', '3'), ('c', Player2)), (('A', '4'), ('s', Player2)), (('A', '5'), ('G', Player2)), (('A', '6'), ('K', Player2)), (('A', '7'), ('G', Player2)), (('A', '8'), ('s', Player2)), (('A', '9'), ('c', Player2)), (('A', 'X'), ('i', Player2)), (('A', 'Y'), ('n', Player2)), (('A', 'Z'), ('l', Player2)), 
+                                    (('B', '0'), ('f', Player2)), (('B', '1'), ('d', Player2)), (('B', '2'), (' ', EmptyPl)), (('B', '3'), (' ', EmptyPl)), (('B', '4'), ('t', Player2)), (('B', '5'), (' ', EmptyPl)), (('B', '6'), ('m', Player2)), (('B', '7'), (' ', EmptyPl)), (('B', '8'), ('t', Player2)), (('B', '9'), (' ', EmptyPl)), (('B', 'X'), (' ', EmptyPl)), (('B', 'Y'), ('d', Player2)), (('B', 'Z'), ('f', Player2)), 
+                                    (('C', '0'), ('p', Player2)), (('C', '1'), ('p', Player2)), (('C', '2'), ('p', Player2)), (('C', '3'), ('p', Player2)), (('C', '4'), ('p', Player2)), (('C', '5'), ('p', Player2)), (('C', '6'), ('p', Player2)), (('C', '7'), ('p', Player2)), (('C', '8'), ('p', Player2)), (('C', '9'), ('p', Player2)), (('C', 'X'), ('p', Player2)), (('C', 'Y'), ('p', Player2)), (('C', 'Z'), ('p', Player2)), 
+                                    (('D', '0'), (' ', EmptyPl)), (('D', '1'), (' ', EmptyPl)), (('D', '2'), (' ', EmptyPl)), (('D', '3'), (' ', EmptyPl)), (('D', '4'), (' ', EmptyPl)), (('D', '5'), (' ', EmptyPl)), (('D', '6'), ('w', Player2)), (('D', '7'), (' ', EmptyPl)), (('D', '8'), (' ', EmptyPl)), (('D', '9'), (' ', EmptyPl)), (('D', 'X'), (' ', EmptyPl)), (('D', 'Y'), (' ', EmptyPl)), (('D', 'Z'), (' ', EmptyPl)), 
+                                    (('E', '0'), (' ', EmptyPl)), (('E', '1'), (' ', EmptyPl)), (('E', '2'), (' ', EmptyPl)), (('E', '3'), (' ', EmptyPl)), (('E', '4'), (' ', EmptyPl)), (('E', '5'), (' ', EmptyPl)), (('E', '6'), (' ', EmptyPl)), (('E', '7'), (' ', EmptyPl)), (('E', '8'), (' ', EmptyPl)), (('E', '9'), (' ', EmptyPl)), (('E', 'X'), (' ', EmptyPl)), (('E', 'Y'), (' ', EmptyPl)), (('E', 'Z'), (' ', EmptyPl)), 
+                                    (('F', '0'), (' ', EmptyPl)), (('F', '1'), (' ', EmptyPl)), (('F', '2'), (' ', EmptyPl)), (('F', '3'), (' ', EmptyPl)), (('F', '4'), (' ', EmptyPl)), (('F', '5'), (' ', EmptyPl)), (('F', '6'), (' ', EmptyPl)), (('F', '7'), (' ', EmptyPl)), (('F', '8'), (' ', EmptyPl)), (('F', '9'), (' ', EmptyPl)), (('F', 'X'), (' ', EmptyPl)), (('F', 'Y'), (' ', EmptyPl)), (('F', 'Z'), (' ', EmptyPl)), 
+                                    (('G', '0'), (' ', EmptyPl)), (('G', '1'), (' ', EmptyPl)), (('G', '2'), (' ', EmptyPl)), (('G', '3'), (' ', EmptyPl)), (('G', '4'), (' ', EmptyPl)), (('G', '5'), (' ', EmptyPl)), (('G', '6'), (' ', EmptyPl)), (('G', '7'), (' ', EmptyPl)), (('G', '8'), (' ', EmptyPl)), (('G', '9'), (' ', EmptyPl)), (('G', 'X'), (' ', EmptyPl)), (('G', 'Y'), (' ', EmptyPl)), (('G', 'Z'), (' ', EmptyPl)), 
+                                    (('H', '0'), (' ', EmptyPl)), (('H', '1'), (' ', EmptyPl)), (('H', '2'), (' ', EmptyPl)), (('H', '3'), (' ', EmptyPl)), (('H', '4'), (' ', EmptyPl)), (('H', '5'), (' ', EmptyPl)), (('H', '6'), (' ', EmptyPl)), (('H', '7'), (' ', EmptyPl)), (('H', '8'), (' ', EmptyPl)), (('H', '9'), (' ', EmptyPl)), (('H', 'X'), (' ', EmptyPl)), (('H', 'Y'), (' ', EmptyPl)), (('H', 'Z'), (' ', EmptyPl)), 
+                                    (('I', '0'), (' ', EmptyPl)), (('I', '1'), (' ', EmptyPl)), (('I', '2'), (' ', EmptyPl)), (('I', '3'), (' ', EmptyPl)), (('I', '4'), (' ', EmptyPl)), (('I', '5'), (' ', EmptyPl)), (('I', '6'), (' ', EmptyPl)), (('I', '7'), (' ', EmptyPl)), (('I', '8'), (' ', EmptyPl)), (('I', '9'), (' ', EmptyPl)), (('I', 'X'), (' ', EmptyPl)), (('I', 'Y'), (' ', EmptyPl)), (('I', 'Z'), (' ', EmptyPl)), 
+                                    (('J', '0'), (' ', EmptyPl)), (('J', '1'), (' ', EmptyPl)), (('J', '2'), (' ', EmptyPl)), (('J', '3'), (' ', EmptyPl)), (('J', '4'), (' ', EmptyPl)), (('J', '5'), (' ', EmptyPl)), (('J', '6'), ('w', Player1)), (('J', '7'), (' ', EmptyPl)), (('J', '8'), (' ', EmptyPl)), (('J', '9'), (' ', EmptyPl)), (('J', 'X'), (' ', EmptyPl)), (('J', 'Y'), (' ', EmptyPl)), (('J', 'Z'), (' ', EmptyPl)), 
+                                    (('K', '0'), ('p', Player1)), (('K', '1'), ('p', Player1)), (('K', '2'), ('p', Player1)), (('K', '3'), ('p', Player1)), (('K', '4'), ('p', Player1)), (('K', '5'), ('p', Player1)), (('K', '6'), ('p', Player1)), (('K', '7'), ('p', Player1)), (('K', '8'), ('p', Player1)), (('K', '9'), ('p', Player1)), (('K', 'X'), ('p', Player1)), (('K', 'Y'), ('p', Player1)), (('K', 'Z'), ('p', Player1)), 
+                                    (('L', '0'), ('f', Player1)), (('L', '1'), ('d', Player1)), (('L', '2'), (' ', EmptyPl)), (('L', '3'), (' ', EmptyPl)), (('L', '4'), ('t', Player1)), (('L', '5'), (' ', EmptyPl)), (('L', '6'), ('m', Player1)), (('L', '7'), (' ', EmptyPl)), (('L', '8'), ('t', Player1)), (('L', '9'), (' ', EmptyPl)), (('L', 'X'), (' ', EmptyPl)), (('L', 'Y'), ('d', Player1)), (('L', 'Z'), ('f', Player1)), 
+                                    (('M', '0'), ('l', Player1)), (('M', '1'), ('n', Player1)), (('M', '2'), ('i', Player1)), (('M', '3'), ('c', Player1)), (('M', '4'), ('s', Player1)), (('M', '5'), ('G', Player1)), (('M', '6'), ('K', Player1)), (('M', '7'), ('G', Player1)), (('M', '8'), ('s', Player1)), (('M', '9'), ('c', Player1)), (('M', 'X'), ('i', Player1)), (('M', 'Y'), ('n', Player1)), (('M', 'Z'), ('l', Player1))]
 
 header :: String
 header = "                                                    d8b                          d8,\n" ++ 
@@ -124,9 +124,9 @@ printBoard board Easy = do
     printLines board ['A'..'D'] Easy
 printBoard board Hard = do
     setSGR [SetColor Foreground Vivid Magenta]
-    putStrLn "      0     1     2     3     4     5     6     7     8     9     X     Y     Z     "
+    putStrLn "      0     1     2     3     4     5     6     7     8     9     X     Y     Z"
     setSGR [Reset]
-    putStrLn "   #################################################################################"
+    putStrLn "   ###############################################################################"
     printLines board ['A'..'M'] Hard
 
 printLines :: Board -> [Char] -> Difficulty -> IO()
@@ -137,6 +137,10 @@ printLines _ [] Medium = do
 printLines _ [] Easy = do
     setSGR [SetColor Foreground Vivid Magenta]
     putStrLn "      0     1     2"
+    setSGR [Reset]
+printLines _ [] Hard = do
+    setSGR [SetColor Foreground Vivid Magenta]
+    putStrLn "      0     1     2     3     4     5     6     7     8     9     X     Y     Z"
     setSGR [Reset]
 
 printLines board (x:xs) Medium = do
@@ -162,26 +166,26 @@ printLines board (x:xs) Easy = do
     printLines board xs Easy
 
 printLines board (x:xs) Hard = do
-    putStrLn "   #     #     #     #     #     #     #     #     #     #     #     #     #"
+    putStrLn "   #     #     #     #     #     #     #     #     #     #     #     #     #     #"
     setSGR [SetColor Foreground Vivid Magenta]
     putStr (" " ++ [x])
     setSGR [Reset]
     putStr " #"
     displayLine (linePieces board x Hard) (linePlayers board x Hard)
-    putStrLn "   #     #     #     #     #     #     #     #     #     #     #     #     #"
-    putStrLn "   #################################################################################"
+    putStrLn "   #     #     #     #     #     #     #     #     #     #     #     #     #     #"
+    putStrLn "   ###############################################################################"
     printLines board xs Hard
     
 
 linePieces :: Board -> Char -> Difficulty -> [Char]
 linePieces board l Medium = [pieceAtPos (board) ((l, b)) | b <- ['0'..'8']]
 linePieces board l Easy = [pieceAtPos (board) ((l, b)) | b <- ['0'..'2']]
-linePieces board l Hard = [pieceAtPos (board) ((l, b)) | b <- ['0'..'9'] ++ ['Z', 'Y', 'X']]
+linePieces board l Hard = [pieceAtPos (board) ((l, b)) | b <- ['0'..'9'] ++ ['X', 'Y', 'Z']]
 
 linePlayers :: Board -> Char -> Difficulty -> [Player]
 linePlayers board l Medium = [playerAtPos (board) ((l, b)) | b <- ['0'..'8']]
 linePlayers board l Easy = [playerAtPos (board) ((l, b)) | b <- ['0'..'2']] 
-linePlayers board l Hard = [playerAtPos (board) ((l, b)) | b <- ['0'..'9'] ++ ['Z', 'Y', 'X']]
+linePlayers board l Hard = [playerAtPos (board) ((l, b)) | b <- ['0'..'9'] ++ ['X', 'Y', 'Z']]
 
 
 displayLine :: [Char] -> [Player] -> IO()
@@ -258,7 +262,7 @@ getCellColumn :: String -> Char
 getCellColumn [] = '*'
 getCellColumn (_:y:ys) | (length(y:ys)) == 0 = '*'
                        | (length ys) /= 0 = '*'
-                       | otherwise = y
+                       | otherwise = Data.Char.toUpper y
 getCellColumn x | length(x) /= 2 = '*'
                 | otherwise = getCellColumn x
 
@@ -315,13 +319,13 @@ isValidMove origin target player board Easy = (isKingMove (posIndexes(origin)) (
 isValidMove origin target player board _ = (isPieceMove (posIndexes(origin)) (posIndexes(target)) board player (pieceAtPos board origin)) && (player == (playerAtPos board origin)) && (player /= (playerAtPos board target))
 
 checkCommand :: String -> Player -> MatchData -> Board -> CapturedPieces -> IO()
-checkCommand "R" _ _ _ _ = do
+checkCommand "R" _ matchData _ _ = do
     clearScreen
-    mainMenu
-checkCommand "E" _ _ _ _ = printWarning "Leaving game."
+    startMatch matchData
+checkCommand "E" _ _ _ _ = main
 checkCommand "H" player match board captured = do
     clearScreen
-    help                               -- FAZER HELP AQUI
+    help
     startTurn player match board captured
 checkCommand _ player match board captured = do
     clearScreen
@@ -329,13 +333,13 @@ checkCommand _ player match board captured = do
     startTurn player match board captured 
 
 checkCommand2 :: String -> Player -> MatchData -> Board -> CapturedPieces -> IO()
-checkCommand2 "R" _ _ _ _ = do
+checkCommand2 "R" _ matchData _ _ = do
     clearScreen
-    mainMenu
-checkCommand2 "E" _ _ _ _ = printWarning "Leaving game."
+    startMatch matchData
+checkCommand2 "E" _ _ _ _ = main
 checkCommand2 "H" player match board captured = do
     clearScreen
-    help                               -- FAZER HELP AQUI
+    help
     startTurn player match board captured
 checkCommand2 "B" player match board captured = do
     clearScreen
@@ -356,7 +360,7 @@ help = do
 help2 :: String -> IO()
 help2 "1" = helpE
 help2 "2" = helpP
-help2 option = putStrLn"Invalid entry"
+help2 _ = putStrLn "Invalid entry"
 
 helpE :: IO()
 helpE = do
@@ -428,7 +432,7 @@ targetInput origin currentPlayer matchData boardData capturedPcs = do
     printBoard (Data.Map.insert origin ((pieceAtPos boardData origin), Selected) boardData) (getDifficulty matchData)
 
     setSGR [SetColor Foreground Vivid Green]
-    putStrLn " <Commands: R - Reset; E - Exit; H - Help; B - Back>"
+    putStrLn " <Commands: R -  match; E - Exit to menu; H - Help; B - Undo selection>"
     setSGR [Reset]
     
     printPlayerName currentPlayer matchData
@@ -452,7 +456,7 @@ originInput currentPlayer matchData boardData capturedPcs = do
     printBoard boardData (getDifficulty matchData)
 
     setSGR [SetColor Foreground Vivid Green]
-    putStrLn " <Commands: R - Reset; E - Exit; H - Help>"
+    putStrLn " <Commands: R - Reset match; E - Exit to menu; H - Help>"
     setSGR [Reset]
 
     putStr " Enemy pieces captured: ["
@@ -490,7 +494,7 @@ dropPiece pos player matchData boardData capturedPcs = do
     printBoard (Data.Map.insert pos (' ', Selected) boardData) (getDifficulty matchData)
 
     setSGR [SetColor Foreground Vivid Green]
-    putStrLn " <Commands: R - Reset; E - Exit; H - Help; B - Back>"
+    putStrLn " <Commands: R - Reset match; E - Exit to menu; H - Help; B - Undo selection>"
     setSGR [Reset]
     putStr " Enemy pieces captured: ["
     putStrLn $ showCapturedPcs $ getCapturedPcs player capturedPcs
@@ -537,21 +541,42 @@ startTurn currentPlayer matchData boardData capturedPcs= do
             originInput currentPlayer matchData boardData capturedPcs
 
 isPieceMove :: Coordinates -> Coordinates -> Board -> Player -> Char -> Bool
+-- EASY and MEDIUM
 isPieceMove origin target _ player 'p'  = isPawnMove origin target player
 isPieceMove origin target _ _ 'K'       = isKingMove origin target
 isPieceMove origin target _ player 'G'  = isGoldenMove origin target player
 isPieceMove origin target _ player 's'  = isSilverMove origin target player
 isPieceMove origin target _ player 'n'  = isKnightMove origin target player
-isPieceMove origin target b player 'l'  = isLancerMove origin target b player
-isPieceMove origin target b _ 'r'       = isRookMove origin target b
-isPieceMove origin target b _ 'b'       = isBishopMove origin target b
+isPieceMove origin target board player 'l'  = isLancerMove origin target board player
+isPieceMove origin target board _ 'r'       = isRookMove origin target board
+isPieceMove origin target board _ 'b'       = isBishopMove origin target board
+-- promoted
 isPieceMove origin target _ player 'P'  = isGoldenMove origin target player
 isPieceMove origin target _ player 'S'  = isGoldenMove origin target player
 isPieceMove origin target _ player 'N'  = isGoldenMove origin target player
 isPieceMove origin target _ player 'L'  = isGoldenMove origin target player
-isPieceMove origin target b _ 'R'       = (isRookMove origin target b || isKingMove origin target)
-isPieceMove origin target b _ 'B'       = (isBishopMove origin target b || isKingMove origin target)
+isPieceMove origin target board _ 'R'       = (isRookMove origin target board || isKingMove origin target)
+isPieceMove origin target board _ 'B'       = (isBishopMove origin target board || isKingMove origin target)
+-- HARD
+isPieceMove origin target _ player 'c'  = isCopperMove origin target player
+isPieceMove origin target _ player 'i'  = isIronMove origin target player
+isPieceMove origin target board _ 'd'   = isDragonMove origin target board
+isPieceMove origin target board _ 'f'   = isChariotMove origin target board
+isPieceMove origin target _ _ 'w'       = isGoBetweenMove origin target
+isPieceMove origin target board _ 'm'   = isSideMove origin target board
+isPieceMove origin target _ _ 't'       = isTigerMove origin target
+-- promoted
+isPieceMove origin target _ player 'C'  = isGoldenMove origin target player
+isPieceMove origin target _ player 'I'  = isGoldenMove origin target player
+isPieceMove origin target board _ 'D'   = (isDragonMove origin target board || isKingMove origin target) 
+isPieceMove origin target _ player 'F'  = isGoldenMove origin target player
+isPieceMove origin target _ player 'W'  = isGoldenMove origin target player
+isPieceMove origin target _ player 'M'  = isGoldenMove origin target player
+isPieceMove origin target _ player 'T'  = isGoldenMove origin target player
+--
 isPieceMove _ _ _ _ _ = False
+
+
 
 capture :: Char -> Player -> CapturedPieces -> CapturedPieces
 capture ' ' _ captured = captured
@@ -672,25 +697,59 @@ freeWayDiagonal l c target board FourthQuad | l == line(target) && c == column(t
 -- Mecanicas de cada peca END
 
 
+-- PecasHard BEGIN
+
+
+isCopperMove :: Coordinates -> Coordinates -> Player -> Bool
+isCopperMove origin target Player1 = ( isKingMove origin target ) && not( column(target) /= (column(origin)) && (line(target) == line(origin)-1) )
+isCopperMove origin target Player2 = ( isKingMove origin target ) && not( column(target) /= (column(origin)) && (line(target) == line(origin)+1) )
+isCopperMove _ _ _ = False
+
+isTigerMove :: Coordinates -> Coordinates -> Bool
+isTigerMove origin target = ( isKingMove origin target ) && ( column(target) /= (column(origin)) && (line(target) /= line(origin)) )
+
+isDragonMove :: Coordinates -> Coordinates -> Board -> Bool
+isDragonMove origin target board = isBishopMove origin target board
+ 
+isChariotMove :: Coordinates -> Coordinates -> Board -> Bool
+isChariotMove origin target board = (isRookMove origin target board) && (column(target) == column(origin))
+
+isGoBetweenMove :: Coordinates -> Coordinates -> Bool
+isGoBetweenMove origin target = ( isKingMove origin target ) && ( column(target) == column(origin) )
+
+isIronMove :: Coordinates -> Coordinates -> Player -> Bool
+isIronMove origin target Player1 = ( isKingMove origin target ) && ( line(target) == (line(origin)-1) )
+isIronMove origin target Player2 = ( isKingMove origin target ) && ( line(target) == (line(origin)+1) )
+isIronMove _ _ _ = False
+
+isSideMove :: Coordinates -> Coordinates -> Board -> Bool
+isSideMove origin target board = (isRookMove origin target board) && (line(target) == line(origin))
+
+-- PecasHard END
+
 -- Menus de navegacao BEGIN
 gameMenu :: IO()
 gameMenu = do
     printHeader
 
-    putStrLn "1 - Easy"
-    putStrLn "2 - Medium "
-    putStrLn "3 - Hard"
-    putStrLn "\n"
+    putStrLn "  1 - Easy"
+    putStrLn "  2 - Medium "
+    putStrLn "  3 - Hard"
+    putStrLn "\n  B - Return to main menu\n"
 
-    putStr "Select the difficulty: "
+    putStr " Select the difficulty: "
     input <- getLine
-    if input /= "1" && input /= "2" && input /= "3"
+    if input /= "1" && input /= "2" && input /= "3" && (uppercase input) /= "B"
         then do
             clearScreen
             printWarning "Invalid entry. Try again: "
             gameMenu
         else do
             clearScreen
+
+            if (uppercase input) == "B"
+                then mainMenu
+                else do
             printHeader
 
             putStr "Difficulty chosen: "
