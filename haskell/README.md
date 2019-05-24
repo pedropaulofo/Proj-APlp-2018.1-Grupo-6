@@ -25,6 +25,8 @@ cabal update
 
 cabal install colour mintty ansi-terminal
 
+
+
 **Running the game:**
 
 main() menu will open showing **Help**, **Instructions** and **Game Start** options.
