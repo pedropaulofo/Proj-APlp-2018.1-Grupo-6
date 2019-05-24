@@ -12,13 +12,17 @@ http://hackage.haskell.org/package/mintty
 http://hackage.haskell.org/package/ansi-terminal
 
 runhaskell Setup configure
+
 runhaskell Setup build
+
 (sudo) runhaskell Setup install
 
 or
 
 **install via cabal by:**
+
 cabal update
+
 cabal install colour mintty ansi-terminal
 
 **Running the game:**
