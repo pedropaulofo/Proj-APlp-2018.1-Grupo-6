@@ -20,13 +20,18 @@ type MatchData = (Difficulty, String, String)
 type Coordinates = (Int, Int)
 type CapturedPieces = ([Char], [Char])
 
-
+-- Auxiliary functions:
 opponent :: Player -> Player
 opponent Player1 = Player2
 opponent Player2 = Player1
 opponent _ = EmptyPl
 
--- Mapeamento de posicoes BEGIN
+uppercase :: [Char] -> [Char]
+uppercase [] = []
+uppercase (h:t) = toUpper h : uppercase t
+
+
+-- Positions mapping:
 invalidCell :: Cell
 invalidCell = ('*', EmptyPl)
 
@@ -56,10 +61,8 @@ line (l, _) = l
 
 column :: Coordinates -> Int
 column (_, c) = c
--- Mapeamento de posicoes END
 
-
--- Estruturas de amrazenamento BEGIN
+-- Data structures:
 newEasyBoard :: Board
 newEasyBoard = Data.Map.fromList[(('A', '0'), ('r', Player2)), (('A', '1'), ('K', Player2)), (('A', '2'), ('b', Player2)), 
                                  (('B', '0'), (' ', EmptyPl)), (('B', '1'), ('p', Player2)), (('B', '2'), (' ', EmptyPl)), 
@@ -105,10 +108,7 @@ header = "                                                    d8b               
          "                                                                           ,88P     \n" ++
          "                                                                       `?8888P      \n"
 
--- Estruturas de amrazenamento END
-
-
--- Impressao do tabuleiro BEGIN
+-- Board printing:
 printBoard :: Board -> Difficulty -> IO()
 printBoard board Medium = do
     setSGR [SetColor Foreground Vivid Magenta]
@@ -239,7 +239,7 @@ difficultyCode :: String -> Difficulty
 difficultyCode "3" = Hard
 difficultyCode "2" = Medium
 difficultyCode "1" = Easy
-difficultyCode _ = Medium
+difficultyCode _ = Medium -- default difficulty
 
 
 printHeader :: IO()
@@ -247,10 +247,8 @@ printHeader = do
     setSGR [SetColor Foreground Vivid Magenta] 
     putStrLn (header)
     setSGR [Reset]
--- Impressao do tabuleiro END
 
-
--- Tratamento da entrada BEGIN
+-- Handling inputs:
 getCellLine :: String -> Char
 getCellLine "" = '*'
 getCellLine (x:xs) | xs == "" = '*'
@@ -274,10 +272,7 @@ isValidInputPosition input board
     where l = getCellLine input
           c = getCellColumn input
 
--- Tratamento da entrada END
-
-
--- Gets BEGIN
+-- Gets:
 getPlayer1Name :: MatchData -> String
 getPlayer1Name (_, p1, _) = p1
 
@@ -286,10 +281,8 @@ getPlayer2Name (_, _, p2) = p2
 
 getDifficulty :: MatchData -> Difficulty
 getDifficulty (dif, _, _) = dif
--- Gets END
 
-
--- Mecanicas de jogo BEGINisValidInputPosition
+--Game mechanics:
 move :: Board -> Position -> Position -> Board
 move board origin target = Data.Map.insert origin (' ', EmptyPl) (Data.Map.insert target (pieceAtPos board origin, playerAtPos board origin) board)
 
@@ -318,6 +311,7 @@ isValidMove :: Position -> Position -> Player -> Board -> Difficulty -> Bool
 isValidMove origin target player board Easy = (isKingMove (posIndexes(origin)) (posIndexes(target))) && (isPieceMove (posIndexes(origin)) (posIndexes(target)) board player (pieceAtPos board origin)) && (player == (playerAtPos board origin)) && (player /= (playerAtPos board target))
 isValidMove origin target player board _ = (isPieceMove (posIndexes(origin)) (posIndexes(target)) board player (pieceAtPos board origin)) && (player == (playerAtPos board origin)) && (player /= (playerAtPos board target))
 
+-- External commands:
 checkCommand :: String -> Player -> MatchData -> Board -> CapturedPieces -> IO()
 checkCommand "R" _ matchData _ _ = do
     clearScreen
@@ -355,15 +349,18 @@ help = do
     putStrLn "1 - English"
     putStrLn "2 - Portugues"
     k <- getLine
-    help2 k
+    helpLanguageSel k
 
-help2 :: String -> IO()
-help2 "1" = helpE
-help2 "2" = helpP
-help2 _ = putStrLn "Invalid entry"
+helpLanguageSel :: String -> IO()
+helpLanguageSel "1" = helpEng
+helpLanguageSel "2" = helpPor
+helpLanguageSel _ = do
+    clearScreen
+    printWarning "Invalid entry"
+    help
 
-helpE :: IO()
-helpE = do
+helpEng :: IO()
+helpEng = do
     clearScreen
     putStrLn "(K) The king moves one square in any direction, orthogonal or diagonal;"
     putStrLn "(r) A rook moves any numeer of squares in an orthogonal direction;"
@@ -397,8 +394,8 @@ helpE = do
     _ <- getLine
     clearScreen
 
-helpP :: IO()
-helpP = do
+helpPor :: IO()
+helpPor = do
     clearScreen
     putStrLn "(K) O rei pode se mover uma casa em qualquer direção, ortogonal ou diagonal;"
     putStrLn "(r) Uma torre move-se qualquer numero de casas em uma direção ortogonal;"
@@ -432,11 +429,7 @@ helpP = do
     _ <- getLine
     clearScreen
 
-
-uppercase :: [Char] -> [Char]
-uppercase [] = []
-uppercase (h:t) = toUpper h : uppercase t
-
+-- Turn phases and types of input:
 targetInput :: Position -> Player -> MatchData -> Board -> CapturedPieces -> IO()
 targetInput origin currentPlayer matchData boardData capturedPcs = do
     printBoard (Data.Map.insert origin ((pieceAtPos boardData origin), Selected) boardData) (getDifficulty matchData)
@@ -524,13 +517,11 @@ dropPiece pos player matchData boardData capturedPcs = do
             printWarning "Player doesn't own the piece selected. Try again: "
             originInput player matchData boardData capturedPcs
             
-
+-- Match and turn management:
 startMatch :: MatchData -> IO()
 startMatch (Medium, p1name, p2name) = startTurn Player1 (Medium, p1name, p2name) newMediumBoard ([], [])
 startMatch (Easy, p1name, p2name) = startTurn Player1 (Easy, p1name, p2name) newEasyBoard ([], []) -- TO DO substituir por easyboard
 startMatch (Hard, p1name, p2name) = startTurn Player1 (Hard, p1name, p2name) newHardBoard ([], []) -- TO DO substituir por easyboard
-
-
 
 startTurn :: Player -> MatchData -> Board -> CapturedPieces -> IO()
 startTurn currentPlayer matchData boardData capturedPcs= do
@@ -550,6 +541,7 @@ startTurn currentPlayer matchData boardData capturedPcs= do
         else
             originInput currentPlayer matchData boardData capturedPcs
 
+-- Pieces' mechanics:
 isPieceMove :: Coordinates -> Coordinates -> Board -> Player -> Char -> Bool
 -- EASY and MEDIUM
 isPieceMove origin target _ player 'p'  = isPawnMove origin target player
@@ -560,7 +552,7 @@ isPieceMove origin target _ player 'n'  = isKnightMove origin target player
 isPieceMove origin target board player 'l'  = isLancerMove origin target board player
 isPieceMove origin target board _ 'r'       = isRookMove origin target board
 isPieceMove origin target board _ 'b'       = isBishopMove origin target board
--- promoted
+-- promoted easy + medium
 isPieceMove origin target _ player 'P'  = isGoldenMove origin target player
 isPieceMove origin target _ player 'S'  = isGoldenMove origin target player
 isPieceMove origin target _ player 'N'  = isGoldenMove origin target player
@@ -575,7 +567,7 @@ isPieceMove origin target board _ 'f'   = isChariotMove origin target board
 isPieceMove origin target _ _ 'w'       = isGoBetweenMove origin target
 isPieceMove origin target board _ 'm'   = isSideMove origin target board
 isPieceMove origin target _ _ 't'       = isTigerMove origin target
--- promoted
+-- promoted hard
 isPieceMove origin target _ player 'C'  = isGoldenMove origin target player
 isPieceMove origin target _ player 'I'  = isGoldenMove origin target player
 isPieceMove origin target board _ 'D'   = (isDragonMove origin target board || isKingMove origin target) 
@@ -585,7 +577,6 @@ isPieceMove origin target _ player 'M'  = isGoldenMove origin target player
 isPieceMove origin target _ player 'T'  = isGoldenMove origin target player
 --
 isPieceMove _ _ _ _ _ = False
-
 
 
 capture :: Char -> Player -> CapturedPieces -> CapturedPieces
@@ -630,10 +621,8 @@ isKingCaptured ((x:xs), (y:ys)) | x == 'k' || y == 'k'= True
                                 | xs == [] = isKingCaptured ([], ys)
                                 | ys == [] = isKingCaptured (xs, [])
                                 | otherwise = isKingCaptured (xs, ys)
--- Mecanicas de jogo END
 
-
--- Mecanicas de cada peca BEGIN
+-- Pieces' mechanics (for each type):
 isPawnMove :: Coordinates -> Coordinates -> Player -> Bool
 isPawnMove origin target Player1 = column(origin) == column(target) && line(origin) == (line(target) + 1)
 isPawnMove origin target Player2 = column(origin) == column(target) && line(origin) == (line(target) - 1)
@@ -704,12 +693,7 @@ freeWayDiagonal l c target board FourthQuad | l == line(target) && c == column(t
                                      | playerAtPos board (coordinateToPosition((l, c))) /= EmptyPl = False
                                      | otherwise = freeWayDiagonal (l+1) (c+1) target board FourthQuad
 
--- Mecanicas de cada peca END
-
-
--- PecasHard BEGIN
-
-
+-- HARD MODE pieces's mechanics:
 isCopperMove :: Coordinates -> Coordinates -> Player -> Bool
 isCopperMove origin target Player1 = ( isKingMove origin target ) && not( column(target) /= (column(origin)) && (line(target) == line(origin)-1) )
 isCopperMove origin target Player2 = ( isKingMove origin target ) && not( column(target) /= (column(origin)) && (line(target) == line(origin)+1) )
@@ -735,9 +719,7 @@ isIronMove _ _ _ = False
 isSideMove :: Coordinates -> Coordinates -> Board -> Bool
 isSideMove origin target board = (isRookMove origin target board) && (line(target) == line(origin))
 
--- PecasHard END
-
--- Menus de navegacao BEGIN
+-- Navigation menus:
 gameMenu :: IO()
 gameMenu = do
     printHeader
@@ -780,8 +762,6 @@ gameMenu = do
             clearScreen
             startMatch (difficultyCode(input), player1, player2)
 
-
-
 mainMenuOptions :: String -> IO()
 mainMenuOptions "1" = do
     clearScreen
@@ -796,7 +776,6 @@ mainMenuOptions x = do
     putStr x
     printWarning " is not a valid command. try again"
     mainMenu
---  Menus de navegacao END
 
 mainMenu :: IO()
 mainMenu = do
