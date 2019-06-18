@@ -1,8 +1,81 @@
 :- initialization main.
 
+
 cls :- write('\e[2J').
 
-menu :- write("\nDigite a opção desejada:\n\t1)Jogar\n\t2)Regras\n\t3)Sair").
+main_menu :- write("\nDigite a opção desejada:\n\t1)Jogar\n\t2)Regras\n\t3)Sair").
+
+lowerLimitColumn(Code) :- char_code('a', Code).
+upperLimitColumn(Code) :- char_code('i', Code).
+
+
+
+pieces(['l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l','_', 'r', '_', '_', '_', '_', '_', 'b', '_','p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', '_', 'b', '_', '_', '_', '_', '_', 'r', '_', 'l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l']).
+
+valid_line(Index) :- integer(Index),
+               Index >= 0, Index < 9.
+
+valid_column(Index) :-
+                char_type(Index, alpha),
+                char_code(Index, CodeI),
+                lowerLimitColumn(CodeL),
+                upperLimitColumn(CodeU),
+                CodeI >= CodeL,
+                CodeI =< CodeU.
+
+read_column :-
+                write_ln("Enter the COLUMN coordinate of the piece you want to move: "),
+                read_line_to_string(user_input, Column),
+                valid_column(Column),
+                write_ln("Valid column, OK").
+            
+read_column :-  write_ln("Invalid column. Try again."),
+                read_column.
+
+read_number(Number) :- read_line_to_codes(user_input, Codes),string_to_atom(Codes, Atom),atom_number(Atom, Number).
+
+read_lineIndex :-
+                write_ln("Enter the LINE coordinate of the piece you want to move: "),
+                read_number(Line),
+                valid_line(Line),
+                write_ln("Valid line, OK.").
+
+read_lineIndex :-
+                write_ln("Invalid line. Try again."),
+                read_lineIndex.
+
+
+game_loop :-
+    repeat,
+    read_column,
+    read_lineIndex,
+    game_loop.
+
+
+entrada_main_menu('1') :- game_loop.
+entrada_main_menu('2') :- imprime_ajuda().
+entrada_main_menu('3') :- write("Saindo...").
+entrada_main_menu(_) :- write("Entrada invalida!").
+
+start :-
+    repeat,
+    main_menu(),
+    nl,
+    get_single_char(X),
+    char_code(Y,X),
+    cls,
+    entrada_main_menu(Y),
+    start.
+
+main :- 
+    cls,
+    pieces(X),
+    write_ln(X),
+    start,
+    halt(0).
+
+
+
 
 imprime_ajuda():-
     writeln("(K) The king moves one square in any direction, orthogonal or diagonal;"),
@@ -34,23 +107,3 @@ imprime_ajuda():-
     writeln("   piece you wish to drop. Pieces dropped on promotion zone will only promote after moving inside it. The Pawn and the Lancer cannot be dropped on the"),
     writeln("   last enemy row, and the Knight cannot be dropped on the last 2 rows. Promoted pieces return to their common counterparts when captured."),
     get_single_char(X).
-
-entrada_menu('1') :- write("Digitei 1").
-entrada_menu('2') :- imprime_ajuda().
-entrada_menu('3') :- write("Saindo...").
-entrada_menu(_) :- write("Entrada invalida!").
-
-comeco :-
-    repeat,
-    menu(),
-    nl,
-    get_single_char(X),
-    char_code(Y,X),
-    cls,
-    entrada_menu(Y),
-    comeco.
-
-main :- 
-    cls,
-    comeco,
-    halt(0).

@@ -420,11 +420,11 @@ helpPor = do
     putStrLn "(H) Ajuda com comandos -> Digite H se você quiser obter ajuda com os comandos do jogo. Você pode obter ajuda depois que o jogo começar"
     putStrLn "(E) Fechar jogo -> Digite E se quiser fechar o jogo e voltar pro menu inicial. Você pode fechar o jogo sempre que digitar este comando"
     putStrLn "\nOutras mecânicas: \n"
-    putStrLn "1. Promoção: Quando uma peça atinge o tabuleiro inimigo, ela é promovida e ganha um novo conjunto de lances. A maioria das peças promovidas ganham movimentos do Golden General."
-    putStrLn "   O Bispo Promovido e a Torre Promovida podem se mover como suas contrapartes comuns e também 1 quadrado para qualquer direção. No modo fácil, apenas o Peão é promovido."
-    putStrLn "2. Drop de peças: As peças inimigas capturadas podem ser colocadas em posições vazias, agora de propriedade do novo jogador. Selecione no seu turno um espaço vazio e a"
-    putStrLn "   posição em que você deseja colcar. As peças postas na zona de promoção só serão promovidas depois de serem movidas dentro da zona. O Peão e o Lanceiro não podem ser postos na"
-    putStrLn "   última linha inimiga, e o Cavaleiro não pode ser posto nas últimas 2 linhas. Peças promovidas retornam às suas contrapartes comuns quando capturadas."
+    putStrLn "1. Promoção: Quando uma peça atinge o tabuleiro inimigo, ela é promovida e ganha um novo conjunto de lances. A maioria das peças promovidas ganham movimentos do Golden General."
+    putStrLn "   O Bispo Promovido e a Torre Promovida podem se mover como suas contrapartes comuns e também 1 quadrado para qualquer direção. No modo fácil, apenas o Peão é promovido."
+    putStrLn "2. Drop de peças: As peças inimigas capturadas podem ser colocadas em posições vazias, agora de propriedade do novo jogador. Selecione no seu turno um espaço vazio e a"
+    putStrLn "   posição em que você deseja colcar. As peças postas na zona de promoção só serão promovidas depois de serem movidas dentro da zona. O Peão e o Lanceiro não podem ser postos na"
+    putStrLn "   última linha inimiga, e o Cavaleiro não pode ser posto nas últimas 2 linhas. Peças promovidas retornam às suas contrapartes comuns quando capturadas."
     printWarning "\nPress enter to return!"
     _ <- getLine
     clearScreen
