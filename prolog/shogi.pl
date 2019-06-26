@@ -94,10 +94,11 @@ print_piece(PlayersMap, Piece, RowIndex, ColumnIndex) :-
     ansi_format([bold, fg(yellow)], '~w', [Piece]),!.
 
 /* Validation of input */
-valid_line(Index) :- integer(Index),
+valid_column(Index) :-
+               integer(Index),
                Index >= 0, Index < 9.
 
-valid_column(Index) :-
+valid_line(Index) :-
                 char_type(Index, alpha),
                 char_code(Index, CodeI),
                 lowerLimitColumn(CodeL),
@@ -105,34 +106,33 @@ valid_column(Index) :-
                 CodeI >= CodeL,
                 CodeI =< CodeU.
 
-read_column :-
+read_column(Column) :-
                 write_ln("Enter the COLUMN coordinate of the piece you want to move: "),
-                read_line_to_string(user_input, Column),
-                valid_column(Column),
-                write_ln("Valid column, OK").
-            
-read_column :-  write_ln("Invalid column. Try again."),
-                read_column.
+                read_number(Column),
+                valid_column(Column).           
+read_column(Column) :-
+                write_ln("Invalid column. Try again."),
+                read_column(Column).
 
 read_number(Number) :- read_line_to_codes(user_input, Codes),string_to_atom(Codes, Atom),atom_number(Atom, Number).
 
-read_lineIndex :-
+read_lineIndex(LineU):-
                 write_ln("Enter the LINE coordinate of the piece you want to move: "),
-                read_number(Line),
+                read_line_to_string(user_input, Line),
                 valid_line(Line),
-                write_ln("Valid line, OK.").
-
-read_lineIndex :-
+                upper_lower(LineU, Line).
+read_lineIndex(Line):-
                 write_ln("Invalid line. Try again."),
-                read_lineIndex.
+                read_lineIndex(Line).
 
-
+/* Game Loop */
 game_loop(Pieces, Players) :-
     repeat,
     cls,
     print_board(Pieces, Players),
-    read_column,
-    read_lineIndex,
+    read_column(Column),
+    read_lineIndex(Line),
+    line_letter_toNum(Line, Row),
     game_loop(Pieces, Players).
 
 
