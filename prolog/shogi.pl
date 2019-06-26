@@ -2,10 +2,13 @@
 
 %% codes and auxiliary 
 cls :- write('\e[2J').
+
 lowerLimitColumn(Code) :- char_code('a', Code).
 upperLimitColumn(Code) :- char_code('i', Code).
+
 print_playerturn(player1) :- write("Player1, enter your move: "), !.
 print_playerturn(player2) :- write("Player2, enter your move: "), !.
+
 line_letter_toNum('A', 0).
 line_letter_toNum('B', 1).
 line_letter_toNum('C', 2).
@@ -15,9 +18,17 @@ line_letter_toNum('F', 5).
 line_letter_toNum('G', 6).
 line_letter_toNum('H', 7).
 line_letter_toNum('I', 8).
+
 is_valid_index(Index) :-
 	Index >= 0,
 	Index < 9.
+
+adversary(player1, player2).
+adversary(player2, player1).
+
+replace([_|T], 0, X, [X|T]).
+replace([H|T], I, X, [H|R]):- I > -1, NI is I-1, replace(T, NI, X, R), !.
+replace(L, _, _, L).
 
 %% game data
 pieces_map([['l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'],
@@ -98,9 +109,11 @@ valid_column(Index) :-
                integer(Index),
                Index >= 0, Index < 9.
 
+
 valid_line(Index) :-
                 char_type(Index, alpha),
-                char_code(Index, CodeI),
+                char_type(IndexLower, to_lower(Index)),
+                char_code(IndexLower, CodeI),
                 lowerLimitColumn(CodeL),
                 upperLimitColumn(CodeU),
                 CodeI >= CodeL,
@@ -116,24 +129,44 @@ read_column(Column) :-
 
 read_number(Number) :- read_line_to_codes(user_input, Codes),string_to_atom(Codes, Atom),atom_number(Atom, Number).
 
-read_lineIndex(LineU):-
+read_lineIndex(Line):-
                 write_ln("Enter the LINE coordinate of the piece you want to move: "),
                 read_line_to_string(user_input, Line),
-                valid_line(Line),
-                upper_lower(LineU, Line).
+                NewLine is Line,
+                valid_line(NewLine).
 read_lineIndex(Line):-
                 write_ln("Invalid line. Try again."),
                 read_lineIndex(Line).
+
+/* Positions handling */
+
+insert_into_coords(Map, Line, Column, Element, NewMap) :-
+    char_type(LineUpper, to_upper(Line)),
+    line_letter_toNum(LineUpper, RowIndex),
+    nth0(RowIndex, Pieces, Row),
+    replace(Row, Column, Element, NewRow),
+    replace(Map, RowIndex, NewRow, Newmap).
+
+clear_cell(Pieces, Players, RowIndex, ColumnIndex, NewPieces, NewPlayers) :-
+    insert_into_coords(Pieces, RowIndex, ColumnIndex, ' ', NewPieces),
+    insert_into_coords(Players, RowIndex, ColumnIndex, '0', NewPieces).
+
+selected_piece(Pieces, Line, Column, SelectedPiece) :-
+    char_type(LineUpper, to_upper(Line)),
+    line_letter_toNum(LineUpper, Row),
+    piece(Pieces, Row, Column, SelectedPiece).
 
 /* Game Loop */
 game_loop(Pieces, Players) :-
     repeat,
     cls,
     print_board(Pieces, Players),
-    read_column(Column),
     read_lineIndex(Line),
-    line_letter_toNum(Line, Row),
-    game_loop(Pieces, Players).
+    read_column(Column),
+    selected_piece(Pieces, Line, Column, SelectedPiece),
+    writeln(SelectedPiece),
+    insert_into_coords(Pieces, Line, Column, 'X', NewPieces),
+    game_loop(NewPieces, Players).
 
 
 %% Menu Navigation
