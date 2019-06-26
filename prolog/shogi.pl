@@ -6,28 +6,28 @@ lowerLimitColumn(Code) :- char_code('a', Code).
 upperLimitColumn(Code) :- char_code('i', Code).
 print_playerturn(player1) :- write("Player1, enter your move: "), !.
 print_playerturn(player2) :- write("Player2, enter your move: "), !.
-line_letter_toNum('a', 0).
-line_letter_toNum('b', 1).
-line_letter_toNum('c', 2).
-line_letter_toNum('d', 3).
-line_letter_toNum('e', 4).
-line_letter_toNum('f', 5).
-line_letter_toNum('g', 6).
-line_letter_toNum('h', 7).
-line_letter_toNum('i', 8).
+line_letter_toNum('A', 0).
+line_letter_toNum('B', 1).
+line_letter_toNum('C', 2).
+line_letter_toNum('D', 3).
+line_letter_toNum('E', 4).
+line_letter_toNum('F', 5).
+line_letter_toNum('G', 6).
+line_letter_toNum('H', 7).
+line_letter_toNum('I', 8).
 is_valid_index(Index) :-
 	Index >= 0,
 	Index < 9.
 
 %% game data
 pieces_map([['l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'],
-            ['_', 'r', '_', '_', '_', '_', '_', 'b', '_'],
+            [' ', 'r', ' ', ' ', ' ', ' ', ' ', 'b', ' '],
             ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-            ['_', '_', '_', '_', '_', '_', '_', '_', '_'], 
-            ['_', '_', '_', '_', '_', '_', '_', '_', '_'], 
-            ['_', '_', '_', '_', '_', '_', '_', '_', '_'], 
+            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
             ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], 
-            ['_', 'b', '_', '_', '_', '_', '_', 'r', '_'], 
+            [' ', 'b', ' ', ' ', ' ', ' ', ' ', 'r', ' '], 
             ['l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l']]).
 
 players_map([['2', '2', '2', '2', '2', '2', '2', '2', '2'],
@@ -40,52 +40,58 @@ players_map([['2', '2', '2', '2', '2', '2', '2', '2', '2'],
              ['0', '1', '0', '0', '0', '0', '0', '1', '0'],
              ['1', '1', '1', '1', '1', '1', '1', '1', '1']]).
 
-/*positions([('A', '0'), ('A', '1'), ('A', '2'), ('A', '3'), ('A', '4'), ('A', '5'), ('A', '6'), ('A', '7'), ('A', '8'),
-           ('B', '0'), ('B', '1'), ('B', '2'), ('B', '3'), ('B', '4'), ('B', '5'), ('B', '6'), ('B', '7'), ('B', '8'),
-           ('C', '0'), ('C', '1'), ('C', '2'), ('C', '3'), ('C', '4'), ('C', '5'), ('C', '6'), ('C', '7'), ('C', '8'),
-           ('D', '0'), ('D', '1'), ('D', '2'), ('D', '3'), ('D', '4'), ('D', '5'), ('D', '6'), ('D', '7'), ('D', '8'),
-           ('E', '0'), ('E', '1'), ('E', '2'), ('E', '3'), ('E', '4'), ('E', '5'), ('E', '6'), ('E', '7'), ('E', '8'),
-           ('F', '0'), ('F', '1'), ('F', '2'), ('F', '3'), ('F', '4'), ('F', '5'), ('F', '6'), ('F', '7'), ('F', '8'),
-           ('G', '0'), ('G', '1'), ('G', '2'), ('G', '3'), ('G', '4'), ('G', '5'), ('G', '6'), ('G', '7'), ('G', '8'),
-           ('H', '0'), ('H', '1'), ('H', '2'), ('H', '3'), ('H', '4'), ('H', '5'), ('H', '6'), ('H', '7'), ('H', '8'),
-           ('I', '0'), ('I', '1'), ('I', '2'), ('I', '3'), ('I', '4'), ('I', '5'), ('I', '6'), ('I', '7'), ('I', '8')]).*/
-
 /* print board relations */
-print_board(Board) :-   
+print_board(Pieces, Players) :-   
 	writeln('\n  0 1 2 3 4 5 6 7 8 '),
-	print_board(Board, 0, 0).
+	print_board(Pieces, Players, 0, 0).
 
-print_board(Board, 8, 9) :-
-	writeln('|8'),
+print_board(Pieces, Players, 8, 9) :-
+	writeln('|I'),
 	writeln('  0 1 2 3 4 5 6 7 8 \n'),!.
 
-print_board(Board, Row, 0) :-
-	write(Row),
+print_board(Pieces, Players, Row, 0) :-
+    line_letter_toNum(RowL, Row),
+    write(RowL),
 	write('|'),
-	piece(Board, Row, 0, Piece),
-	write(Piece), 
-	print_board(Board, Row, 1).
+    piece(Pieces, Row, 0, Piece),
+    print_piece(Players, Piece, Row, Column),
+	print_board(Pieces, Players, Row, 1).
 
-print_board(Board, Row, 9) :-
+print_board(Pieces, Players, Row, 9) :-
 	Row \= 8,
 	NextRow is Row + 1,
 	write('|'),
-	writeln(Row),
-	print_board(Board, NextRow, 0).
-
-print_board(Board, Row, Column) :-
+    line_letter_toNum(RowL, Row),
+    writeln(RowL),
+	print_board(Pieces, Players, NextRow, 0).
+print_board(Pieces, Players, Row, Column) :-
 	Column \= 0,
 	write('.'),
-	piece(Board, Row, Column, Piece),
-	write(Piece),
+    piece(Pieces, Row, Column, Piece),
+    print_piece(Players, Piece, Row, Column),
 	NextColumn is Column + 1,
-	print_board(Board, Row, NextColumn).
+	print_board(Pieces, Players, Row, NextColumn).
 
-piece(Board, RowIndex, ColumnIndex, Piece) :-
+piece(Pieces, RowIndex, ColumnIndex, Piece) :-
 	is_valid_index(RowIndex),
 	is_valid_index(ColumnIndex),
-	nth0(RowIndex, Board, Row),
+	nth0(RowIndex, Pieces, Row),
 	nth0(ColumnIndex, Row, Piece).
+
+print_piece(PlayersMap, _, RowIndex, ColumnIndex) :-
+    nth0(RowIndex, PlayersMap, Row),
+    nth0(ColumnIndex, Row, '0'),
+    write(' '),!.
+
+print_piece(PlayersMap, Piece, RowIndex, ColumnIndex) :-
+    nth0(RowIndex, PlayersMap, Row),
+    nth0(ColumnIndex, Row, '1'),
+    ansi_format([bold, fg(cyan)], '~w', [Piece]),!.
+
+print_piece(PlayersMap, Piece, RowIndex, ColumnIndex) :-
+    nth0(RowIndex, PlayersMap, Row),
+    nth0(ColumnIndex, Row, '2'),
+    ansi_format([bold, fg(yellow)], '~w', [Piece]),!.
 
 /* Validation of input */
 valid_line(Index) :- integer(Index),
@@ -121,20 +127,21 @@ read_lineIndex :-
                 read_lineIndex.
 
 
-game_loop(Board) :-
+game_loop(Pieces, Players) :-
     repeat,
     cls,
-    print_board(Board),
+    print_board(Pieces, Players),
     read_column,
     read_lineIndex,
-    game_loop(Board).
+    game_loop(Pieces, Players).
 
 
 %% Menu Navigation
 main_menu :- write("\nEnter the selected option:\n\t1) Start game\n\t2) Rules\n\t3) Exit").
 
-input_main_menu('1') :- pieces_map(Board),
-                        game_loop(Board).
+input_main_menu('1') :- pieces_map(Pieces),
+                        players_map(Players),
+                        game_loop(Pieces, Players).
 input_main_menu('2') :- print_help().
 input_main_menu('3') :- write("Leaving game..."), halt(0).
 input_main_menu(_) :- write("Invalid input! Try again: ").
