@@ -51,13 +51,13 @@ replace_column( [C|Cs] , Y , Z , [C|Rs] ) :- % otherwise,
 
 %% game data
 pieces_map([['l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'],
-            [' ', 'r', ' ', ' ', ' ', ' ', ' ', 'b', ' '],
+            ['_', 'r', '_', '_', '_', '_', '_', 'b', '_'],
             ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
-            [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '], 
+            ['_', '_', '_', '_', '_', '_', '_', '_', '_'], 
+            ['_', '_', '_', '_', '_', '_', '_', '_', '_'], 
+            ['_', '_', '_', '_', '_', '_', '_', '_', '_'], 
             ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'], 
-            [' ', 'b', ' ', ' ', ' ', ' ', ' ', 'r', ' '], 
+            ['_', 'b', '_', '_', '_', '_', '_', 'r', '_'], 
             ['l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l']]).
 
 players_map([['2', '2', '2', '2', '2', '2', '2', '2', '2'],
@@ -85,6 +85,7 @@ print_board(Pieces, Players, Row, 0) :-
 	write('|'),
     piece(Pieces, Row, 0, Piece),
     print_piece(Players, Piece, Row, Column),
+    %%write(Piece),
 	print_board(Pieces, Players, Row, 1).
 
 print_board(Pieces, Players, Row, 9) :-
@@ -108,10 +109,10 @@ piece(Pieces, RowIndex, ColumnIndex, Piece) :-
 	nth0(RowIndex, Pieces, Row),
 	nth0(ColumnIndex, Row, Piece).
 
-print_piece(PlayersMap, _, RowIndex, ColumnIndex) :-
+print_piece(PlayersMap, '_', RowIndex, ColumnIndex) :-
     nth0(RowIndex, PlayersMap, Row),
     nth0(ColumnIndex, Row, '0'),
-    write(' '),!.
+    write('_'),!.
 
 print_piece(PlayersMap, Piece, RowIndex, ColumnIndex) :-
     nth0(RowIndex, PlayersMap, Row),
@@ -122,6 +123,8 @@ print_piece(PlayersMap, Piece, RowIndex, ColumnIndex) :-
     nth0(RowIndex, PlayersMap, Row),
     nth0(ColumnIndex, Row, '2'),
     ansi_format([bold, fg(yellow)], '~w', [Piece]),!.
+
+
 
 /* Validation of input */
 valid_column(Index) :-
@@ -159,27 +162,51 @@ read_lineIndex(Line):-
 
 /* Positions handling */
 
-insert_piece(Pieces, Players, Line, Column, Element, Owner, NewPieces, NewPlayers) :-
+insert_piece(Pieces, Players, Line, Column, Piece, Owner, NewPieces, NewPlayers) :-
     char_type(LineUpper, to_upper(Line)),
     line_letter_toNum(LineUpper, Row),
-    replace(Pieces, Row, Column, Element, NewPieces),
+    replace(Pieces, Row, Column, Piece, NewPieces),
     replace(Players, Row, Column, Owner, NewPlayers).
 
 clear_cell(Pieces, Players, Line, Column, NewPieces, NewPlayers) :-
     char_type(LineUpper, to_upper(Line)),
     line_letter_toNum(LineUpper, Row),    
-    replace(Pieces, Row, Column, ' ', NewPieces),
+    replace(Pieces, Row, Column, '_', NewPieces),
     replace(Players, Row, Column, '0', NewPlayers).
 
-move_piece(Pieces, Players, OriginLine, OriginColumn, TargetLine, TargetColumn, SelectedPiece, CurrentPlayer, FinalPieces, FinalPlayers) :-
+move_piece(Pieces, Players, OriginLine, OriginColumn, TargetLine, TargetColumn, Piece, CurrentPlayer, FinalPieces, FinalPlayers) :-
     clear_cell(Pieces, Players, OriginLine, OriginColumn, Pieces2, Players2), % Apaga a celula onde estava a peca
-    insert_piece(Pieces2, Players2, TargetLine, TargetColumn, SelectedPiece, CurrentPlayer, FinalPieces, FinalPlayers). % Insere a peca na nova posicao
+    insert_piece(Pieces2, Players2, TargetLine, TargetColumn, Piece, CurrentPlayer, FinalPieces, FinalPlayers). % Insere a peca na nova posicao
 
 
 selected_piece(Pieces, Line, Column, SelectedPiece) :-
     char_type(LineUpper, to_upper(Line)),
     line_letter_toNum(LineUpper, Row),
     piece(Pieces, Row, Column, SelectedPiece).
+
+
+get_origin(Pieces, Players, Line, Column, Piece, CurrentPlayer) :-
+    read_lineIndex(Line), % Le a linha da peca de origem do movimento
+    read_column(Column),  % Le a coluna da peca de origem do movimento
+
+    selected_piece(Pieces, Line, Column, Piece). % Peca selecionada
+    is_from_player(CurrentPlayer, Pieces, Players, Line, Column).
+
+is_from_player('1', Pieces, Players, Line, Column) :-
+    char_type(LineUpper, to_upper(Line)),
+    line_letter_toNum(LineUpper, Row),
+    nth0(Row, Players, Row),
+    nth0(Column, Row, '1').
+
+is_from_player('2', Pieces, Players, Line, Column) :-
+    char_type(LineUpper, to_upper(Line)),
+    line_letter_toNum(LineUpper, Row),
+    nth0(Row, Players, Row),
+    nth0(Column, Row, '2').
+
+is_from_player(CurrentPlayer, Pieces, Players, Line, Column) :-
+    write_ln("The piece chosen is not from the current player."),
+    game_loop(Pieces, Players, CurrentPlayer).
 
 /* Game Loop */
 game_loop(Pieces, Players, CurrentPlayer) :-
@@ -188,12 +215,8 @@ game_loop(Pieces, Players, CurrentPlayer) :-
     print_board(Pieces, Players),
     print_playerturn(CurrentPlayer),
 
-    read_lineIndex(OriginLine), % Le a linha da peca de origem do movimento
-    read_column(OriginColumn),  % Le a coluna da peca de origem do movimento
+    get_origin(Pieces, Players, OriginLine, OriginColumn, SelectedPiece, CurrentPlayer),
 
-    selected_piece(Pieces, OriginLine, OriginColumn, SelectedPiece), % Peca selecionada
-    writeln(SelectedPiece),
-    
     read_lineIndex(TargetLine), % Le a linha de destino do movimento
     read_column(TargetColumn),  % Le a coluna de destino do movimento
 
