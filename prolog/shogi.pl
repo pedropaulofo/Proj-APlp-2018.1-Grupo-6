@@ -6,8 +6,12 @@ cls :- write('\e[2J').
 lowerLimitColumn(Code) :- char_code('a', Code).
 upperLimitColumn(Code) :- char_code('i', Code).
 
-print_playerturn(player1) :- write("Player1, enter your move: "), !.
-print_playerturn(player2) :- write("Player2, enter your move: "), !.
+print_playerturn(player1) :-
+    ansi_format([bold, fg(cyan)], '~w', ['Player1']),
+    writeln(", enter your move: "), !.
+print_playerturn(player2) :-
+    ansi_format([bold, fg(yellow)], '~w', ['Player2']),
+    writeln(", enter your move: "), !.
 
 line_letter_toNum('A', 0).
 line_letter_toNum('B', 1).
@@ -120,7 +124,7 @@ valid_line(Index) :-
                 CodeI =< CodeU.
 
 read_column(Column) :-
-                write_ln("Enter the COLUMN coordinate of the piece you want to move: "),
+                write_ln("Enter the COLUMN coordinate of the piece you want to move (0-8): "),
                 read_number(Column),
                 valid_column(Column).           
 read_column(Column) :-
@@ -130,7 +134,7 @@ read_column(Column) :-
 read_number(Number) :- read_line_to_codes(user_input, Codes),string_to_atom(Codes, Atom),atom_number(Atom, Number).
 
 read_lineIndex(Line):-
-                write_ln("Enter the LINE coordinate of the piece you want to move: "),
+                write_ln("Enter the LINE coordinate of the piece you want to move (A-I): "),
                 read_line_to_string(user_input, Line),
                 NewLine is Line,
                 valid_line(NewLine).
@@ -140,12 +144,12 @@ read_lineIndex(Line):-
 
 /* Positions handling */
 
-insert_into_coords(Map, Line, Column, Element, NewMap) :-
-    char_type(LineUpper, to_upper(Line)),
-    line_letter_toNum(LineUpper, RowIndex),
-    nth0(RowIndex, Pieces, Row),
-    replace(Row, Column, Element, NewRow),
-    replace(Map, RowIndex, NewRow, Newmap).
+insert_into_coords(Map, NewMap) :-
+    /*char_type(LineUpper, to_upper(Line)),
+    line_letter_toNum(LineUpper, RowIndex),*/
+    nth0(0, Map, Row),
+    replace(Row, 3, c, NewRow),
+    replace(Map, 0, NewRow, Newmap).
 
 clear_cell(Pieces, Players, RowIndex, ColumnIndex, NewPieces, NewPlayers) :-
     insert_into_coords(Pieces, RowIndex, ColumnIndex, ' ', NewPieces),
@@ -157,16 +161,18 @@ selected_piece(Pieces, Line, Column, SelectedPiece) :-
     piece(Pieces, Row, Column, SelectedPiece).
 
 /* Game Loop */
-game_loop(Pieces, Players) :-
+game_loop(Pieces, Players, CurrentPlayer) :-
     repeat,
     cls,
     print_board(Pieces, Players),
+    print_playerturn(CurrentPlayer),
     read_lineIndex(Line),
     read_column(Column),
     selected_piece(Pieces, Line, Column, SelectedPiece),
     writeln(SelectedPiece),
-    insert_into_coords(Pieces, Line, Column, 'X', NewPieces),
-    game_loop(NewPieces, Players).
+    insert_into_coords(Pieces, NewPieces),
+    adversary(CurrentPlayer, Oponent),
+    game_loop(NewPieces, Players, Oponent).
 
 
 %% Menu Navigation
@@ -174,7 +180,7 @@ main_menu :- write("\nEnter the selected option:\n\t1) Start game\n\t2) Rules\n\
 
 input_main_menu('1') :- pieces_map(Pieces),
                         players_map(Players),
-                        game_loop(Pieces, Players).
+                        game_loop(Pieces, Players, player1).
 input_main_menu('2') :- print_help().
 input_main_menu('3') :- write("Leaving game..."), halt(0).
 input_main_menu(_) :- write("Invalid input! Try again: ").
