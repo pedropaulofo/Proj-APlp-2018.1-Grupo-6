@@ -30,9 +30,24 @@ is_valid_index(Index) :-
 adversary(player1, player2).
 adversary(player2, player1).
 
-replace([_|T], 0, X, [X|T]).
-replace([H|T], I, X, [H|R]):- I > -1, NI is I-1, replace(T, NI, X, R), !.
-replace(L, _, _, L).
+player_code(player1, '1').
+player_code(player2, '2').
+
+replace( [L|Ls] , 0 , Y , Z , [R|Ls] ) :- % once we find the desired row,
+  replace_column(L,Y,Z,R)                 % - we replace specified column, and we're done.
+  .                                       %
+replace( [L|Ls] , X , Y , Z , [L|Rs] ) :- % if we haven't found the desired row yet
+  X > 0 ,                                 % - and the row offset is positive,
+  X1 is X-1 ,                             % - we decrement the row offset
+  replace( Ls , X1 , Y , Z , Rs )         % - and recurse down
+  .                                       %
+
+replace_column( [_|Cs] , 0 , Z , [Z|Cs] ) .  % once we find the specified offset, just make the substitution and finish up.
+replace_column( [C|Cs] , Y , Z , [C|Rs] ) :- % otherwise,
+  Y > 0 ,                                    % - assuming that the column offset is positive,
+  Y1 is Y-1 ,                                % - we decrement it
+  replace_column( Cs , Y1 , Z , Rs )         % - and recurse down.
+  .      
 
 %% game data
 pieces_map([['l', 'n', 's', 'G', 'K', 'G', 's', 'n', 'l'],
@@ -144,16 +159,22 @@ read_lineIndex(Line):-
 
 /* Positions handling */
 
-insert_into_coords(Map, NewMap) :-
-    /*char_type(LineUpper, to_upper(Line)),
-    line_letter_toNum(LineUpper, RowIndex),*/
-    nth0(0, Map, Row),
-    replace(Row, 3, c, NewRow),
-    replace(Map, 0, NewRow, Newmap).
+insert_piece(Pieces, Players, Line, Column, Element, Owner, NewPieces, NewPlayers) :-
+    char_type(LineUpper, to_upper(Line)),
+    line_letter_toNum(LineUpper, Row),
+    replace(Pieces, Row, Column, Element, NewPieces),
+    replace(Players, Row, Column, Owner, NewPlayers).
 
-clear_cell(Pieces, Players, RowIndex, ColumnIndex, NewPieces, NewPlayers) :-
-    insert_into_coords(Pieces, RowIndex, ColumnIndex, ' ', NewPieces),
-    insert_into_coords(Players, RowIndex, ColumnIndex, '0', NewPieces).
+clear_cell(Pieces, Players, Line, Column, NewPieces, NewPlayers) :-
+    char_type(LineUpper, to_upper(Line)),
+    line_letter_toNum(LineUpper, Row),    
+    replace(Pieces, Row, Column, ' ', NewPieces),
+    replace(Players, Row, Column, '0', NewPlayers).
+
+move_piece(Pieces, Players, OriginLine, OriginColumn, TargetLine, TargetColumn, SelectedPiece, CurrentPlayer, FinalPieces, FinalPlayers) :-
+    clear_cell(Pieces, Players, OriginLine, OriginColumn, Pieces2, Players2), % Apaga a celula onde estava a peca
+    insert_piece(Pieces2, Players2, TargetLine, TargetColumn, SelectedPiece, CurrentPlayer, FinalPieces, FinalPlayers). % Insere a peca na nova posicao
+
 
 selected_piece(Pieces, Line, Column, SelectedPiece) :-
     char_type(LineUpper, to_upper(Line)),
@@ -166,13 +187,22 @@ game_loop(Pieces, Players, CurrentPlayer) :-
     cls,
     print_board(Pieces, Players),
     print_playerturn(CurrentPlayer),
-    read_lineIndex(Line),
-    read_column(Column),
-    selected_piece(Pieces, Line, Column, SelectedPiece),
+
+    read_lineIndex(OriginLine), % Le a linha da peca de origem do movimento
+    read_column(OriginColumn),  % Le a coluna da peca de origem do movimento
+
+    selected_piece(Pieces, OriginLine, OriginColumn, SelectedPiece), % Peca selecionada
     writeln(SelectedPiece),
-    insert_into_coords(Pieces, NewPieces),
-    adversary(CurrentPlayer, Oponent),
-    game_loop(NewPieces, Players, Oponent).
+    
+    read_lineIndex(TargetLine), % Le a linha de destino do movimento
+    read_column(TargetColumn),  % Le a coluna de destino do movimento
+
+    player_code(CurrentPlayer, PCode),
+
+    move_piece(Pieces, Players, OriginLine, OriginColumn, TargetLine, TargetColumn, SelectedPiece, PCode, FinalPieces, FinalPlayers),
+    
+    adversary(CurrentPlayer, Oponent),    % Troca pro adversario
+    game_loop(FinalPieces, FinalPlayers, Oponent).
 
 
 %% Menu Navigation
